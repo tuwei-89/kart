@@ -1,0 +1,4197 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>街機 3D 卡丁車 · 賽車車庫與強化大獎賽</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏎️</text></svg>">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #87ceeb;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    #canvas-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    /* 正式競速 HUD 層 */
+    #racing-hud {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 18px 24px;
+    }
+
+    /* 頂部賽況列 */
+    .top-race-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      width: 100%;
+    }
+    .top-left-box {
+      display: flex;
+      gap: 12px;
+    }
+    .hud-badge-box {
+      background: rgba(15, 23, 42, 0.88);
+      border: 2px solid rgba(56, 189, 248, 0.4);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), inset 0 0 12px rgba(56, 189, 248, 0.2);
+      backdrop-filter: blur(8px);
+      padding: 8px 18px;
+      border-radius: 14px;
+      color: #fff;
+    }
+    .hud-sub-label {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #94a3b8;
+      text-transform: uppercase;
+    }
+    .hud-main-val {
+      font-size: 30px;
+      font-weight: 900;
+      color: #38bdf8;
+      font-style: italic;
+      line-height: 1;
+      margin-top: 2px;
+    }
+    .hud-main-val span {
+      font-size: 16px;
+      color: #64748b;
+      font-weight: 600;
+    }
+    .rank-val {
+      color: #fbbf24;
+    }
+
+    /* 中央計時板 */
+    .timer-panel {
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      padding: 8px 22px;
+      border-radius: 14px;
+      text-align: center;
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    }
+    .timer-current {
+      font-family: "Consolas", "Courier New", monospace;
+      font-size: 30px;
+      font-weight: 900;
+      color: #f8fafc;
+      letter-spacing: 1px;
+    }
+    .timer-best {
+      font-size: 12px;
+      color: #fbbf24;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    /* 右上導航快捷 */
+    .top-right-nav {
+      display: flex;
+      gap: 10px;
+      pointer-events: auto;
+    }
+    .btn-nav {
+      background: rgba(15, 23, 42, 0.85);
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-nav:hover {
+      background: rgba(30, 41, 59, 0.95);
+      border-color: #38bdf8;
+      color: #38bdf8;
+      transform: translateY(-1px);
+    }
+    .coin-display {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(15, 23, 42, 0.85));
+      border: 1px solid #f59e0b;
+      color: #fbbf24;
+      font-weight: 800;
+    }
+
+    /* 中央動態反饋提醒 (DRIFT / BOOST / COUNTDOWN) */
+    .center-alert-container {
+      position: absolute;
+      top: 42%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      pointer-events: none;
+    }
+    .countdown-text {
+      font-size: 110px;
+      font-weight: 900;
+      font-style: italic;
+      color: #f59e0b;
+      text-shadow: 0 0 40px rgba(245, 158, 11, 0.8), 0 8px 0 #78350f, 0 14px 25px rgba(0,0,0,0.8);
+      animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .countdown-text.go {
+      color: #10b981;
+      text-shadow: 0 0 50px rgba(16, 185, 129, 0.9), 0 8px 0 #064e3b, 0 14px 25px rgba(0,0,0,0.8);
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.3); opacity: 0; }
+      80% { transform: scale(1.15); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .drift-alert {
+      font-size: 34px;
+      font-weight: 900;
+      font-style: italic;
+      color: #fbbf24;
+      text-shadow: 0 0 20px rgba(251, 191, 36, 0.9), 0 4px 0 #b45309;
+      letter-spacing: 3px;
+      opacity: 0;
+      transform: translateY(10px) scale(0.9);
+      transition: all 0.15s ease-out;
+    }
+    .drift-alert.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    .boost-alert {
+      font-size: 38px;
+      font-weight: 900;
+      font-style: italic;
+      color: #38bdf8;
+      text-shadow: 0 0 25px rgba(56, 189, 248, 0.9), 0 4px 0 #0369a1;
+      letter-spacing: 3px;
+      opacity: 0;
+      transform: scale(0.8);
+      transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .boost-alert.active {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+    .boost-alert.rocket {
+      color: #f59e0b;
+      text-shadow: 0 0 25px rgba(245, 158, 11, 0.9), 0 4px 0 #78350f;
+    }
+    .boost-alert.stall {
+      color: #ef4444;
+      text-shadow: 0 0 25px rgba(239, 68, 68, 0.9), 0 4px 0 #7f1d1d;
+    }
+    .draft-alert {
+      color: #67e8f9;
+      text-shadow: 0 0 20px rgba(103, 232, 249, 0.9), 0 4px 0 #0e7490;
+    }
+
+    /* 底部儀表控制區域 */
+    .bottom-race-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      width: 100%;
+    }
+
+    /* 左側鍵位小指示 */
+    .controls-hint-card {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 10px 16px;
+      color: #cbd5e1;
+      font-size: 12px;
+      backdrop-filter: blur(6px);
+      line-height: 1.6;
+    }
+    .controls-hint-card kbd {
+      background: #334155;
+      color: #38bdf8;
+      border: 1px solid #475569;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: inherit;
+      font-weight: bold;
+    }
+
+    /* 中央氮氣能量條與存槽 */
+    .nitro-center-dock {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+    .nitro-tanks {
+      display: flex;
+      gap: 12px;
+    }
+    .tank-slot {
+      width: 110px;
+      height: 38px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 13px;
+      color: #64748b;
+      letter-spacing: 1px;
+      transition: all 0.25s ease;
+      backdrop-filter: blur(6px);
+    }
+    .tank-slot.ready {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      border-color: #38bdf8;
+      color: #fff;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.8);
+      transform: translateY(-2px);
+      animation: tankGlow 1s infinite alternate;
+    }
+    @keyframes tankGlow {
+      from { box-shadow: 0 0 12px rgba(56, 189, 248, 0.6); }
+      to { box-shadow: 0 0 24px rgba(56, 189, 248, 1); }
+    }
+
+    .gauge-wrapper {
+      width: 260px;
+      height: 16px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 8px;
+      padding: 2px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+    .gauge-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #f59e0b, #ef4444);
+      border-radius: 6px;
+      transition: width 0.05s linear;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.8);
+    }
+
+    /* 右側跑跑時速儀表 */
+    .speedo-cluster {
+      background: rgba(15, 23, 42, 0.9);
+      border: 2px solid rgba(56, 189, 248, 0.35);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 14px 26px;
+      text-align: right;
+      color: #fff;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      min-width: 170px;
+    }
+    .speedo-number {
+      font-size: 52px;
+      font-weight: 900;
+      font-style: italic;
+      color: #f8fafc;
+      line-height: 1;
+      font-family: "Consolas", "Courier New", monospace;
+      letter-spacing: -1px;
+    }
+    .speedo-unit {
+      font-size: 13px;
+      font-weight: 800;
+      color: #38bdf8;
+      letter-spacing: 2px;
+      margin-top: 4px;
+    }
+
+    /* 小地圖 */
+    #minimap {
+      position: absolute;
+      top: 80px;
+      right: 24px;
+      width: 170px;
+      height: 170px;
+      background: rgba(15, 23, 42, 0.75);
+      border: 2px solid rgba(56, 189, 248, 0.35);
+      border-radius: 16px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+      z-index: 15;
+      pointer-events: none;
+    }
+
+    /* Debug HUD */
+    #debug-hud {
+      position: absolute;
+      top: 86px;
+      left: 24px;
+      z-index: 20;
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(8px);
+      padding: 14px 18px;
+      border-radius: 12px;
+      color: #f8fafc;
+      font-family: "Consolas", "Courier New", monospace;
+      font-size: 12px;
+      min-width: 270px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      pointer-events: none;
+      display: none;
+    }
+    .debug-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #38bdf8;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      padding-bottom: 4px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .debug-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .debug-label { color: #94a3b8; }
+    .debug-val { font-weight: 700; color: #f1f5f9; }
+    .debug-val.alert { color: #ef4444 !important; }
+
+    /* 車庫與賽前大廳 (Garage Screen) */
+    #garage-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 50% 40%, rgba(15, 23, 42, 0.75) 0%, rgba(10, 15, 30, 0.95) 100%);
+      backdrop-filter: blur(10px);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 24px 36px;
+    }
+    #garage-screen.hidden {
+      display: none !important;
+    }
+
+    .garage-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .garage-title {
+      font-size: 32px;
+      font-weight: 900;
+      color: #38bdf8;
+      font-style: italic;
+      letter-spacing: 2px;
+      text-shadow: 0 0 20px rgba(56, 189, 248, 0.6);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .garage-coins {
+      background: rgba(15, 23, 42, 0.9);
+      border: 2px solid #f59e0b;
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+      padding: 8px 20px;
+      border-radius: 12px;
+      font-size: 20px;
+      font-weight: 900;
+      color: #fbbf24;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* 車庫主體面板：賽車卡片選擇器 & 強化面板 */
+    .garage-main {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 24px;
+      margin-bottom: 12px;
+    }
+
+    /* 賽車切換面板 */
+    .garage-panel {
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 20px 24px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+      color: #fff;
+    }
+    .car-select-panel {
+      width: 380px;
+    }
+    .panel-heading {
+      font-size: 16px;
+      font-weight: 800;
+      color: #38bdf8;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .car-cards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .car-card {
+      background: rgba(30, 41, 59, 0.7);
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 10px 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+    .car-card:hover {
+      background: rgba(51, 65, 85, 0.9);
+      border-color: #38bdf8;
+      transform: translateY(-2px);
+    }
+    .car-card.active {
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.35), rgba(37, 99, 235, 0.45));
+      border-color: #38bdf8;
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.5);
+    }
+    .car-card-name {
+      font-weight: 800;
+      font-size: 14px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .car-card-desc {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-top: 4px;
+      line-height: 1.3;
+    }
+
+    /* 烤漆選擇 */
+    .color-swatches {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .color-swatch {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .color-swatch:hover {
+      transform: scale(1.15);
+    }
+    .color-swatch.active {
+      border: 3px solid #fff;
+      box-shadow: 0 0 12px #fff;
+      transform: scale(1.2);
+    }
+
+    /* 強化升級面板 */
+    .upgrade-panel {
+      width: 440px;
+    }
+    .upgrade-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.12);
+    }
+    .upgrade-item:last-child {
+      border-bottom: none;
+    }
+    .upgrade-info {
+      flex: 1;
+    }
+    .upgrade-name {
+      font-size: 14px;
+      font-weight: 800;
+      color: #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .upgrade-desc {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+    .upgrade-dots {
+      display: flex;
+      gap: 5px;
+      margin-top: 6px;
+    }
+    .upgrade-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      background: #334155;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .upgrade-dot.filled {
+      background: #38bdf8;
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.8);
+      border-color: #38bdf8;
+    }
+    .btn-upgrade {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 800;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+    }
+    .btn-upgrade:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(56, 189, 248, 0.6);
+    }
+    .btn-upgrade:disabled {
+      background: #475569;
+      color: #94a3b8;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* 多人連線面板 */
+    #mp-panel {
+      position: absolute; inset: 0; z-index: 70;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(2, 6, 23, 0.6);
+    }
+    #mp-panel.hidden { display: none; }
+    .mp-card {
+      width: 440px; background: rgba(15, 23, 42, 0.97); border: 2px solid rgba(56, 189, 248, 0.4);
+      border-radius: 18px; padding: 22px 26px; color: #e2e8f0; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .mp-title { font-size: 22px; font-weight: 900; color: #38bdf8; margin-bottom: 14px; }
+    .mp-row { display: flex; gap: 10px; align-items: center; margin: 10px 0; }
+    .mp-row label { width: 48px; color: #94a3b8; font-weight: 700; font-size: 13px; }
+    .mp-card input {
+      flex: 1; background: #0b1220; border: 1px solid #334155; color: #fff; border-radius: 10px;
+      padding: 9px 12px; font-size: 15px; font-weight: 700; letter-spacing: 1px; outline: none;
+    }
+    .mp-card button {
+      background: #1d4ed8; color: #fff; border: none; border-radius: 10px; padding: 10px 16px;
+      font-weight: 800; font-size: 14px; cursor: pointer;
+    }
+    .mp-card button:hover { filter: brightness(1.15); }
+    #btnMpHost { width: 100%; background: #059669; margin-top: 4px; }
+    #btnMpStart { background: #059669; }
+    #btnMpLeave { background: #b91c1c; }
+    #btnMpClose { background: #475569; }
+    .mp-code { font-size: 15px; margin: 6px 0 10px; }
+    .mp-code b { font-size: 30px; letter-spacing: 6px; color: #fbbf24; margin-left: 6px; }
+    .mp-player { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid #1e293b; font-weight: 700; }
+    .mp-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+    .mp-car { margin-left: auto; color: #94a3b8; font-size: 12px; }
+    .mp-fill { color: #64748b; font-size: 12px; margin-top: 8px; }
+    .mp-status { min-height: 20px; font-size: 13px; margin-top: 12px; }
+    .mp-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 12px; }
+    .btn-open-mp {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; border: none; padding: 16px 28px;
+      font-size: 18px; font-weight: 900; border-radius: 16px; cursor: pointer;
+      box-shadow: 0 10px 30px rgba(37, 99, 235, 0.45);
+    }
+    #mpToast {
+      position: absolute; top: 120px; left: 50%; transform: translateX(-50%) translateY(-10px);
+      background: rgba(15, 23, 42, 0.92); color: #fff; padding: 10px 18px; border-radius: 12px;
+      font-weight: 800; z-index: 80; opacity: 0; transition: all 0.2s; pointer-events: none;
+    }
+    #mpToast.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* 賽道選擇列 */
+    .garage-track-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .track-row-label {
+      color: #94a3b8;
+      font-weight: 800;
+      font-size: 14px;
+    }
+    .track-card {
+      background: rgba(15, 23, 42, 0.85);
+      border: 2px solid rgba(148, 163, 184, 0.3);
+      color: #e2e8f0;
+      border-radius: 12px;
+      padding: 8px 14px;
+      cursor: pointer;
+      text-align: left;
+      min-width: 150px;
+      transition: all 0.15s;
+    }
+    .track-card:hover { border-color: #38bdf8; }
+    .track-card.active {
+      border-color: #fbbf24;
+      box-shadow: 0 0 16px rgba(251, 191, 36, 0.4);
+    }
+    .track-card .t-name { font-weight: 900; font-size: 15px; }
+    .track-card .t-desc { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+
+    /* 底部開賽按鈕區 */
+    .garage-footer {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    .btn-start-race {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+      border: none;
+      padding: 16px 54px;
+      font-size: 22px;
+      font-weight: 900;
+      font-style: italic;
+      letter-spacing: 2px;
+      border-radius: 16px;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.5), inset 0 0 15px rgba(255, 255, 255, 0.3);
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .btn-start-race:hover {
+      transform: scale(1.06);
+      box-shadow: 0 15px 40px rgba(16, 185, 129, 0.7);
+    }
+
+    /* 結算畫面 (Finish Settlement Modal) */
+    #settlement-modal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    #settlement-modal.active {
+      display: flex;
+    }
+    .modal-card {
+      background: #0f172a;
+      border: 2px solid #38bdf8;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(56, 189, 248, 0.4);
+      border-radius: 24px;
+      padding: 30px 40px;
+      text-align: center;
+      color: #fff;
+      max-width: 520px;
+      width: 92%;
+      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .modal-title {
+      font-size: 34px;
+      font-weight: 900;
+      color: #38bdf8;
+      font-style: italic;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+    .modal-reward-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(245, 158, 11, 0.2);
+      border: 1px solid #f59e0b;
+      padding: 4px 16px;
+      border-radius: 20px;
+      font-size: 16px;
+      font-weight: 900;
+      color: #fbbf24;
+      margin-bottom: 14px;
+    }
+    .modal-total-time {
+      font-family: "Consolas", monospace;
+      font-size: 36px;
+      font-weight: 900;
+      color: #f8fafc;
+      margin-bottom: 14px;
+    }
+    .leaderboard-list {
+      background: rgba(30, 41, 59, 0.6);
+      border-radius: 12px;
+      padding: 10px 16px;
+      margin-bottom: 18px;
+      text-align: left;
+      font-family: "Consolas", monospace;
+      font-size: 13px;
+    }
+    .leaderboard-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+    }
+    .leaderboard-row:last-child {
+      border-bottom: none;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+    }
+    .btn-modal {
+      flex: 1;
+      padding: 12px 20px;
+      font-size: 15px;
+      font-weight: 800;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+    }
+    .btn-modal-primary {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: #fff;
+      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.5);
+    }
+    .btn-modal-secondary {
+      background: rgba(30, 41, 59, 0.9);
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .btn-modal:hover {
+      transform: translateY(-2px);
+    }
+  </style>
+  <!-- Three.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+</head>
+<body>
+
+  <div id="canvas-container"></div>
+
+  <!-- 正式競速 HUD -->
+  <div id="racing-hud">
+    <!-- 頂部列 -->
+    <div class="top-race-bar">
+      <div class="top-left-box">
+        <div class="hud-badge-box">
+          <div class="hud-sub-label">POSITION</div>
+          <div class="hud-main-val rank-val" id="hudRank">1<span>/6</span></div>
+        </div>
+        <div class="hud-badge-box">
+          <div class="hud-sub-label">LAP</div>
+          <div class="hud-main-val" id="hudLapCount">1<span>/3</span></div>
+        </div>
+      </div>
+
+      <div class="timer-panel">
+        <div class="timer-current" id="hudCurrentTimer">00:00.00</div>
+        <div class="timer-best" id="hudBestLap">BEST: --:--.--</div>
+        <div class="timer-best" id="hudTargetLap" style="color:#a78bfa"></div>
+      </div>
+
+      <div class="top-right-nav">
+        <div class="btn-nav coin-display" title="現有金幣">
+          <span>🪙</span> <span id="hudCoinsTop">200</span>
+        </div>
+        <button class="btn-nav" id="btnOpenGarageInGame" title="返回車庫更換賽車">🔧 車庫</button>
+        <button class="btn-nav" id="btnToggleDebug" title="切換 Debug 視窗 (F1)">🛠️ HUD (F1)</button>
+        <button class="btn-nav" id="btnReset" title="重新比賽 (R)">🔄 重開 (R)</button>
+        <a href="index.html" class="btn-nav" title="回到摸魚大師">🪵 摸魚大殿</a>
+      </div>
+    </div>
+
+    <!-- 中央反饋提示 (DRIFT / BOOST / COUNTDOWN) -->
+    <div class="center-alert-container">
+      <div class="countdown-text" id="hudCountdown">3</div>
+      <div class="drift-alert" id="hudDriftAlert">🌀 DRIFTING!</div>
+      <div class="boost-alert" id="hudBoostAlert">🚀 NITRO BOOST!!</div>
+      <div class="drift-alert draft-alert" id="hudDraftAlert">💨 尾流 0%</div>
+    </div>
+
+    <!-- 底部儀表列 -->
+    <div class="bottom-race-bar">
+      <!-- 鍵位提示卡片 -->
+      <div class="controls-hint-card">
+        • <kbd>W</kbd> 加速 ｜ <kbd>S</kbd> 煞車/倒車<br>
+        • <kbd>A</kbd> <kbd>D</kbd> 平滑敏捷轉向<br>
+        • <kbd>Shift</kbd>＋方向 甩尾（起跑 GO 前後 0.15s 按 W 起跑加速）<br>
+        • <kbd>Space</kbd> 氮氣 ｜ 跟車 1 秒觸發尾流<br>
+        • <kbd>L</kbd> 最佳行車線 ｜ <kbd>1</kbd>~<kbd>4</kbd> 表情<br>
+        • <kbd>F1</kbd> 物理診斷 ｜ <kbd>R</kbd> 重新開賽
+      </div>
+
+      <!-- 中央氮氣能量條與存槽 -->
+      <div class="nitro-center-dock">
+        <div class="nitro-tanks">
+          <div class="tank-slot" id="tankSlot0">🚀 EMPTY</div>
+          <div class="tank-slot" id="tankSlot1">🚀 EMPTY</div>
+        </div>
+        <div class="gauge-wrapper">
+          <div class="gauge-fill" id="hudGaugeFill"></div>
+        </div>
+      </div>
+
+      <!-- 右側跑跑時速表 -->
+      <div class="speedo-cluster">
+        <div class="speedo-number" id="hudSpeedNumber">0</div>
+        <div class="speedo-unit">KM / H</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 小地圖 -->
+  <canvas id="minimap" width="220" height="220"></canvas>
+
+  <!-- Debug HUD (按 F1 切換) -->
+  <div id="debug-hud">
+    <div class="debug-title">
+      <span>🏎️ KART DEBUG (F1)</span>
+      <span style="color:#10b981;">60Hz FIXED</span>
+    </div>
+    <div class="debug-row">
+      <span class="debug-label">Speed (速度):</span>
+      <span class="debug-val" id="dbgSpeed">0.0 u/s</span>
+    </div>
+    <div class="debug-row">
+      <span class="debug-label">Current Grip:</span>
+      <span class="debug-val" id="dbgGrip">0.95</span>
+    </div>
+    <div class="debug-row">
+      <span class="debug-label">Lat Slide:</span>
+      <span class="debug-val" id="dbgLat">0.0 u/s</span>
+    </div>
+    <div class="debug-row">
+      <span class="debug-label">Dist (中心距):</span>
+      <span class="debug-val" id="dbgDist">0.0 / 6.8</span>
+    </div>
+    <div class="debug-row">
+      <span class="debug-label">Drift State:</span>
+      <span class="debug-val" id="dbgDrifting">false</span>
+    </div>
+    <div class="debug-row">
+      <span class="debug-label">Drift Angle:</span>
+      <span class="debug-val" id="dbgDriftAngle">0.0°</span>
+    </div>
+    <div class="debug-row">
+      <span class="debug-label">Nitro Gauge:</span>
+      <span class="debug-val" id="dbgGauge">0 / 100</span>
+    </div>
+    <div class="debug-row">
+      <span class="debug-label">Kart Type:</span>
+      <span class="debug-val" id="dbgKartType">balanced</span>
+    </div>
+  </div>
+
+  <!-- 賽車車庫大廳畫面 (Garage Screen) -->
+  <div id="garage-screen">
+    <div class="garage-header">
+      <div class="garage-title">
+        <span>🏎️</span>
+        <span>賽車整備車庫 (GRAND PRIX GARAGE)</span>
+      </div>
+      <div class="garage-coins">
+        <span>🪙</span>
+        <span id="garageCoinAmount">200</span>
+      </div>
+    </div>
+
+    <div class="garage-main">
+      <!-- 換車面板 -->
+      <div class="garage-panel car-select-panel">
+        <div class="panel-heading">
+          <span>🏎️</span> 選擇參賽賽車
+        </div>
+        <div class="car-cards-grid" id="carCardsContainer">
+          <!-- JS 動態生成 4 款車種 -->
+        </div>
+
+        <div style="font-size: 13px; font-weight: 700; color: #94a3b8; margin-top: 10px;">車身車漆顏色：</div>
+        <div class="color-swatches" id="colorSwatchesContainer">
+          <!-- JS 動態生成 6 種顏色 -->
+        </div>
+      </div>
+
+      <!-- 強化面板 -->
+      <div class="garage-panel upgrade-panel">
+        <div class="panel-heading">
+          <span>⚡</span> 賽車零件改裝強化 (當前車種)
+        </div>
+        <div id="upgradeItemsContainer">
+          <!-- JS 動態生成 4 項強化屬性 -->
+        </div>
+      </div>
+    </div>
+
+    <div class="garage-track-row">
+      <span class="track-row-label">🗺️ 賽道</span>
+      <div id="trackPicker" style="display:flex; gap:10px;"></div>
+      <button class="track-card" id="btnAiLevel" style="min-width:110px"></button>
+    </div>
+
+    <div class="garage-footer">
+      <button class="btn-open-mp" id="btnOpenMp">🌐 多人連線</button>
+      <button class="btn-start-race" id="btnStartRaceFromGarage">🏁 開始比賽 (START RACE)</button>
+    </div>
+  </div>
+
+  <!-- 多人連線面板 -->
+  <div id="mp-panel" class="hidden">
+    <div class="mp-card">
+      <div class="mp-title">🌐 多人連線</div>
+      <div class="mp-row"><label>暱稱</label><input id="mpName" maxlength="10"></div>
+      <div id="mpMenu">
+        <button id="btnMpHost">🏠 開新房間（用目前選的賽道）</button>
+        <div class="mp-row"><input id="mpCode" placeholder="輸入 4 碼房間碼" maxlength="4" style="text-transform:uppercase"><button id="btnMpJoin">🚪 加入</button></div>
+      </div>
+      <div id="mpLobby" style="display:none">
+        <div class="mp-code">房間碼<b id="mpCodeShow"></b></div>
+        <div id="mpPlayers"></div>
+      </div>
+      <div class="mp-status" id="mpStatus"></div>
+      <div class="mp-actions">
+        <button id="btnMpStart">🏁 開始比賽</button>
+        <button id="btnMpLeave">離開房間</button>
+        <button id="btnMpClose">關閉</button>
+      </div>
+    </div>
+  </div>
+  <div id="mpToast"></div>
+
+  <!-- 結算畫面 (Finish Settlement Modal) -->
+  <div id="settlement-modal">
+    <div class="modal-card">
+      <div class="modal-title">🏆 GRAND PRIX FINISH!</div>
+      <div class="modal-reward-badge" id="modalRewardBadge">🪙 +100 金幣獎勵</div>
+      <div style="font-size: 13px; color: #94a3b8; margin-bottom: 2px;">YOUR TOTAL TIME</div>
+      <div class="modal-total-time" id="modalTotalTime">02:15.80</div>
+      <div class="leaderboard-list" id="modalLeaderboard">
+        <!-- JS 動態插入 6 台車排名成績 -->
+      </div>
+      <div class="modal-actions">
+        <button class="btn-modal btn-modal-primary" id="btnModalRestart">🔄 再戰一場 (R)</button>
+        <button class="btn-modal btn-modal-secondary" id="btnModalGarage">🔧 返回車庫</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================================
+    // 街機 3D 卡丁車競速引擎 · 車種系統與改裝強化版
+    // 物理與碰撞邏輯完全保留，純以乘上倍率 (Multiplier) 套用車子能力
+    // ==========================================================
+
+    // 1. 物理常數表 (規格定義)
+    const FIXED_DT = 1 / 60;              // 60Hz 固定時間步長
+    const MAX_FRAME_TIME = 0.1;           // 防掉幀死亡螺旋上限
+    const V_MAX = 30.0;                   // 前進最高速 (u/s)
+    const V_REVERSE_MAX = 9.0;            // 倒車最高速 (30%)
+    const ACCEL = 10.0;                   // 前進加速度 (u/s²)
+    const REVERSE_ACCEL = 5.0;            // 倒車加速度 (u/s²)
+    const BRAKE_DECEL = 18.0;             // 煞車減速度 (u/s²)
+    const DRAG = 4.0;                     // 滾動自然阻力減速度 (u/s²)
+    const GRIP_NORMAL = 0.95;             // 正常抓地力係數
+    const GRIP_DRIFT = 0.05;              // 甩尾抓地力 (改為 0.05，大幅滑出)
+    const GRIP_RATE = 30.0;               // 抓地衰減速率常數
+
+    // 轉向角速度上限
+    const STEER_DEADZONE = 0.5;           // 轉向速度死區
+    const STEER_PEAK_SPEED = 12.0;        // 轉向最靈敏峰值速度
+    const STEER_PEAK_RATE = 1.9;          // 1.9 rad/s
+    const STEER_HIGH_RATE = 0.8;          // 高速轉向變鈍
+
+    // 賽道路寬與碰撞
+    const TRACK_WIDTH = 16.0;             // 賽道寬度
+    const TRACK_HALF_WIDTH = 8.0;         // 半寬 8.0
+    const DEFAULT_HALF_WIDTH = 8.0;
+    const KART_RADIUS = 1.2;              // 車身碰撞半徑
+    const KART_COLLISION_DIST = 2.6;      // 車與車碰撞判定距離 (1.3 + 1.3)
+    const W_LIMIT = TRACK_HALF_WIDTH - KART_RADIUS; // 6.8
+    const COLLISION_PENALTY = 0.2;        // 碰撞減速係數
+    const COLLISION_SPEED_THRESHOLD = 0.1;// 碰撞速度門檻
+
+    // 氮氣基礎參數
+    const NITRO_DURATION = 4.0;           // 基礎持續 4.0 秒
+    const NITRO_CHARGE_RATE = 45.0;       // 基礎集氣速率 45.0 /s
+
+    // 甩尾參數更新 (規格 1：收斂甩尾過滑問題)
+    // 拖飄模型：車頭先甩進彎內，行進方向靠慣性慢慢追上車頭
+    const DRIFT_YAW_BASE = 1.1;           // 甩尾中車頭轉動速度 (rad/s)，越大彎越急
+    const DRIFT_YAW_INPUT = 0.5;          // 往彎內打 → 1.6，反打 → 0.6
+    const DRIFT_CATCH = 3.0;              // 行進方向追上車頭的速度，越小越「拖」、越滑
+    const DRIFT_MAX_SLIP = 0.7;           // 車身最大側滑角 (約 40°)
+    const DRIFT_SLIP_DRAG = 4.0;          // 側滑角越大，減速越多 (u/s²)
+    // 穩定時的側滑角 ≈ 車頭轉速 / DRIFT_CATCH：一般約 21°、往內打約 31°、反打約 11°
+    const DRIFT_SPEED_CAP = 0.93;         // 甩尾中最高速 = 平常的 93%
+    const DRIFT_SPEED_LOSS = 2.0;         // 甩尾持續減速 (u/s²)
+    const MINI_BOOST_MIN_DRIFT = 0.5;     // 甩尾超過這個秒數放開才有小噴
+    const MINI_BOOST_TIME = 0.7;
+
+    // 尾流判定
+    const DRAFT_RANGE = 30.0;
+    const DRAFT_WIDTH = 2.8;
+    const DRAFT_MIN_SPEED = 15.0;
+    const DRAFT_CHARGE_TIME = 1.0;
+    const DRAFT_BOOST_TIME = 1.6;
+
+    // 加速帶與坡度
+    const PAD_BOOST_TIME = 1.0;
+    const SLOPE_GRAVITY = 8.0;
+
+    // 輔助數學
+    function smooth01(x) {
+      const c = Math.max(0, Math.min(1, x));
+      return c * c * (3 - 2 * c);
+    }
+
+    // ==========================================================
+    // 2. 規格 1 & 2：車種能力定義、外型幾何與強化儲存系統
+    // ==========================================================
+    const KART_TYPES = {
+      balanced: {
+        id: 'balanced',
+        name: '平衡型',
+        desc: '全能均衡，各項能力標準，極易上手控制。',
+        icon: '🏎️',
+        topSpeed: 1.0,
+        accel: 1.0,
+        steer: 1.0,
+        weight: 1.0,
+        driftTurn: 1.0,
+        nitroCharge: 1.0
+      },
+      speed: {
+        id: 'speed',
+        name: '速度型',
+        desc: '極速破風+6%，直線爆發力霸道，但轉向加速略沉。',
+        icon: '⚡',
+        topSpeed: 1.06,
+        accel: 0.9,
+        steer: 0.9,
+        weight: 1.0,
+        driftTurn: 1.0,
+        nitroCharge: 1.0
+      },
+      drift: {
+        id: 'drift',
+        name: '甩尾型',
+        desc: '過彎銳利+15%，集氣神速+20%，出彎小噴迅捷。',
+        icon: '🌀',
+        topSpeed: 0.98,
+        accel: 1.0,
+        steer: 1.05,
+        weight: 1.0,
+        driftTurn: 1.15,
+        nitroCharge: 1.2
+      },
+      heavy: {
+        id: 'heavy',
+        name: '重型',
+        desc: '裝甲厚重重量1.6倍，撞碰佔盡優勢，起跑略重。',
+        icon: '🛡️',
+        topSpeed: 1.0,
+        accel: 0.85,
+        steer: 0.9,
+        weight: 1.6,
+        driftTurn: 1.0,
+        nitroCharge: 1.0
+      }
+    };
+
+    const KART_COLORS = [
+      { id: 'blue',   name: '經典藍', hex: 0x2563eb, css: '#2563eb' },
+      { id: 'red',    name: '赤焰紅', hex: 0xef4444, css: '#ef4444' },
+      { id: 'green',  name: '翡翠綠', hex: 0x10b981, css: '#10b981' },
+      { id: 'yellow', name: '閃電黃', hex: 0xf59e0b, css: '#f59e0b' },
+      { id: 'purple', name: '暗影紫', hex: 0x8b5cf6, css: '#8b5cf6' },
+      { id: 'pink',   name: '流星粉', hex: 0xec4899, css: '#ec4899' }
+    ];
+
+    // 本地持久化資料 (localStorage)
+    const STORAGE_KEY = 'kart_racing_save_v2';
+
+    let gameData = {
+      coins: 200,
+      selectedCar: 'balanced',
+      selectedColor: 0x2563eb,
+      selectedTrack: 'figure8',
+      aiLevel: 1,            // 0 簡單 / 1 普通 / 2 困難
+      upgrades: {
+        balanced: { engine: 0, tire: 0, nitro: 0, drift: 0 },
+        speed:    { engine: 0, tire: 0, nitro: 0, drift: 0 },
+        drift:    { engine: 0, tire: 0, nitro: 0, drift: 0 },
+        heavy:    { engine: 0, tire: 0, nitro: 0, drift: 0 }
+      }
+    };
+
+    function loadGameData() {
+      try {
+        const str = localStorage.getItem(STORAGE_KEY);
+        if (str) {
+          const parsed = JSON.parse(str);
+          if (parsed && typeof parsed === 'object') {
+            gameData = Object.assign(gameData, parsed);
+          }
+        }
+      } catch (err) {
+        console.warn('無法從 localStorage 讀取存檔，使用預設值', err);
+      }
+    }
+
+    function saveGameData() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(gameData));
+      } catch (err) {
+        console.warn('無法寫入 localStorage', err);
+      }
+      updateGarageUI();
+    }
+
+    loadGameData();
+
+    // 依車種與強化等級計算綜合倍率屬性 (Stats)
+    function getKartEffectiveStats(typeId, customUpgrades = null) {
+      const base = KART_TYPES[typeId] || KART_TYPES.balanced;
+      const up = customUpgrades || (gameData.upgrades[typeId] || { engine: 0, tire: 0, nitro: 0, drift: 0 });
+
+      // 四種強化：
+      // 引擎：最高速每級 +1.5%
+      // 輪胎：轉向每級 +3%
+      // 氮氣：持續時間每級 +0.3 秒
+      // 甩尾：集氣每級 +6%
+      const engineMult = 1.0 + up.engine * 0.015;
+      const tireMult = 1.0 + up.tire * 0.03;
+      const nitroDurationBonus = up.nitro * 0.3;
+      const driftChargeMult = 1.0 + up.drift * 0.06;
+
+      return {
+        typeId: typeId,
+        topSpeedMult: base.topSpeed * engineMult,
+        accelMult: base.accel,
+        steerMult: base.steer * tireMult,
+        weight: base.weight,
+        driftTurnMult: base.driftTurn,
+        nitroChargeMult: base.nitroCharge * driftChargeMult,
+        nitroDuration: NITRO_DURATION + nitroDurationBonus
+      };
+    }
+
+    // 3. 按鍵讀取 (使用 e.code，視窗 blur 自動清空)
+    const rawKeys = {
+      throttle: false,
+      brake: false,
+      left: false,
+      right: false,
+      drift: false,
+      nitro: false
+    };
+
+    // 規格 3：起跑加速計時判定狀態
+    let rocketStartStatus = 'NONE'; // 'NONE' | 'SUCCESS' | 'FAIL'
+    let playerStallTimer = 0;       // 太早按爆缸延遲 0.5 秒起步
+
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'KeyW' || e.code === 'ArrowUp') {
+        rawKeys.throttle = true;
+
+        // 起跑火箭噴射判定：
+        // 倒數顯示 GO (即 countdownTimer 跨越 0.8s) 的前後 0.15 秒內按下 W 成功
+        // 若在 GO 之前 0.5 秒以上就按著/按下 W，判定為太早按爆缸
+        if (raceState === 'COUNTDOWN') {
+          const timeToGO = countdownTimer - 0.8; // >0 表示尚未到 GO
+          if (timeToGO > 0.5) {
+            rocketStartStatus = 'FAIL';
+          } else if (Math.abs(timeToGO) <= 0.15) {
+            rocketStartStatus = 'SUCCESS';
+          }
+        }
+      }
+      if (e.code === 'KeyS' || e.code === 'ArrowDown') rawKeys.brake = true;
+      if (e.code === 'KeyA' || e.code === 'ArrowLeft') rawKeys.left = true;
+      if (e.code === 'KeyD' || e.code === 'ArrowRight') rawKeys.right = true;
+      if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') rawKeys.drift = true;
+      if (e.code === 'Space') rawKeys.nitro = true;
+      if (e.code === 'KeyR' && !net.role) resetRace();
+      if (EMOTES[e.code]) sendEmote(e.code);
+      if (e.code === 'KeyL') {
+        racingLineMesh.visible = !racingLineMesh.visible;
+        showToast(racingLineMesh.visible ? '🧠 最佳行車線：綠＝全油門 黃＝收油 紅＝煞車 紫＝甩尾' : '最佳行車線：關');
+      }
+      if (e.code === 'F1') {
+        e.preventDefault();
+        toggleDebugHud();
+      }
+    });
+
+    window.addEventListener('keyup', (e) => {
+      if (e.code === 'KeyW' || e.code === 'ArrowUp') rawKeys.throttle = false;
+      if (e.code === 'KeyS' || e.code === 'ArrowDown') rawKeys.brake = false;
+      if (e.code === 'KeyA' || e.code === 'ArrowLeft') rawKeys.left = false;
+      if (e.code === 'KeyD' || e.code === 'ArrowRight') rawKeys.right = false;
+      if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') rawKeys.drift = false;
+      if (e.code === 'Space') rawKeys.nitro = false;
+    });
+
+    window.addEventListener('blur', () => {
+      rawKeys.throttle = false;
+      rawKeys.brake = false;
+      rawKeys.left = false;
+      rawKeys.right = false;
+      rawKeys.drift = false;
+      rawKeys.nitro = false;
+    });
+
+    let smoothedPlayerSteer = 0;
+
+    function readKeyboardInput(dt) {
+      let targetSteer = 0;
+      if (rawKeys.left) targetSteer += 1;
+      if (rawKeys.right) targetSteer -= 1;
+
+      if (Math.abs(targetSteer) > Math.abs(smoothedPlayerSteer) || (targetSteer * smoothedPlayerSteer < 0)) {
+        const step = 6.0 * dt;
+        if (smoothedPlayerSteer < targetSteer) smoothedPlayerSteer = Math.min(targetSteer, smoothedPlayerSteer + step);
+        else smoothedPlayerSteer = Math.max(targetSteer, smoothedPlayerSteer - step);
+      } else {
+        const step = 10.0 * dt;
+        if (smoothedPlayerSteer < targetSteer) smoothedPlayerSteer = Math.min(targetSteer, smoothedPlayerSteer + step);
+        else smoothedPlayerSteer = Math.max(targetSteer, smoothedPlayerSteer - step);
+      }
+
+      // 起步延遲懲罰 (爆缸 stall)
+      let effectiveThrottle = rawKeys.throttle;
+      if (playerStallTimer > 0) {
+        effectiveThrottle = false;
+      }
+
+      return {
+        throttle: effectiveThrottle,
+        brake: rawKeys.brake,
+        steer: smoothedPlayerSteer,
+        drift: rawKeys.drift,
+        nitro: rawKeys.nitro
+      };
+    }
+
+    // 4. Three.js 場景設置
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x87ceeb);
+    scene.fog = new THREE.Fog(0x87ceeb, 150, 700);
+
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.2, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    container.appendChild(renderer.domElement);
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    scene.add(ambientLight);
+
+    const dirLight = new THREE.DirectionalLight(0xfffaed, 0.9);
+    dirLight.position.set(150, 300, 150);
+    dirLight.castShadow = true;
+    dirLight.shadow.mapSize.width = 2048;
+    dirLight.shadow.mapSize.height = 2048;
+    dirLight.shadow.camera.near = 20;
+    dirLight.shadow.camera.far = 900;
+    const shadowDist = 320;
+    dirLight.shadow.camera.left = -shadowDist;
+    dirLight.shadow.camera.right = shadowDist;
+    dirLight.shadow.camera.top = shadowDist;
+    dirLight.shadow.camera.bottom = -shadowDist;
+    scene.add(dirLight);
+
+    // 4. 賽道庫（全部原創設計，由直線＋圓弧段生成）
+    //   ['S', 長度] = 直線；['A', 半徑, 角度] = 圓弧（角度正 = 逆時針、負 = 順時針），四段角度加總要是 ±360
+    //   hills: 坡道（solid = 實心山坡；不加 = 高架橋）、widths: 路寬、pads: 加速帶、ice: 冰面
+    const TRACKS = {
+      figure8: {
+        name: '陽光立交', desc: '8 字形・立體交叉橋・兩個髮夾彎',
+        startHeading: Math.PI / 4,
+        segments: [
+          ['S', 140], ['A', 70, -90], ['S', 90.03], ['A', 20, -150], ['S', 50],
+          ['A', 45, 45], ['A', 45, -45], ['A', 60, -30], ['S', 150],
+          ['A', 55, 90], ['S', 181.46], ['A', 24, 120], ['S', 60],
+          ['A', 80, 45], ['A', 35, -35], ['A', 35, 35], ['A', 70, 15], ['S', 40]
+        ],
+        hills: [
+          { center: 600, plateau: 30, ramp: 50, height: 9.0 },
+          { center: 872, plateau: 0, ramp: 70, height: 4.5, solid: true }
+        ],
+        widths: [ { from: 330, to: 400, half: 10.0 }, { from: 530, to: 680, half: 7.0 }, { from: 952, to: 1022, half: 10.0 } ],
+        pads: [405, 650, 1030, 1206],
+        ice: [],
+        theme: 'sunny'
+      },
+      city: {
+        name: '霓虹夜城', desc: '夜間街道・直角彎・減速彎・高架',
+        startHeading: 0,
+        segments: [
+          ['S', 224.67], ['A', 28, 90], ['S', 53.78], ['A', 24, 50], ['A', 24, -50],
+          ['S', 73.78], ['A', 26, 90], ['S', 145.33], ['A', 40, 55], ['A', 40, -55],
+          ['S', 45.33], ['A', 18, 90], ['S', 136.22], ['A', 30, 90], ['S', 34.67]
+        ],
+        hills: [
+          { center: 552, plateau: 40, ramp: 45, height: 7.0 },
+          { center: 843, plateau: 0, ramp: 35, height: 2.5, solid: true }
+        ],
+        widths: [ { from: 0, to: 200, half: 9.0 }, { from: 315, to: 370, half: 9.5 }, { from: 740, to: 780, half: 9.5 } ],
+        pads: [130, 400, 870],
+        ice: [],
+        theme: 'night'
+      },
+      snow: {
+        name: '冰雪山道', desc: '連續髮夾彎爬山・山頂冰面・下坡衝刺',
+        startHeading: 0,
+        segments: [
+          ['S', 157.33], ['A', 45, 100], ['S', 28.17], ['A', 20, -160], ['S', 93.09],
+          ['A', 20, 170], ['S', 73.79], ['A', 60, 80], ['S', 118.1], ['A', 35, -60],
+          ['A', 35, 60], ['S', 98.1], ['A', 30, 110], ['S', 63.52], ['A', 50, 60]
+        ],
+        hills: [
+          { center: 370, plateau: 150, ramp: 120, height: 14.0, solid: true },
+          { center: 767, plateau: 0, ramp: 40, height: 3.0, solid: true }
+        ],
+        widths: [ { from: 258, to: 326, half: 10.0 }, { from: 407, to: 478, half: 10.0 } ],
+        pads: [60, 600, 960],
+        ice: [ { from: 330, to: 405 }, { from: 830, to: 905 } ],
+        theme: 'snow'
+      },
+      desert: {
+        name: '沙丘峽谷', desc: '高速大彎・雙髮夾・300 米沙丘直線',
+        startHeading: 0,
+        segments: [
+          ['S', 96.67], ['A', 90, 70], ['S', 18.0], ['A', 60, -50], ['S', 18.0],
+          ['A', 70, 120], ['S', 73.99], ['A', 22, -120], ['S', 18.0], ['A', 22, 120],
+          ['S', 83.99], ['A', 80, 100], ['S', 301.16], ['A', 50, 70], ['S', 77.8],
+          ['A', 60, 50]
+        ],
+        hills: [
+          { center: 160, plateau: 20, ramp: 60, height: 6.0, solid: true },
+          { center: 930, plateau: 0, ramp: 30, height: 3.5, solid: true },
+          { center: 1000, plateau: 0, ramp: 30, height: 3.5, solid: true },
+          { center: 1070, plateau: 0, ramp: 30, height: 3.5, solid: true }
+        ],
+        widths: [ { from: 508, to: 634, half: 10.0 }, { from: 849, to: 1151, half: 9.0 } ],
+        pads: [470, 660, 870],
+        ice: [],
+        theme: 'desert'
+      }
+    };
+
+    // 主題：天空、霧、地面、燈光、護欄顏色、路面顏色、裝飾物
+    const THEMES = {
+      sunny:  { sky: 0x87ceeb, fogNear: 150, fogFar: 700, ground: 0x3d7c38, ambient: [0xffffff, 0.7], sun: [0xfffaed, 0.9],
+                wallA: [0.92, 0.20, 0.20], wallB: [0.96, 0.96, 0.96], road: 0.18, decor: 'trees' },
+      night:  { sky: 0x0b1026, fogNear: 90, fogFar: 520, ground: 0x1c2330, ambient: [0x8ea0ff, 0.55], sun: [0x9fb4ff, 0.35],
+                wallA: [0.10, 0.85, 0.95], wallB: [0.95, 0.20, 0.75], road: 0.13, decor: 'buildings' },
+      snow:   { sky: 0xcfe3f2, fogNear: 110, fogFar: 560, ground: 0xeef3f8, ambient: [0xffffff, 0.8], sun: [0xffffff, 0.85],
+                wallA: [0.20, 0.45, 0.90], wallB: [0.97, 0.98, 1.00], road: 0.22, decor: 'pines' },
+      desert: { sky: 0xf6cf96, fogNear: 160, fogFar: 680, ground: 0xd8b06a, ambient: [0xfff1dc, 0.72], sun: [0xffe2b0, 1.0],
+                wallA: [0.93, 0.45, 0.12], wallB: [0.98, 0.93, 0.82], road: 0.20, decor: 'desert' }
+    };
+
+    // 選賽道：網址 ?track=xxx 優先（連線用），其次是車庫裡上次選的
+    const urlParams = new URLSearchParams(location.search);
+    const SELECTED_TRACK_ID = TRACKS[urlParams.get('track')] ? urlParams.get('track')
+      : (TRACKS[gameData.selectedTrack] ? gameData.selectedTrack : 'figure8');
+    const TRACK_DEF = TRACKS[SELECTED_TRACK_ID];
+    const THEME = THEMES[TRACK_DEF.theme];
+
+    const TRACK_SEGMENTS = TRACK_DEF.segments;
+    const TRACK_START_HEADING = TRACK_DEF.startHeading;
+    const TRACK_SAMPLE_SPACING = 1.0;
+    const TRACK_HILLS = TRACK_DEF.hills;
+    const WIDTH_ZONES = TRACK_DEF.widths;
+
+    // 套用主題
+    scene.background = new THREE.Color(THEME.sky);
+    scene.fog = new THREE.Fog(THEME.sky, THEME.fogNear, THEME.fogFar);
+    ambientLight.color.setHex(THEME.ambient[0]);
+    ambientLight.intensity = THEME.ambient[1];
+    dirLight.color.setHex(THEME.sun[0]);
+    dirLight.intensity = THEME.sun[1];
+    function smooth01(t) { t = Math.max(0, Math.min(1, t)); return t * t * (3 - 2 * t); }
+    function buildTrackPath() {
+      const raw = [[0, 0]];
+      let x = 0, z = 0, th = TRACK_START_HEADING;
+      for (const sg of TRACK_SEGMENTS) {
+        if (sg[0] === 'S') {
+          const n = Math.max(1, Math.ceil(sg[1] / 0.25)), step = sg[1] / n;
+          for (let k = 0; k < n; k++) { x += Math.cos(th) * step; z += Math.sin(th) * step; raw.push([x, z]); }
+        } else {
+          const ang = sg[2] * Math.PI / 180, len = sg[1] * Math.abs(ang);
+          const n = Math.max(2, Math.ceil(len / 0.25)), step = len / n;
+          for (let k = 0; k < n; k++) {
+            th += ang / n * 0.5; x += Math.cos(th) * step; z += Math.sin(th) * step; th += ang / n * 0.5;
+            raw.push([x, z]);
+          }
+        }
+      }
+      const M = raw.length - 1;
+      const ex = raw[M][0] - raw[0][0], ez = raw[M][1] - raw[0][1];
+      const closureError = Math.hypot(ex, ez);
+      for (let i = 0; i <= M; i++) { raw[i][0] -= ex * i / M; raw[i][1] -= ez * i / M; }
+      raw.pop();
+      const cum = [0];
+      for (let i = 1; i < raw.length; i++) cum.push(cum[i - 1] + Math.hypot(raw[i][0] - raw[i - 1][0], raw[i][1] - raw[i - 1][1]));
+      const last = raw.length - 1;
+      const total = cum[last] + Math.hypot(raw[0][0] - raw[last][0], raw[0][1] - raw[last][1]);
+      const count = Math.round(total / TRACK_SAMPLE_SPACING);
+      const pts = [];
+      let j = 0;
+      for (let i = 0; i < count; i++) {
+        const s = i * total / count;
+        while (j + 1 < raw.length && cum[j + 1] <= s) j++;
+        const a = raw[j], b = raw[(j + 1) % raw.length];
+        const segEnd = (j + 1 < raw.length) ? cum[j + 1] : total;
+        const segLen = segEnd - cum[j];
+        const t = segLen > 1e-9 ? (s - cum[j]) / segLen : 0;
+        pts.push({ x: a[0] + (b[0] - a[0]) * t, z: a[1] + (b[1] - a[1]) * t, s });
+      }
+      return { pts, total, closureError };
+    }
+    function circDist(a, b, total) { const d = Math.abs(a - b) % total; return Math.min(d, total - d); }
+    function heightAt(s, total) {
+      let h = 0;
+      for (const hill of TRACK_HILLS) {
+        const d = circDist(s, hill.center, total), half = hill.plateau / 2;
+        if (d <= half) h = Math.max(h, hill.height);
+        else if (d < half + hill.ramp) h = Math.max(h, hill.height * smooth01(1 - (d - half) / hill.ramp));
+      }
+      return h;
+    }
+    function halfWidthAt(s) {
+      let hw = DEFAULT_HALF_WIDTH;
+      for (const zn of WIDTH_ZONES) hw += (zn.half - DEFAULT_HALF_WIDTH) * smooth01((s - zn.from) / 15) * smooth01((zn.to - s) / 15);
+      return hw;
+    }
+    const BOOST_PAD_S = TRACK_DEF.pads;   // 加速帶位置（里程）
+
+    const trackPath = buildTrackPath();
+    const N = trackPath.pts.length;
+    const trackCenters = [];
+    const trackHalfWidths = new Float32Array(N);
+    const trackSolid = new Uint8Array(N);   // 1 = 實心山坡（護欄落地、不放橋墩）
+    const trackIce = new Uint8Array(N);     // 1 = 冰面
+    for (let i = 0; i < N; i++) {
+      const q = trackPath.pts[i];
+      trackCenters.push(new THREE.Vector3(q.x, heightAt(q.s, trackPath.total), q.z));
+      trackHalfWidths[i] = halfWidthAt(q.s);
+      for (const hill of TRACK_HILLS) {
+        if (hill.solid && circDist(q.s, hill.center, trackPath.total) < hill.plateau / 2 + hill.ramp) trackSolid[i] = 1;
+      }
+      for (const z of TRACK_DEF.ice) {
+        if (q.s >= z.from && q.s <= z.to) trackIce[i] = 1;
+      }
+    }
+
+    // 預先計算中心線切線、坡度與累計里程
+    const trackTangents = [];
+    const trackSlopes = new Float32Array(N);
+    const trackCumDist = new Float32Array(N);
+    let totalTrackLength = 0;
+
+    for (let i = 0; i < N; i++) {
+      const prev = trackCenters[(i - 1 + N) % N];
+      const next = trackCenters[(i + 1) % N];
+      const horiz = Math.hypot(next.x - prev.x, next.z - prev.z);
+      trackTangents.push(new THREE.Vector3(next.x - prev.x, 0, next.z - prev.z).normalize());
+      trackSlopes[i] = horiz > 1e-6 ? (next.y - prev.y) / horiz : 0;
+      if (i > 0) {
+        trackCumDist[i] = trackCumDist[i - 1] + trackCenters[i].distanceTo(trackCenters[i - 1]);
+      }
+    }
+    totalTrackLength = trackCumDist[N - 1] + trackCenters[0].distanceTo(trackCenters[N - 1]);
+
+    function trackIndexAt(s) {
+      return ((Math.round(s / trackPath.total * N) % N) + N) % N;
+    }
+
+    // 草地（置中在賽道範圍）
+    const trackBounds = new THREE.Box3().setFromPoints(trackCenters);
+    const trackMid = trackBounds.getCenter(new THREE.Vector3());
+    trackMid.y = 0;
+    const groundGeo = new THREE.PlaneGeometry(1600, 1600);
+    const groundMat = new THREE.MeshStandardMaterial({ color: THEME.ground, roughness: 0.85, metalness: 0.05 });
+    const groundMesh = new THREE.Mesh(groundGeo, groundMat);
+    groundMesh.rotation.x = -Math.PI / 2;
+    groundMesh.position.set(trackMid.x, -0.05, trackMid.z);
+    groundMesh.receiveShadow = true;
+    scene.add(groundMesh);
+
+    dirLight.position.set(trackMid.x + 150, 300, trackMid.z + 150);
+    dirLight.target.position.copy(trackMid);
+    scene.add(dirLight.target);
+
+    // 建構路面與防護牆（支援高度與路寬變化）
+    const roadLeftBorder = [];
+    const roadRightBorder = [];
+
+    for (let i = 0; i < N; i++) {
+      const p = trackCenters[i];
+      const tan = trackTangents[i];
+      const side = new THREE.Vector3(tan.z, 0, -tan.x); // 左法線
+      roadLeftBorder.push(p.clone().addScaledVector(side, trackHalfWidths[i]));
+      roadRightBorder.push(p.clone().addScaledVector(side, -trackHalfWidths[i]));
+    }
+
+    const roadPositions = [];
+    const roadNormals = [];
+    const roadColors = [];
+    const roadIndices = [];
+
+    for (let i = 0; i < N; i++) {
+      const leftP = roadLeftBorder[i];
+      const rightP = roadRightBorder[i];
+
+      roadPositions.push(leftP.x, leftP.y + 0.01, leftP.z);
+      roadPositions.push(rightP.x, rightP.y + 0.01, rightP.z);
+      roadNormals.push(0, 1, 0, 0, 1, 0);
+
+      // 每 40 單位一條淺色橫紋，增加速度感
+      if (trackIce[i]) {
+        roadColors.push(0.62, 0.80, 0.95, 0.62, 0.80, 0.95);  // 冰面：淡藍色
+      } else {
+        const c = (i % 40) < 2 ? THEME.road + 0.16 : THEME.road;
+        roadColors.push(c, c + 0.01, c + 0.04, c, c + 0.01, c + 0.04);
+      }
+
+      const nextI = (i + 1) % N;
+      const i0 = i * 2, i1 = i * 2 + 1, i2 = nextI * 2, i3 = nextI * 2 + 1;
+      roadIndices.push(i0, i2, i1);
+      roadIndices.push(i1, i2, i3);
+    }
+
+    const roadGeo = new THREE.BufferGeometry();
+    roadGeo.setAttribute('position', new THREE.Float32BufferAttribute(roadPositions, 3));
+    roadGeo.setAttribute('normal', new THREE.Float32BufferAttribute(roadNormals, 3));
+    roadGeo.setAttribute('color', new THREE.Float32BufferAttribute(roadColors, 3));
+    roadGeo.setIndex(roadIndices);
+
+    const roadMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.9, metalness: 0.1, side: THREE.DoubleSide });
+    const roadMesh = new THREE.Mesh(roadGeo, roadMat);
+    roadMesh.receiveShadow = true;
+    scene.add(roadMesh);
+
+    // 紅白相間矮牆（高架段牆底不落地，讓下方道路可以通過）
+    function buildWallMesh(borderPoints, isLeft) {
+      const wallPositions = [];
+      const wallColors = [];
+      const wallIndices = [];
+      const wallHeight = 1.4;
+
+      for (let i = 0; i < N; i++) {
+        const bp = borderPoints[i];
+        const bottom = (bp.y > 2.5 && !trackSolid[i]) ? bp.y - 0.9 : 0.0; // 高架橋：牆底不落地
+        wallPositions.push(bp.x, bottom, bp.z);
+        wallPositions.push(bp.x, bp.y + wallHeight, bp.z);
+
+        const [r, g, b] = (Math.floor(i / 10) % 2 === 0) ? THEME.wallA : THEME.wallB;
+        wallColors.push(r, g, b, r, g, b);
+
+        const nextI = (i + 1) % N;
+        const i0 = i * 2, i1 = i * 2 + 1, i2 = nextI * 2, i3 = nextI * 2 + 1;
+        if (isLeft) {
+          wallIndices.push(i0, i1, i2);
+          wallIndices.push(i1, i3, i2);
+        } else {
+          wallIndices.push(i0, i2, i1);
+          wallIndices.push(i1, i2, i3);
+        }
+      }
+
+      const wallGeo = new THREE.BufferGeometry();
+      wallGeo.setAttribute('position', new THREE.Float32BufferAttribute(wallPositions, 3));
+      wallGeo.setAttribute('color', new THREE.Float32BufferAttribute(wallColors, 3));
+      wallGeo.setIndex(wallIndices);
+      wallGeo.computeVertexNormals();
+
+      const wallMat = new THREE.MeshStandardMaterial({
+        vertexColors: true,
+        emissive: TRACK_DEF.theme === 'night' ? 0x222244 : 0x000000,
+        roughness: 0.5,
+        metalness: 0.1,
+        side: THREE.DoubleSide
+      });
+      const wallMesh = new THREE.Mesh(wallGeo, wallMat);
+      wallMesh.castShadow = true;
+      wallMesh.receiveShadow = true;
+      return wallMesh;
+    }
+
+    const leftWall = buildWallMesh(roadLeftBorder, true);
+    const rightWall = buildWallMesh(roadRightBorder, false);
+    scene.add(leftWall);
+    scene.add(rightWall);
+
+    // 橋墩：高架路段每 12 單位一根，自動避開下方的路
+    const pillarGeo = new THREE.BoxGeometry(1.2, 1, 1.2);
+    const bridgePillarMat = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.7 });
+    function isOnOtherRoad(pt, selfIdx) {
+      for (let k = 0; k < N; k += 2) {
+        const arc = Math.min(Math.abs(k - selfIdx), N - Math.abs(k - selfIdx));
+        if (arc < 60) continue;
+        const c = trackCenters[k];
+        if (Math.hypot(pt.x - c.x, pt.z - c.z) < trackHalfWidths[k] + 2.5) return true;
+      }
+      return false;
+    }
+    for (let i = 0; i < N; i += 12) {
+      const h = trackCenters[i].y;
+      if (h < 2.5 || trackSolid[i]) continue;
+      for (const bp of [roadLeftBorder[i], roadRightBorder[i]]) {
+        if (isOnOtherRoad(bp, i)) continue;
+        const pillar = new THREE.Mesh(pillarGeo, bridgePillarMat);
+        pillar.scale.y = h;
+        pillar.position.set(bp.x, h / 2 - 0.5, bp.z);
+        pillar.castShadow = true;
+        scene.add(pillar);
+      }
+    }
+
+    // 加速帶
+    const padCanvas = document.createElement('canvas');
+    padCanvas.width = 64;
+    padCanvas.height = 64;
+    const pctx = padCanvas.getContext('2d');
+    pctx.fillStyle = '#0c4a6e';
+    pctx.fillRect(0, 0, 64, 64);
+    pctx.strokeStyle = '#facc15';
+    pctx.lineWidth = 8;
+    pctx.lineCap = 'round';
+    pctx.beginPath();
+    pctx.moveTo(10, 14); pctx.lineTo(32, 40); pctx.lineTo(54, 14);
+    pctx.stroke();
+    const padTexture = new THREE.CanvasTexture(padCanvas);
+    padTexture.wrapS = padTexture.wrapT = THREE.RepeatWrapping;
+    padTexture.repeat.set(1, 2);
+    const padMat = new THREE.MeshBasicMaterial({ map: padTexture, transparent: true, opacity: 0.92, side: THREE.DoubleSide });
+
+    const boostPadIndices = BOOST_PAD_S.map(s => trackIndexAt(s));
+    boostPadIndices.forEach(idx => {
+      const geo = new THREE.PlaneGeometry(trackHalfWidths[idx] * 2 - 2, 6);
+      geo.rotateX(-Math.PI / 2);
+      const pad = new THREE.Mesh(geo, padMat);
+      const c = trackCenters[idx];
+      const dir3 = trackCenters[(idx + 1) % N].clone().sub(trackCenters[(idx - 1 + N) % N]).normalize();
+      pad.position.set(c.x, c.y + 0.04, c.z);
+      pad.lookAt(c.clone().add(dir3).setY(c.y + 0.04 + dir3.y));
+      scene.add(pad);
+    });
+
+    // ==========================================================
+    // 最佳行車線：在路寬內找「彎曲最小」的路線（外－內－外），再算每個點能跑多快
+    //   綠 = 全油門、黃 = 收油、紅 = 煞車、紫 = 建議甩尾（按 L 顯示）
+    // ==========================================================
+    const racingOffset = new Float32Array(N);   // 相對中心線的側向偏移（左為正）
+    const racingPoints = [];
+    const racingSpeed = new Float32Array(N);    // 建議速度
+    const racingDrift = new Uint8Array(N);      // 1 = 建議甩尾
+    const racingBrake = new Uint8Array(N);      // 1 = 煞車區
+    let racingLapTime = 0;
+    (function computeRacingLine() {
+      const sx = new Float32Array(N), sz = new Float32Array(N);
+      for (let i = 0; i < N; i++) { sx[i] = trackTangents[i].z; sz[i] = -trackTangents[i].x; }
+      const off = racingOffset;
+      const lim = i => Math.max(0, trackHalfWidths[i] - 2.6);
+      const px = i => trackCenters[i].x + sx[i] * off[i];
+      const pz = i => trackCenters[i].z + sz[i] * off[i];
+      // 最小曲率：讓每個點滿足「四階差分 = 0」，用不同間距由粗到細迭代
+      for (const [K, iters] of [[24, 200], [12, 250], [6, 300]]) {
+        for (let it = 0; it < iters; it++) {
+          for (let i = 0; i < N; i++) {
+            const a1 = (i - K + N) % N, b1 = (i + K) % N;
+            const a2 = (i - 2 * K + N) % N, b2 = (i + 2 * K) % N;
+            const mx = (4 * (px(a1) + px(b1)) - (px(a2) + px(b2))) / 6;
+            const mz = (4 * (pz(a1) + pz(b1)) - (pz(a2) + pz(b2))) / 6;
+            const c = trackCenters[i];
+            const o = (mx - c.x) * sx[i] + (mz - c.z) * sz[i];
+            const L = lim(i);
+            const relaxed = off[i] + (o - off[i]) * 0.8;
+            off[i] = Math.max(-L, Math.min(L, relaxed));
+          }
+        }
+      }
+      for (let i = 0; i < N; i++) {
+        const c = trackCenters[i];
+        racingPoints.push(new THREE.Vector3(c.x + sx[i] * off[i], c.y, c.z + sz[i] * off[i]));
+      }
+
+      // 每個點的轉彎半徑 → 過彎極速
+      function gripSpeed(R) {          // 一般轉向能過的最高速
+        for (let v = V_MAX; v > 4; v -= 0.25) if (getSteeringRate(v) * 0.92 * R >= v) return v;
+        return 4;
+      }
+      const driftTurn = (DRIFT_YAW_BASE + DRIFT_YAW_INPUT * 0.5); // 甩尾時穩定的轉彎角速度
+      const ds = new Float32Array(N);
+      for (let i = 0; i < N; i++) {
+        const a = racingPoints[(i - 6 + N) % N], b = racingPoints[i], c = racingPoints[(i + 6) % N];
+        const ab = Math.hypot(b.x - a.x, b.z - a.z), bc = Math.hypot(c.x - b.x, c.z - b.z), ca = Math.hypot(a.x - c.x, a.z - c.z);
+        const cross = Math.abs((b.x - a.x) * (c.z - a.z) - (b.z - a.z) * (c.x - a.x));
+        const R = cross > 1e-6 ? ab * bc * ca / (2 * cross) : 1e6;
+        const vg = gripSpeed(R);
+        const vd = Math.min(V_MAX * DRIFT_SPEED_CAP, driftTurn * R * 0.95);
+        racingDrift[i] = vd > vg + 1.5 ? 1 : 0;
+        // ×1.3：實測車子過彎能力比上面的保守估計高約 30%（單車計時測出來的最佳值）
+        racingSpeed[i] = Math.min(V_MAX, Math.max(vg, racingDrift[i] ? vd : 0) * 1.3);
+        const n = racingPoints[(i + 1) % N];
+        ds[i] = Math.max(0.05, Math.hypot(n.x - b.x, n.z - b.z));
+      }
+      // 甩尾區前後各延伸一點，避免一直切換
+      const d0 = Uint8Array.from(racingDrift);
+      for (let i = 0; i < N; i++) if (d0[i]) for (let k = -6; k <= 4; k++) racingDrift[(i + k + N) % N] = 1;
+
+      // 煞車點：從彎道往回推（AI 的目標速度只看這個，出彎一律全油門）
+      const corner = Float32Array.from(racingSpeed);
+      for (let k = 2 * N - 1; k >= 0; k--) {
+        const i = k % N, j = (i + 1) % N;
+        racingSpeed[i] = Math.min(racingSpeed[i], Math.sqrt(racingSpeed[j] ** 2 + 2 * 16.0 * ds[i]));
+      }
+      // 理論單圈：再加上「出彎加速需要時間」的限制來估算
+      const est = Float32Array.from(racingSpeed);
+      for (let k = 0; k < 2 * N; k++) {
+        const i = (k + 1) % N, h = k % N;
+        est[i] = Math.min(est[i], Math.sqrt(est[h] ** 2 + 2 * 8.0 * ds[h]));
+      }
+      racingLapTime = 0;
+      for (let i = 0; i < N; i++) {
+        racingLapTime += ds[i] / Math.max(1, est[i]);
+        racingBrake[i] = (racingSpeed[i] < corner[i] - 0.3) ? 1 : 0;
+      }
+    })();
+
+    // 行車線的顯示（彩色細帶，按 L 開關）
+    const racingLineMesh = (function buildRacingLineMesh() {
+      const pos = [], col = [], idx = [];
+      for (let i = 0; i < N; i++) {
+        const p = racingPoints[i], t = trackTangents[i];
+        const sx = t.z * 0.35, sz = -t.x * 0.35;
+        pos.push(p.x + sx, p.y + 0.06, p.z + sz, p.x - sx, p.y + 0.06, p.z - sz);
+        let c;
+        if (racingDrift[i]) c = [0.75, 0.35, 1.0];
+        else if (racingBrake[i]) c = [1.0, 0.2, 0.2];
+        else if (racingSpeed[i] >= V_MAX - 0.5) c = [0.2, 0.95, 0.35];
+        else c = [1.0, 0.85, 0.2];
+        col.push(...c, ...c);
+        const j = (i + 1) % N;
+        if (i % 4 !== 3) idx.push(i * 2, j * 2, i * 2 + 1, i * 2 + 1, j * 2, j * 2 + 1); // 虛線
+      }
+      const g = new THREE.BufferGeometry();
+      g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+      g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+      g.setIndex(idx);
+      const m = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.DoubleSide, transparent: true, opacity: 0.85 }));
+      m.visible = false;
+      scene.add(m);
+      return m;
+    })();
+
+    // 場景裝飾（固定亂數種子，每台電腦長得一樣）
+    function mulberry32(a) {
+      return function () {
+        a |= 0; a = a + 0x6D2B79F5 | 0;
+        let t = Math.imul(a ^ a >>> 15, 1 | a);
+        t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+      };
+    }
+    (function buildDecorations() {
+      const rand = mulberry32(SELECTED_TRACK_ID.length * 9973 + 17);
+      const margin = 90;
+      const minX = trackBounds.min.x - margin, maxX = trackBounds.max.x + margin;
+      const minZ = trackBounds.min.z - margin, maxZ = trackBounds.max.z + margin;
+      function clearOfTrack(x, z, extra) {
+        for (let i = 0; i < N; i += 3) {
+          const c = trackCenters[i];
+          const dx = x - c.x, dz = z - c.z;
+          const lim = trackHalfWidths[i] + extra;
+          if (dx * dx + dz * dz < lim * lim) return false;
+        }
+        return true;
+      }
+      const decor = THEME.decor;
+      const target = decor === 'buildings' ? 110 : 170;
+      let placed = 0, tries = 0;
+
+      const trunkGeo = new THREE.CylinderGeometry(0.5, 0.7, 3, 6);
+      const trunkMat = new THREE.MeshStandardMaterial({ color: 0x6b4423, roughness: 0.9 });
+      const leafGeo = new THREE.SphereGeometry(3.2, 7, 6);
+      const leafMat = new THREE.MeshStandardMaterial({ color: 0x2f7d32, roughness: 0.8, flatShading: true });
+      const pineGeo = new THREE.ConeGeometry(3.2, 9, 7);
+      const pineMat = new THREE.MeshStandardMaterial({ color: 0x1f4d3a, roughness: 0.8, flatShading: true });
+      const snowCapGeo = new THREE.ConeGeometry(1.7, 3.2, 7);
+      const snowCapMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.6 });
+      const cactusGeo = new THREE.CylinderGeometry(0.7, 0.8, 1, 7);
+      const cactusMat = new THREE.MeshStandardMaterial({ color: 0x3f7f3a, roughness: 0.8 });
+      const rockGeo = new THREE.DodecahedronGeometry(3, 0);
+      const rockMat = new THREE.MeshStandardMaterial({ color: 0xb5652e, roughness: 0.95, flatShading: true });
+      const boxGeo = new THREE.BoxGeometry(1, 1, 1);
+
+      // 夜城大樓窗戶貼圖
+      let windowTex = null;
+      if (decor === 'buildings') {
+        const wc = document.createElement('canvas');
+        wc.width = 64; wc.height = 128;
+        const w = wc.getContext('2d');
+        w.fillStyle = '#0f172a'; w.fillRect(0, 0, 64, 128);
+        for (let y = 4; y < 128; y += 10) for (let x = 4; x < 64; x += 10) {
+          const r = Math.random();
+          w.fillStyle = r < 0.45 ? '#fde68a' : (r < 0.6 ? '#67e8f9' : '#1e293b');
+          w.fillRect(x, y, 6, 6);
+        }
+        windowTex = new THREE.CanvasTexture(wc);
+        windowTex.wrapS = windowTex.wrapT = THREE.RepeatWrapping;
+      }
+
+      while (placed < target && tries < target * 30) {
+        tries++;
+        const x = minX + rand() * (maxX - minX);
+        const z = minZ + rand() * (maxZ - minZ);
+        const extra = decor === 'buildings' ? 22 : 9;
+        if (!clearOfTrack(x, z, extra)) continue;
+        const g = new THREE.Group();
+        const sc = 0.8 + rand() * 0.6;
+        if (decor === 'trees') {
+          const t = new THREE.Mesh(trunkGeo, trunkMat); t.position.y = 1.5;
+          const l = new THREE.Mesh(leafGeo, leafMat); l.position.y = 5;
+          g.add(t, l);
+        } else if (decor === 'pines') {
+          const t = new THREE.Mesh(trunkGeo, trunkMat); t.position.y = 1.5;
+          const p = new THREE.Mesh(pineGeo, pineMat); p.position.y = 7;
+          const cap = new THREE.Mesh(snowCapGeo, snowCapMat); cap.position.y = 10.4;
+          g.add(t, p, cap);
+        } else if (decor === 'desert') {
+          if (rand() < 0.55) {
+            const h = 4 + rand() * 4;
+            const body = new THREE.Mesh(cactusGeo, cactusMat); body.scale.y = h; body.position.y = h / 2;
+            const arm = new THREE.Mesh(cactusGeo, cactusMat); arm.scale.set(0.6, 2.2, 0.6); arm.position.set(1.3, h * 0.6, 0);
+            const elbow = new THREE.Mesh(cactusGeo, cactusMat); elbow.scale.set(0.6, 1.4, 0.6); elbow.rotation.z = Math.PI / 2; elbow.position.set(0.7, h * 0.6 - 1.0, 0);
+            g.add(body, arm, elbow);
+          } else {
+            const r = new THREE.Mesh(rockGeo, rockMat); r.scale.set(1 + rand(), 0.8 + rand() * 1.6, 1 + rand()); r.position.y = 1.5;
+            g.add(r);
+          }
+        } else if (decor === 'buildings') {
+          const w = 12 + rand() * 14, d = 12 + rand() * 14, h = 14 + rand() * 50;
+          const mat = new THREE.MeshStandardMaterial({ color: 0x334155, emissive: 0xffffff, emissiveMap: windowTex.clone(), emissiveIntensity: 0.9, map: windowTex.clone(), roughness: 0.7 });
+          mat.emissiveMap.needsUpdate = true; mat.map.needsUpdate = true;
+          mat.map.repeat.set(Math.round(w / 6), Math.round(h / 12));
+          mat.emissiveMap.repeat.copy(mat.map.repeat);
+          const b = new THREE.Mesh(boxGeo, mat); b.scale.set(w, h, d); b.position.y = h / 2;
+          g.add(b);
+        }
+        g.position.set(x, 0, z);
+        g.rotation.y = rand() * Math.PI * 2;
+        if (decor !== 'buildings') g.scale.setScalar(sc);
+        g.traverse(o => { if (o.isMesh) o.castShadow = decor !== 'buildings'; });
+        scene.add(g);
+        placed++;
+      }
+    })();
+
+    // 起跑拱門與線
+    const startCenter = trackCenters[0];
+    const startTangent = trackTangents[0];
+    const startSide = new THREE.Vector3(startTangent.z, 0, -startTangent.x);
+
+    const finishLineGeo = new THREE.PlaneGeometry(trackHalfWidths[0] * 2, 2.2);
+    const finishLineCanvas = document.createElement('canvas');
+    finishLineCanvas.width = 128;
+    finishLineCanvas.height = 32;
+    const fctx = finishLineCanvas.getContext('2d');
+    for (let x = 0; x < 8; x++) {
+      for (let y = 0; y < 2; y++) {
+        fctx.fillStyle = (x + y) % 2 === 0 ? '#ffffff' : '#111827';
+        fctx.fillRect(x * 16, y * 16, 16, 16);
+      }
+    }
+    const finishTex = new THREE.CanvasTexture(finishLineCanvas);
+    const finishMat = new THREE.MeshBasicMaterial({ map: finishTex, side: THREE.DoubleSide });
+    const finishMesh = new THREE.Mesh(finishLineGeo, finishMat);
+    finishMesh.rotation.x = -Math.PI / 2;
+    finishMesh.rotation.z = Math.atan2(startSide.z, startSide.x);
+    finishMesh.position.set(startCenter.x, 0.02, startCenter.z);
+    scene.add(finishMesh);
+
+    const pillarMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.6, roughness: 0.3 });
+    const crossbarMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.5, roughness: 0.4 });
+
+    const gantryGroup = new THREE.Group();
+    const pLeft = new THREE.Mesh(new THREE.BoxGeometry(0.9, 7.5, 0.9), pillarMat);
+    pLeft.position.copy(startCenter).addScaledVector(startSide, trackHalfWidths[0] + 0.3);
+    pLeft.position.y = 3.75;
+
+    const pRight = new THREE.Mesh(new THREE.BoxGeometry(0.9, 7.5, 0.9), pillarMat);
+    pRight.position.copy(startCenter).addScaledVector(startSide, -(trackHalfWidths[0] + 0.3));
+    pRight.position.y = 3.75;
+
+    const crossbar = new THREE.Mesh(new THREE.BoxGeometry(0.9, 1.4, TRACK_WIDTH + 2.0), crossbarMat);
+    crossbar.position.copy(startCenter);
+    crossbar.position.y = 7.0;
+    crossbar.rotation.y = Math.atan2(startSide.x, startSide.z);
+
+    gantryGroup.add(pLeft, pRight, crossbar);
+    scene.add(gantryGroup);
+
+    // 最近點投影計算
+    function findNearestCenter(p, lastIdx) {
+      let bestDistSq = Infinity;
+      let bestIdx = lastIdx;
+      let bestProj = new THREE.Vector3();
+      let bestT = 0;
+      let bestY = 0;
+      let bestHalf = DEFAULT_HALF_WIDTH;
+
+      for (let offset = -20; offset <= 20; offset++) {
+        const i = (lastIdx + offset + N) % N;
+        const j = (i + 1) % N;
+        const A = trackCenters[i];
+        const B = trackCenters[j];
+
+        const abx = B.x - A.x;
+        const abz = B.z - A.z;
+        const apx = p.x - A.x;
+        const apz = p.z - A.z;
+
+        const abLenSq = abx * abx + abz * abz;
+        if (abLenSq < 1e-6) continue;
+
+        let t = (apx * abx + apz * abz) / abLenSq;
+        t = Math.max(0, Math.min(1, t));
+
+        const projX = A.x + abx * t;
+        const projZ = A.z + abz * t;
+        const dx = p.x - projX;
+        const dz = p.z - projZ;
+        const dSq = dx * dx + dz * dz;
+
+        if (dSq < bestDistSq) {
+          bestDistSq = dSq;
+          bestIdx = i;
+          bestProj.set(projX, 0, projZ);
+          bestT = t;
+          bestY = A.y + (B.y - A.y) * t;
+          bestHalf = trackHalfWidths[i] + (trackHalfWidths[j] - trackHalfWidths[i]) * t;
+        }
+      }
+
+      return {
+        index: bestIdx,
+        center: bestProj,
+        dist: Math.sqrt(bestDistSq),
+        t: bestT,
+        y: bestY,
+        half: bestHalf
+      };
+    }
+
+    function findNearestCenterGlobal(p) {
+      let bestDistSq = Infinity;
+      let bestIdx = 0;
+      for (let i = 0; i < N; i++) {
+        const dx = p.x - trackCenters[i].x;
+        const dz = p.z - trackCenters[i].z;
+        const d = dx * dx + dz * dz;
+        if (d < bestDistSq) {
+          bestDistSq = d;
+          bestIdx = i;
+        }
+      }
+      return findNearestCenter(p, bestIdx);
+    }
+
+    function getDistanceAlongTrack(idx, t) {
+      const segDist = trackCenters[idx].distanceTo(trackCenters[(idx + 1) % N]);
+      return trackCumDist[idx] + t * segDist;
+    }
+
+    function getSteeringRate(speed) {
+      if (speed < STEER_DEADZONE) return 0;
+      if (speed <= STEER_PEAK_SPEED) {
+        const t = (speed - STEER_DEADZONE) / (STEER_PEAK_SPEED - STEER_DEADZONE);
+        return STEER_PEAK_RATE * t;
+      }
+      const t = (speed - STEER_PEAK_SPEED) / (V_MAX - STEER_PEAK_SPEED);
+      return STEER_PEAK_RATE + (STEER_HIGH_RATE - STEER_PEAK_RATE) * Math.min(1, Math.max(0, t));
+    }
+
+    function lerpAngle(a, b, t) {
+      let diff = b - a;
+      diff -= Math.PI * 2 * Math.round(diff / (Math.PI * 2));
+      return a + diff * t;
+    }
+
+    function rotateTowards(current, target, maxStep) {
+      let diff = target - current;
+      diff -= Math.PI * 2 * Math.round(diff / (Math.PI * 2));
+      if (Math.abs(diff) <= maxStep) return target;
+      return current + Math.sign(diff) * maxStep;
+    }
+
+    // 特效粒子系統
+    class ParticleSystem {
+      constructor() {
+        this.maxParticles = 240;
+        this.pool = [];
+
+        const smokeGeo = new THREE.BoxGeometry(0.3, 0.3, 0.3);
+        const smokeMat = new THREE.MeshBasicMaterial({ color: 0xe2e8f0, transparent: true, opacity: 0.6 });
+
+        const fireGeo = new THREE.BoxGeometry(0.24, 0.24, 0.4);
+        const fireMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.85 });
+
+        for (let i = 0; i < this.maxParticles; i++) {
+          const isFire = i >= 120;
+          const mesh = new THREE.Mesh(isFire ? fireGeo : smokeGeo, isFire ? fireMat.clone() : smokeMat.clone());
+          mesh.visible = false;
+          scene.add(mesh);
+          this.pool.push({
+            mesh: mesh,
+            active: false,
+            life: 0,
+            maxLife: 1,
+            vel: new THREE.Vector3(),
+            isFire: isFire
+          });
+        }
+      }
+
+      emit(x, y, z, vx, vy, vz, isFire = false, life = 0.45) {
+        for (const p of this.pool) {
+          if (!p.active && p.isFire === isFire) {
+            p.active = true;
+            p.life = life;
+            p.maxLife = life;
+            p.mesh.position.set(x, y, z);
+            p.vel.set(vx, vy, vz);
+            p.mesh.visible = true;
+            p.mesh.scale.set(1, 1, 1);
+            p.mesh.material.opacity = isFire ? 0.9 : 0.6;
+            break;
+          }
+        }
+      }
+
+      update(dt) {
+        for (const p of this.pool) {
+          if (p.active) {
+            p.life -= dt;
+            if (p.life <= 0) {
+              p.active = false;
+              p.mesh.visible = false;
+            } else {
+              p.mesh.position.addScaledVector(p.vel, dt);
+              const progress = p.life / p.maxLife;
+              p.mesh.material.opacity = progress * (p.isFire ? 0.9 : 0.6);
+              const scale = p.isFire ? (progress * 1.3) : (1.0 + (1 - progress) * 1.5);
+              p.mesh.scale.set(scale, scale, scale);
+            }
+          }
+        }
+      }
+    }
+
+    const particleSystem = new ParticleSystem();
+
+    // 6. 規格 1：各車種專屬 3D 外型生成函式
+    function createKartMesh(typeId = 'balanced', mainColor = 0x2563eb) {
+      const group = new THREE.Group();
+
+      const bodyMat = new THREE.MeshStandardMaterial({ color: mainColor, metalness: 0.45, roughness: 0.35 });
+      const darkMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.7, roughness: 0.25 });
+      const accentMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.3 });
+      const wheelRubberMat = new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 0.9 });
+      const rimMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.8, roughness: 0.2 });
+
+      let chassisW = 1.6, chassisH = 0.7, chassisL = 2.4;
+      let tireRadius = 0.35, tireW = 0.28;
+
+      if (typeId === 'speed') {
+        // 速度型：修長低風阻超跑造型
+        chassisW = 1.45; chassisH = 0.55; chassisL = 2.8;
+
+        const chassis = new THREE.Mesh(new THREE.BoxGeometry(chassisW, chassisH, chassisL), bodyMat);
+        chassis.position.y = 0.38;
+        chassis.castShadow = true;
+        group.add(chassis);
+
+        // 尖銳鼻錐
+        const nose = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.28, 1.3), accentMat);
+        nose.position.set(0, 0.24, 1.5);
+        nose.castShadow = true;
+        group.add(nose);
+
+        // 低趴駕駛艙
+        const cockpit = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.4, 1.1), darkMat);
+        cockpit.position.set(0, 0.65, -0.1);
+        group.add(cockpit);
+
+        // 雙層高尾翼
+        const wing1 = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.08, 0.45), bodyMat);
+        wing1.position.set(0, 1.1, -1.4);
+        const wing2 = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.08, 0.35), accentMat);
+        wing2.position.set(0, 0.85, -1.4);
+        group.add(wing1, wing2);
+
+      } else if (typeId === 'drift') {
+        // 甩尾型：寬體短軸鋼砲造型
+        chassisW = 1.75; chassisH = 0.68; chassisL = 2.2;
+
+        const chassis = new THREE.Mesh(new THREE.BoxGeometry(chassisW, chassisH, chassisL), bodyMat);
+        chassis.position.y = 0.42;
+        chassis.castShadow = true;
+        group.add(chassis);
+
+        // 前下巴氣壩
+        const splitter = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.15, 0.9), darkMat);
+        splitter.position.set(0, 0.12, 1.15);
+        group.add(splitter);
+
+        const cockpit = new THREE.Mesh(new THREE.BoxGeometry(1.25, 0.52, 1.1), darkMat);
+        cockpit.position.set(0, 0.8, -0.15);
+        group.add(cockpit);
+
+        // 傾角 GT 尾翼
+        const wing = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.1, 0.5), accentMat);
+        wing.position.set(0, 1.05, -1.15);
+        wing.rotation.x = 0.12;
+        group.add(wing);
+
+      } else if (typeId === 'heavy') {
+        // 重型：厚重裝甲越野霸王造型
+        chassisW = 1.95; chassisH = 0.88; chassisL = 2.5;
+        tireRadius = 0.42; tireW = 0.35;
+
+        const chassis = new THREE.Mesh(new THREE.BoxGeometry(chassisW, chassisH, chassisL), bodyMat);
+        chassis.position.y = 0.52;
+        chassis.castShadow = true;
+        group.add(chassis);
+
+        // 前防撞衝角護欄
+        const bumper = new THREE.Mesh(new THREE.BoxGeometry(2.1, 0.5, 0.6), darkMat);
+        bumper.position.set(0, 0.35, 1.35);
+        group.add(bumper);
+
+        // 裝甲方正駕駛艙
+        const cockpit = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.65, 1.3), darkMat);
+        cockpit.position.set(0, 0.98, -0.1);
+        group.add(cockpit);
+
+        // 巨大後裝甲翼板
+        const wing = new THREE.Mesh(new THREE.BoxGeometry(2.1, 0.18, 0.55), bodyMat);
+        wing.position.set(0, 1.25, -1.25);
+        group.add(wing);
+
+      } else {
+        // 平衡型：標準經典卡丁車
+        const chassis = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.7, 2.4), bodyMat);
+        chassis.position.y = 0.45;
+        chassis.castShadow = true;
+        group.add(chassis);
+
+        const cockpit = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.55, 1.2), darkMat);
+        cockpit.position.set(0, 0.85, -0.15);
+        group.add(cockpit);
+
+        const nose = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.35, 0.8), accentMat);
+        nose.position.set(0, 0.25, 1.3);
+        group.add(nose);
+
+        const wing = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.1, 0.45), bodyMat);
+        wing.position.set(0, 1.1, -1.25);
+        group.add(wing);
+      }
+
+      // 4 個輪子
+      const wheelGeo = new THREE.CylinderGeometry(tireRadius, tireRadius, tireW, 16);
+      const rimGeo = new THREE.CylinderGeometry(tireRadius * 0.6, tireRadius * 0.6, tireW + 0.01, 12);
+
+      const halfW = (chassisW / 2) + (tireW / 2);
+      const halfL = (chassisL / 2) - 0.35;
+      const wheelPositions = [
+        { x:  halfW, y: tireRadius, z:  halfL },
+        { x: -halfW, y: tireRadius, z:  halfL },
+        { x:  halfW, y: tireRadius, z: -halfL },
+        { x: -halfW, y: tireRadius, z: -halfL }
+      ];
+
+      wheelPositions.forEach(p => {
+        const wGroup = new THREE.Group();
+        const tire = new THREE.Mesh(wheelGeo, wheelRubberMat);
+        tire.rotation.z = Math.PI / 2;
+        tire.castShadow = true;
+
+        const rim = new THREE.Mesh(rimGeo, rimMat);
+        rim.rotation.z = Math.PI / 2;
+
+        wGroup.add(tire, rim);
+        wGroup.position.set(p.x, p.y, p.z);
+        group.add(wGroup);
+      });
+
+      scene.add(group);
+      return group;
+    }
+
+    // ==========================================================
+    // 7. Kart 類別 (支援屬性倍率、換車重置與質量碰撞)
+    // ==========================================================
+    class Kart {
+      constructor(options = {}) {
+        this.id = options.id || 'kart';
+        this.name = options.name || '車手';
+        this.isPlayer = !!options.isPlayer;
+        this.typeId = options.typeId || 'balanced';
+        this.color = options.color || 0x2563eb;
+        this.spawnPos = options.spawnPos ? options.spawnPos.clone() : new THREE.Vector3();
+        this.spawnYaw = options.spawnYaw || 0;
+
+        // 屬性倍率 Stats
+        this.stats = options.stats || getKartEffectiveStats(this.typeId);
+        this.weight = this.stats.weight; // 重量屬性 (重型 1.6，其餘 1.0)
+
+        // 空間狀態
+        this.pos = this.spawnPos.clone();
+        this.yaw = this.spawnYaw;
+        this.velocity = new THREE.Vector3(0, 0, 0);
+        this.prevPos = this.pos.clone();
+        this.prevYaw = this.yaw;
+        this.renderPos = this.pos.clone();
+        this.renderYaw = this.yaw;
+        this.lastTrackIndex = 0;
+        this.radius = KART_RADIUS;
+
+        // 甩尾狀態
+        this.isDrifting = false;
+        this.driftDir = 0;
+        this.driftTime = 0;
+        this.gripRecoveryTimer = 0;
+        this.currentGrip = GRIP_NORMAL;
+        this.visualDriftAngle = 0;
+
+        // 撞牆導正與抓地力釋放
+        this.wallGripTimer = 0;
+        this.wallGripRecoverTimer = 0;
+
+        // 氮氣狀態
+        this.nitroGauge = 0;
+        this.nitroCount = 0;
+        this.nitroTimer = 0;
+        this.miniBoostTimer = 0;
+
+        // 圈數與進度
+        this.currentLap = 1;
+        this.totalLaps = 3;
+        this.passedCP1 = false;
+        this.passedCP2 = false;
+        this.passedCP3 = false;
+        this.prevTrackIndex = 0;
+        this.lapTimes = [];
+        this.currentLapTime = 0;
+        this.totalTime = 0;
+        this.isFinished = false;
+        this.finishTime = 0;
+        this.progress = 0;
+
+        // 尾流與加速帶
+        this.exitAlignTimer = 0;
+        this.draftCharge = 0;
+        this.draftBoostTimer = 0;
+        this.inDraft = false;
+        this.padBoostTimer = 0;
+        this.slopeAlong = 0;
+        this.renderPitch = 0;
+
+        // AI 專用屬性
+        this.baseLaneOffset = options.laneOffset || 0;
+        this.currentLaneOffset = this.baseLaneOffset;
+        this.avoidOffset = 0;
+        this.avoidTimer = 0;
+        this.steerNoise = 0;
+        this.noiseTimer = 0;
+        this.stuckTimer = 0;
+        this.reverseTimer = 0;
+        this.aiSpeedMult = options.aiSpeedMult || (0.92 + Math.random() * 0.08);
+        this.baseAiSpeedMult = this.aiSpeedMult;
+        this.aiSkill = 0.94 + Math.random() * 0.08; // 過彎膽量（1.0 = 照最佳行車線的速度）
+
+        // 診斷監控
+        this.v_forward = 0;
+        this.v_lateral = 0;
+        this.speed = 0;
+        this.debugDist = 0;
+        this.debugLimit = DEFAULT_HALF_WIDTH - KART_RADIUS;
+        this.driftAngleDeg = 0;
+
+        // 建立 3D 幾何模型
+        this.mesh = createKartMesh(this.typeId, this.color);
+        this.mesh.rotation.order = 'YXZ';
+        this.reset();
+      }
+
+      // 換車或套用強化數值
+      reconfigure(typeId, color, stats) {
+        this.typeId = typeId;
+        this.color = color;
+        this.stats = stats;
+        this.weight = stats.weight;
+
+        // 重造模型
+        if (this.mesh) {
+          scene.remove(this.mesh);
+        }
+        this.mesh = createKartMesh(this.typeId, this.color);
+        this.mesh.rotation.order = 'YXZ';
+      }
+
+      reset() {
+        this.pos.copy(this.spawnPos);
+        this.pos.y = 0;
+        this.yaw = this.spawnYaw;
+        this.velocity.set(0, 0, 0);
+        this.prevPos.copy(this.pos);
+        this.prevYaw = this.yaw;
+        this.renderPos.copy(this.pos);
+        this.renderYaw = this.yaw;
+
+        const initNear = findNearestCenterGlobal(this.pos);
+        this.lastTrackIndex = initNear.index;
+        this.prevTrackIndex = this.lastTrackIndex;
+
+        this.isDrifting = false;
+        this.driftDir = 0;
+        this.driftTime = 0;
+        this.gripRecoveryTimer = 0;
+        this.currentGrip = GRIP_NORMAL;
+        this.visualDriftAngle = 0;
+
+        this.wallGripTimer = 0;
+        this.wallGripRecoverTimer = 0;
+
+        this.nitroGauge = 0;
+        this.nitroCount = 0;
+        this.nitroTimer = 0;
+        this.miniBoostTimer = 0;
+
+        this.currentLap = 1;
+        this.passedCP1 = false;
+        this.passedCP2 = false;
+        this.passedCP3 = false;
+        this.lapTimes = [];
+        this.currentLapTime = 0;
+        this.totalTime = 0;
+        this.isFinished = false;
+        this.finishTime = 0;
+        this.progress = 0;
+
+        this.currentLaneOffset = this.baseLaneOffset;
+        this.avoidOffset = 0;
+        this.avoidTimer = 0;
+        this.stuckTimer = 0;
+        this.reverseTimer = 0;
+
+        this.exitAlignTimer = 0;
+        this.draftCharge = 0;
+        this.draftBoostTimer = 0;
+        this.inDraft = false;
+        this.padBoostTimer = 0;
+        this.slopeAlong = 0;
+        this.renderPitch = 0;
+
+        this.v_forward = 0;
+        this.v_lateral = 0;
+        this.speed = 0;
+        this.debugDist = 0;
+        this.driftAngleDeg = 0;
+      }
+
+      update(dt, input) {
+        const fwd0x = Math.sin(this.yaw);
+        const fwd0z = Math.cos(this.yaw);
+        const last_v_forward = this.velocity.x * fwd0x + this.velocity.z * fwd0z;
+        const speed = Math.abs(last_v_forward);
+        const planarSpeed = Math.hypot(this.velocity.x, this.velocity.z);
+
+        // 甩尾進入 / 退出
+        if (!this.isDrifting && input.drift && Math.abs(input.steer) > 0.1 && last_v_forward > 12) {
+          this.isDrifting = true;
+          this.driftDir = input.steer > 0 ? 1 : -1;
+          this.driftTime = 0;
+          this.exitAlignTimer = 0;
+        }
+        if (this.isDrifting) {
+          this.driftTime += dt;
+          if (!input.drift || planarSpeed < 8) {
+            this.exitDrift(true);
+          }
+        }
+
+        // 抓地力狀態
+        if (this.wallGripTimer > 0) {
+          this.wallGripTimer = Math.max(0, this.wallGripTimer - dt);
+          this.currentGrip = 0.3;
+        } else if (this.wallGripRecoverTimer > 0) {
+          this.wallGripRecoverTimer = Math.max(0, this.wallGripRecoverTimer - dt);
+          const t = 1.0 - (this.wallGripRecoverTimer / 0.2);
+          this.currentGrip = 0.3 + (GRIP_NORMAL - 0.3) * t;
+        } else if (this.isDrifting) {
+          this.currentGrip = GRIP_DRIFT;
+        } else if (this.exitAlignTimer > 0) {
+          this.currentGrip = 0.1;
+        } else {
+          this.currentGrip = this.onIce ? GRIP_NORMAL * 0.3 : GRIP_NORMAL; // 冰面很滑
+        }
+
+        // 氮氣大噴
+        if (input.nitro && this.nitroCount > 0 && this.nitroTimer <= 0) {
+          this.nitroCount--;
+          this.nitroTimer = this.stats.nitroDuration; // 依強化增加時長
+        }
+        this.nitroTimer = Math.max(0, this.nitroTimer - dt);
+        this.miniBoostTimer = Math.max(0, this.miniBoostTimer - dt);
+        this.draftBoostTimer = Math.max(0, this.draftBoostTimer - dt);
+        this.padBoostTimer = Math.max(0, this.padBoostTimer - dt);
+        this.exitAlignTimer = Math.max(0, this.exitAlignTimer - dt);
+
+        // 目標最高速與加速度（乘上車輛 stats 倍率）
+        let targetVMax = V_MAX * this.stats.topSpeedMult;
+        let currentAccel = ACCEL * this.stats.accelMult;
+
+        if (this.miniBoostTimer > 0)  { targetVMax = Math.max(targetVMax, 36.0 * this.stats.topSpeedMult); currentAccel = Math.max(currentAccel, 20.0); }
+        if (this.draftBoostTimer > 0) { targetVMax = Math.max(targetVMax, 37.0 * this.stats.topSpeedMult); currentAccel = Math.max(currentAccel, 22.0); }
+        if (this.padBoostTimer > 0)   { targetVMax = Math.max(targetVMax, 40.0 * this.stats.topSpeedMult); currentAccel = Math.max(currentAccel, 30.0); }
+        if (this.nitroTimer > 0)      { targetVMax = Math.max(targetVMax, 42.0 * this.stats.topSpeedMult); currentAccel = Math.max(currentAccel, 25.0); }
+
+        if (!this.isPlayer) {
+          targetVMax *= this.aiSpeedMult;
+        }
+
+        if (this.isDrifting) {
+          // 甩尾動力學 (套用 driftTurnMult 甩尾轉彎倍率)
+          let travel = planarSpeed > 0.5 ? Math.atan2(this.velocity.x, this.velocity.z) : this.yaw;
+          const s = Math.max(-1, Math.min(1, input.steer * this.driftDir)); // +1 往彎內打、-1 反打
+
+          // (a) 車頭先轉
+          this.yaw += this.driftDir * (DRIFT_YAW_BASE + DRIFT_YAW_INPUT * s) * this.stats.driftTurnMult * dt;
+
+          // (b) 側滑角 = 車頭與行進方向的夾角，限制最大值
+          let slipAng = this.yaw - travel;
+          slipAng -= Math.PI * 2 * Math.round(slipAng / (Math.PI * 2));
+          if (slipAng * this.driftDir > DRIFT_MAX_SLIP) {
+            slipAng = this.driftDir * DRIFT_MAX_SLIP;
+            this.yaw = travel + slipAng;
+          }
+
+          // (c) 行進方向被慣性拖著，慢慢追上車頭（側滑角越大追越快）
+          travel += slipAng * DRIFT_CATCH * dt;
+
+          let spd = planarSpeed;
+          spd -= DRIFT_SLIP_DRAG * Math.abs(Math.sin(slipAng)) * dt;
+          const driftCap = targetVMax * DRIFT_SPEED_CAP;
+          if (input.throttle && spd < driftCap) spd = Math.min(driftCap, spd + currentAccel * 0.6 * dt);
+          if (input.brake) spd -= BRAKE_DECEL * dt;
+          spd -= DRIFT_SPEED_LOSS * dt;
+          if (spd > driftCap) spd = Math.max(driftCap, spd - 6.0 * dt);
+          spd -= SLOPE_GRAVITY * this.slopeAlong * dt;
+          spd = Math.max(0, spd);
+          this.velocity.set(Math.sin(travel) * spd, 0, Math.cos(travel) * spd);
+
+          // 甩尾集氣 (套用 nitroChargeMult 集氣倍率)
+          this.nitroGauge += NITRO_CHARGE_RATE * this.stats.nitroChargeMult * smooth01((spd - 8) / 14) * dt;
+        } else {
+          // 甩尾收尾
+          if (this.exitAlignTimer > 0 && planarSpeed > 0.5) {
+            let travel = Math.atan2(this.velocity.x, this.velocity.z);
+            travel = rotateTowards(travel, this.yaw, 4.0 * dt);
+            this.velocity.set(Math.sin(travel) * planarSpeed, 0, Math.cos(travel) * planarSpeed);
+          }
+
+          // (1) 轉向 (套用 steerMult 轉向倍率)
+          const steerDir = speed >= STEER_DEADZONE ? (last_v_forward >= 0 ? 1 : -1) : 0;
+          this.yaw += input.steer * (getSteeringRate(speed) * this.stats.steerMult) * steerDir * dt;
+
+          // (2) 向量分解
+          const fx = Math.sin(this.yaw), fz = Math.cos(this.yaw);
+          let v_forward = this.velocity.x * fx + this.velocity.z * fz;
+          let v_lateral = this.velocity.x * fz - this.velocity.z * fx;
+
+          // (3) 加減速與阻力
+          if (input.throttle && v_forward < targetVMax) {
+            v_forward = Math.min(targetVMax, v_forward + currentAccel * dt);
+          }
+          if (input.brake) {
+            if (v_forward > 0.1) v_forward = Math.max(0, v_forward - BRAKE_DECEL * dt);
+            else v_forward = Math.max(-V_REVERSE_MAX, v_forward - REVERSE_ACCEL * dt);
+          }
+          if (!input.throttle && !input.brake) {
+            if (v_forward > 0) v_forward = Math.max(0, v_forward - DRAG * dt);
+            else if (v_forward < 0) v_forward = Math.min(0, v_forward + DRAG * dt);
+          }
+          if (v_forward > targetVMax) {
+            v_forward = Math.max(targetVMax, v_forward - 6.0 * dt);
+          }
+          v_forward -= SLOPE_GRAVITY * this.slopeAlong * dt;
+
+          // (4) 抓地力衰減
+          v_lateral *= Math.exp(-this.currentGrip * GRIP_RATE * dt);
+
+          // (5) 重組速度
+          this.velocity.set(fx * v_forward + fz * v_lateral, 0, fz * v_forward - fx * v_lateral);
+        }
+
+        if (this.nitroGauge >= 100) {
+          if (this.nitroCount < 2) {
+            this.nitroCount++;
+            this.nitroGauge = 0;
+          } else {
+            this.nitroGauge = 100;
+          }
+        }
+
+        // 診斷數值
+        const dfx = Math.sin(this.yaw), dfz = Math.cos(this.yaw);
+        this.v_forward = this.velocity.x * dfx + this.velocity.z * dfz;
+        this.v_lateral = this.velocity.x * dfz - this.velocity.z * dfx;
+        this.speed = Math.hypot(this.velocity.x, this.velocity.z);
+        if (this.speed > 0.5) {
+          const c = Math.max(-1, Math.min(1, this.v_forward / this.speed));
+          this.driftAngleDeg = (Math.acos(c) * 180 / Math.PI).toFixed(1);
+        } else {
+          this.driftAngleDeg = 0;
+        }
+
+        // (6) 更新位置
+        this.pos.addScaledVector(this.velocity, dt);
+
+        // (7) 邊界碰撞、貼地、坡度
+        this.handleTrackCollision(dt);
+
+        // 加速帶
+        for (const pi of boostPadIndices) {
+          let d = this.lastTrackIndex - pi;
+          d = ((d % N) + N) % N;
+          if (d > N / 2) d -= N;
+          if (d >= -3 && d <= 3 && this.debugDist < trackHalfWidths[pi] - 0.5) {
+            this.padBoostTimer = PAD_BOOST_TIME;
+          }
+        }
+
+        // (8) 圈數
+        this.updateLapSystem(dt);
+
+        this.emitParticles();
+      }
+
+      exitDrift(allowMiniBoost = true) {
+        if (!this.isDrifting) return;
+        if (allowMiniBoost && this.driftTime >= MINI_BOOST_MIN_DRIFT) {
+          this.miniBoostTimer = MINI_BOOST_TIME;
+        }
+        this.isDrifting = false;
+        this.exitAlignTimer = 0.35;
+        this.driftTime = 0;
+      }
+
+      handleTrackCollision(dt = FIXED_DT) {
+        const result = findNearestCenter(this.pos, this.lastTrackIndex);
+        this.lastTrackIndex = result.index;
+        this.debugDist = result.dist;
+        const wLimit = result.half - KART_RADIUS;
+        this.debugLimit = wLimit;
+
+        // 貼地與坡度（沿車頭方向）
+        this.pos.y = result.y;
+        const slopeTan = trackTangents[result.index];
+        const headingSign = (Math.sin(this.yaw) * slopeTan.x + Math.cos(this.yaw) * slopeTan.z) >= 0 ? 1 : -1;
+        this.slopeAlong = trackSlopes[result.index] * headingSign;
+        this.onIce = trackIce[result.index] === 1;
+
+        if (result.dist > wLimit) {
+          const nx = (this.pos.x - result.center.x) / result.dist;
+          const nz = (this.pos.z - result.center.z) / result.dist;
+
+          this.pos.x = result.center.x + nx * wLimit;
+          this.pos.z = result.center.z + nz * wLimit;
+
+          const tan = trackTangents[result.index];
+          const curFwd = new THREE.Vector3(Math.sin(this.yaw), 0, Math.cos(this.yaw));
+          const dot = curFwd.dot(tan);
+          const chosenTan = dot >= 0 ? tan : tan.clone().negate();
+          const targetYaw = Math.atan2(chosenTan.x, chosenTan.z);
+
+          this.yaw = rotateTowards(this.yaw, targetYaw, 5.0 * dt);
+
+          this.wallGripTimer = 0.25;
+          this.wallGripRecoverTimer = 0.2;
+
+          const currentSpeed = this.velocity.length();
+          if (currentSpeed > COLLISION_SPEED_THRESHOLD) {
+            const v_wall = this.velocity.x * nx + this.velocity.z * nz;
+            if (v_wall > 0) {
+              this.velocity.x -= nx * (v_wall * 1.2);
+              this.velocity.z -= nz * (v_wall * 1.2);
+
+              const impact = Math.min(1.0, Math.max(0.0, v_wall / currentSpeed));
+              this.velocity.multiplyScalar(1.0 - COLLISION_PENALTY * impact);
+
+              if (impact > 0.5 && this.isDrifting) {
+                this.exitDrift(false);
+              }
+            }
+          }
+        }
+      }
+
+      updateLapSystem(dt) {
+        if (raceState !== 'RACING' && !(raceState === 'FINISHED' && !this.isFinished)) return;
+
+        this.currentLapTime += dt;
+        this.totalTime += dt;
+
+        const idx = this.lastTrackIndex;
+        const f = idx / N;
+        if (f >= 0.2 && f <= 0.3) this.passedCP1 = true;
+        if (this.passedCP1 && f >= 0.45 && f <= 0.55) this.passedCP2 = true;
+        if (this.passedCP2 && f >= 0.7 && f <= 0.8) this.passedCP3 = true;
+
+        if (this.passedCP3 && this.prevTrackIndex >= N * 0.95 && idx <= N * 0.05) {
+          this.lapTimes.push(this.currentLapTime);
+          this.currentLapTime = 0;
+          this.passedCP1 = false;
+          this.passedCP2 = false;
+          this.passedCP3 = false;
+
+          this.currentLap++;
+          if (this.currentLap > this.totalLaps) {
+            this.isFinished = true;
+            this.finishTime = this.totalTime;
+            if (this.isPlayer) {
+              finishRace();
+            }
+          }
+        }
+
+        this.prevTrackIndex = idx;
+
+        if (this.isFinished) {
+          this.progress = (this.totalLaps + 1) * totalTrackLength + (10000 - this.finishTime);
+        } else {
+          const distAlong = getDistanceAlongTrack(idx, 0);
+          this.progress = (this.currentLap - 1) * totalTrackLength + distAlong;
+        }
+      }
+
+      emitParticles() {
+        const baseY = this.pos.y;
+        if (this.isDrifting && this.speed > 8) {
+          const sinY = Math.sin(this.yaw);
+          const cosY = Math.cos(this.yaw);
+
+          const rlX = this.pos.x - cosY * 0.9 - sinY * 0.85;
+          const rlZ = this.pos.z + sinY * 0.9 - cosY * 0.85;
+          const rrX = this.pos.x + cosY * 0.9 - sinY * 0.85;
+          const rrZ = this.pos.z - sinY * 0.9 - cosY * 0.85;
+
+          const pVel = this.velocity.clone().multiplyScalar(-0.25);
+          pVel.y = 0.5 + Math.random() * 0.4;
+
+          particleSystem.emit(rlX, baseY + 0.2, rlZ, pVel.x + (Math.random()-0.5)*2, pVel.y, pVel.z + (Math.random()-0.5)*2, false, 0.35);
+          particleSystem.emit(rrX, baseY + 0.2, rrZ, pVel.x + (Math.random()-0.5)*2, pVel.y, pVel.z + (Math.random()-0.5)*2, false, 0.35);
+        }
+
+        if (this.nitroTimer > 0 || this.miniBoostTimer > 0 || this.padBoostTimer > 0 || this.draftBoostTimer > 0) {
+          const sinY = Math.sin(this.yaw);
+          const cosY = Math.cos(this.yaw);
+
+          const exX = this.pos.x - sinY * 1.35;
+          const exZ = this.pos.z - cosY * 1.35;
+
+          const bVelX = -sinY * (22 + Math.random() * 10);
+          const bVelZ = -cosY * (22 + Math.random() * 10);
+
+          particleSystem.emit(exX, baseY + 0.4, exZ, bVelX, (Math.random() - 0.5) * 2, bVelZ, true, 0.25);
+          particleSystem.emit(exX + (Math.random() - 0.5) * 0.4, baseY + 0.4, exZ + (Math.random() - 0.5) * 0.4, bVelX, (Math.random() - 0.5) * 2, bVelZ, true, 0.22);
+        }
+
+        if (this.isPlayer && this.inDraft && this.draftBoostTimer <= 0 && Math.random() < 0.6) {
+          const sinY = Math.sin(this.yaw), cosY = Math.cos(this.yaw);
+          const sideOff = (Math.random() < 0.5 ? -1 : 1) * (1.3 + Math.random() * 0.6);
+          particleSystem.emit(
+            this.pos.x + cosY * sideOff + sinY * 1.5, baseY + 0.6 + Math.random() * 0.6, this.pos.z - sinY * sideOff + cosY * 1.5,
+            -sinY * 25, 0, -cosY * 25, false, 0.18);
+        }
+      }
+    }
+
+    // ==========================================================
+    // 8. 起跑格陣型、玩家與 AI 生成
+    // ==========================================================
+    const karts = [];
+
+    function calcGridPos(row, col) {
+      const distBehind = 6.0 + row * 6.0;
+      const latOffset = col * 2.5;
+
+      return startCenter.clone()
+        .addScaledVector(startTangent, -distBehind)
+        .addScaledVector(startSide, latOffset);
+    }
+
+    const spawnYaw = Math.atan2(startTangent.x, startTangent.z);
+
+    // 建立 1 玩家 + 5 AI
+    const kartConfigs = [
+      { id: 'player', name: '玩家 (You)', isPlayer: true, row: 2, col: 1, lane: 0 },
+      { id: 'ai1', name: '赤焰領航', isPlayer: false, row: 0, col: -1, lane: -3.2 },
+      { id: 'ai2', name: '疾風掠影', isPlayer: false, row: 0, col: 1, lane: 3.2 },
+      { id: 'ai3', name: '閃電狂瀾', isPlayer: false, row: 1, col: -1, lane: -1.6 },
+      { id: 'ai4', name: '暗影獵手', isPlayer: false, row: 1, col: 1, lane: 1.6 },
+      { id: 'ai5', name: '重裝暴龍', isPlayer: false, row: 2, col: -1, lane: -2.0 }
+    ];
+
+    const availableTypes = ['balanced', 'speed', 'drift', 'heavy'];
+
+    kartConfigs.forEach((cfg, idx) => {
+      const gPos = calcGridPos(cfg.row, cfg.col);
+
+      let carType = 'balanced';
+      let carColor = 0x2563eb;
+
+      if (cfg.isPlayer) {
+        carType = gameData.selectedCar || 'balanced';
+        carColor = gameData.selectedColor || 0x2563eb;
+      } else {
+        // AI 隨機分配車種與顏色
+        carType = availableTypes[idx % availableTypes.length];
+        carColor = KART_COLORS[(idx + 1) % KART_COLORS.length].hex;
+      }
+
+      const effectiveStats = getKartEffectiveStats(carType);
+
+      const k = new Kart({
+        id: cfg.id,
+        name: cfg.name,
+        isPlayer: cfg.isPlayer,
+        typeId: carType,
+        color: carColor,
+        stats: effectiveStats,
+        spawnPos: gPos,
+        spawnYaw: spawnYaw,
+        laneOffset: cfg.lane
+      });
+      karts.push(k);
+    });
+
+    let playerKart = karts[0];
+
+    // AI 駕駛決策
+    function getAIInput(kart, dt) {
+      const speed = kart.speed;
+
+      if (speed < 2.0) {
+        kart.stuckTimer += dt;
+      } else {
+        kart.stuckTimer = 0;
+      }
+
+      if (kart.stuckTimer >= 1.5 && kart.stuckTimer < 2.5) {
+        return { throttle: false, brake: true, steer: -kart.currentLaneOffset > 0 ? 1 : -1, drift: false, nitro: false };
+      }
+
+      if (kart.stuckTimer >= 5.0) {
+        const near = findNearestCenter(kart.pos, kart.lastTrackIndex);
+        kart.pos.copy(near.center);
+        kart.pos.y = near.y;
+        kart.lastTrackIndex = near.index;
+        const tan = trackTangents[near.index];
+        kart.yaw = Math.atan2(tan.x, tan.z);
+        kart.velocity.set(0, 0, 0);
+        kart.stuckTimer = 0;
+      }
+
+      if (kart.avoidTimer > 0) {
+        kart.avoidTimer -= dt;
+        kart.currentLaneOffset += (kart.baseLaneOffset + kart.avoidOffset - kart.currentLaneOffset) * (1 - Math.exp(-4 * dt));
+      } else {
+        kart.currentLaneOffset += (kart.baseLaneOffset - kart.currentLaneOffset) * (1 - Math.exp(-2 * dt));
+      }
+
+      const heading = (kart.isDrifting && kart.speed > 1) ? Math.atan2(kart.velocity.x, kart.velocity.z) : kart.yaw;
+      const forward = new THREE.Vector3(Math.sin(heading), 0, Math.cos(heading));
+      const right = new THREE.Vector3(Math.cos(heading), 0, -Math.sin(heading));
+
+      for (const other of karts) {
+        if (other === kart || kart.isGhost) continue;
+        if (Math.abs(other.pos.y - kart.pos.y) > 2.5) continue; // 橋上橋下不互相閃避
+        const rel = other.pos.clone().sub(kart.pos);
+        const fDist = rel.dot(forward);
+        const rDist = rel.dot(right);
+
+        if (fDist > 0 && fDist < 10.0 && Math.abs(rDist) < 3.0) {
+          kart.avoidOffset = rDist >= 0 ? -3.0 : 3.0;
+          kart.avoidTimer = 2.0;
+          break;
+        }
+      }
+
+      const lookDist = 10.0 + speed * 0.6;
+      const currentTrackDist = getDistanceAlongTrack(kart.lastTrackIndex, 0);
+      const targetTrackDist = (currentTrackDist + lookDist) % totalTrackLength;
+
+      let targetIdx = Math.floor((targetTrackDist / totalTrackLength) * N) % N;
+      const targetCenter = trackCenters[targetIdx];
+      const targetTan = trackTangents[targetIdx];
+      const targetSide = new THREE.Vector3(targetTan.z, 0, -targetTan.x);
+
+      const maxOff = trackHalfWidths[targetIdx] - 2.6;
+      // 沿最佳行車線跑；每台 AI 保留一點自己的偏好位置，閃避時再往旁邊讓
+      const personal = kart.baseLaneOffset * 0.25 + (kart.currentLaneOffset - kart.baseLaneOffset);
+      const laneOff = Math.max(-maxOff, Math.min(maxOff, racingOffset[targetIdx] + personal));
+      const trackTarget = targetCenter.clone().addScaledVector(targetSide, laneOff);
+
+      kart.noiseTimer += dt;
+      if (kart.noiseTimer >= 0.5) {
+        kart.noiseTimer = 0;
+        kart.steerNoise = (Math.random() - 0.5) * 0.06;
+      }
+
+      const toTarget = trackTarget.clone().sub(kart.pos).setY(0);
+      const desiredYaw = Math.atan2(toTarget.x, toTarget.z);
+      let yawDiff = desiredYaw - heading;
+      yawDiff -= Math.PI * 2 * Math.round(yawDiff / (Math.PI * 2));
+      yawDiff += kart.steerNoise;
+
+      const steer = Math.max(-1.0, Math.min(1.0, yawDiff * 2.5));
+
+      const ahead35Idx = (kart.lastTrackIndex + Math.floor((35.0 / totalTrackLength) * N)) % N;
+      const curTan = trackTangents[kart.lastTrackIndex];
+      const aheadTan = trackTangents[ahead35Idx];
+      const dotTan = Math.max(-1, Math.min(1, curTan.dot(aheadTan)));
+      const a = Math.acos(dotTan);
+
+      let throttle = true;
+      let brake = false;
+
+      // 依行車線的速度規劃：看前面幾公尺的建議速度，並找有沒有甩尾區
+      const li = kart.lastTrackIndex;
+      let vAhead = 99, driftSoon = false, driftNow = false, straightAhead = true;
+      for (let k = 0; k <= 14; k++) {
+        const j = (li + k) % N;
+        if (k <= 6) vAhead = Math.min(vAhead, racingSpeed[j]);
+        if (racingDrift[j]) { driftSoon = true; if (k <= 4) driftNow = true; }
+      }
+      for (let k = 0; k <= 70; k += 5) {
+        const j = (li + k) % N;
+        if (racingSpeed[j] < V_MAX - 1 || racingDrift[j]) { straightAhead = false; break; }
+      }
+      const skill = kart.aiSkill || 1.0;
+      // 直線（建議速度 = 極速）一律全油門；膽量只影響過彎速度
+      const targetSpeed = vAhead >= V_MAX - 0.5 ? 99
+        : vAhead * skill * (kart.onIce ? 0.85 : 1.0) + (kart.nitroTimer > 0 || kart.padBoostTimer > 0 ? 8 : 0);
+      if (speed > targetSpeed) throttle = false;
+      if (speed > targetSpeed + 2.5) brake = true;
+
+      let drift = false;
+      if (kart.isDrifting) drift = driftNow || driftSoon && Math.abs(yawDiff) > 0.12;
+      else drift = driftSoon && speed > 16.0 && Math.abs(steer) > 0.25;
+
+      let nitro = false;
+      if (kart.nitroCount > 0 && straightAhead && speed > 22.0) {
+        nitro = true;
+      }
+
+      const diffToPlayer = kart.isGhost ? 0 : kart.progress - playerKart.progress;
+      if (diffToPlayer > 150.0) {
+        kart.aiSpeedMult = kart.baseAiSpeedMult * 0.9;
+      } else if (diffToPlayer < -150.0) {
+        kart.aiSpeedMult = kart.baseAiSpeedMult * 1.08;
+      } else {
+        kart.aiSpeedMult = kart.baseAiSpeedMult;
+      }
+
+      return { throttle, brake, steer, drift, nitro };
+    }
+
+    // ==========================================================
+    // 9. 規格 1：依重量分配的車與車物理碰撞
+    // ==========================================================
+    let cameraShakeTimer = 0;
+
+    function handleKartCollisions() {
+      const len = karts.length;
+      for (let i = 0; i < len; i++) {
+        for (let j = i + 1; j < len; j++) {
+          const kA = karts[i];
+          const kB = karts[j];
+          if (Math.abs(kA.pos.y - kB.pos.y) > 2.5) continue; // 一台在橋上、一台在橋下
+
+          const dx = kB.pos.x - kA.pos.x;
+          const dz = kB.pos.z - kA.pos.z;
+          const dist = Math.sqrt(dx * dx + dz * dz);
+
+          if (dist < KART_COLLISION_DIST) {
+            let nx, nz;
+            if (dist < 0.001) {
+              nx = Math.sin(kA.yaw);
+              nz = Math.cos(kA.yaw);
+            } else {
+              nx = dx / dist;
+              nz = dz / dist;
+            }
+
+            const overlap = KART_COLLISION_DIST - dist;
+
+            if (kA.isRemote && kB.isRemote) continue; // 兩台都是別人的車：各自的電腦處理
+
+            // 依重量分配推開量（輕的車被推較多）
+            const mA = kA.weight || 1.0;
+            const mB = kB.weight || 1.0;
+            const totalM = mA + mB;
+
+            // 撞到別人的車：只推自己這台（對方的電腦會自己推他的車）
+            const pushA = kB.isRemote ? overlap : (kA.isRemote ? 0 : overlap * (mB / totalM));
+            const pushB = kA.isRemote ? overlap : (kB.isRemote ? 0 : overlap * (mA / totalM));
+
+            kA.pos.x -= nx * pushA;
+            kA.pos.z -= nz * pushA;
+            kB.pos.x += nx * pushB;
+            kB.pos.z += nz * pushB;
+
+            // 相對速度衝量交換
+            const rvx = kA.velocity.x - kB.velocity.x;
+            const rvz = kA.velocity.z - kB.velocity.z;
+            const velAlongNormal = rvx * nx + rvz * nz;
+
+            if (velAlongNormal > 0) {
+              const restitution = 0.3;
+              const J = (1 + restitution) * velAlongNormal;
+
+              if (!kA.isRemote) {
+                kA.velocity.x -= nx * (J * (mB / totalM));
+                kA.velocity.z -= nz * (J * (mB / totalM));
+              }
+              if (!kB.isRemote) {
+                kB.velocity.x += nx * (J * (mA / totalM));
+                kB.velocity.z += nz * (J * (mA / totalM));
+              }
+
+              if (kA.isPlayer || kB.isPlayer) {
+                cameraShakeTimer = 0.15;
+              }
+            }
+
+            if (!kA.isRemote) kA.handleTrackCollision(0);
+            if (!kB.isRemote) kB.handleTrackCollision(0);
+          }
+        }
+      }
+    }
+
+    // 尾流判定
+    function updateSlipstream(dt) {
+      for (const k of karts) {
+        let inDraft = false;
+        const spd = k.speed;
+        if (raceState === 'RACING' && spd > DRAFT_MIN_SPEED) {
+          const fx = k.velocity.x / spd, fz = k.velocity.z / spd;
+          for (const o of karts) {
+            if (o === k) continue;
+            const rx = o.pos.x - k.pos.x, rz = o.pos.z - k.pos.z;
+            const along = rx * fx + rz * fz;
+            const side = Math.abs(rx * fz - rz * fx);
+            if (along > 3 && along < DRAFT_RANGE && side < DRAFT_WIDTH) { inDraft = true; break; }
+          }
+        }
+        k.inDraft = inDraft;
+        if (k.draftBoostTimer > 0) {
+          k.draftCharge = 0;
+        } else if (inDraft) {
+          k.draftCharge += dt;
+          if (k.draftCharge >= DRAFT_CHARGE_TIME) {
+            k.draftBoostTimer = DRAFT_BOOST_TIME;
+            k.draftCharge = 0;
+          }
+        } else {
+          k.draftCharge = Math.max(0, k.draftCharge - dt * 1.5);
+        }
+      }
+    }
+
+    // 10. 攝影機追尾系統
+    const cameraPos = new THREE.Vector3();
+    const cameraLookAt = new THREE.Vector3();
+
+    function initCamera(kart) {
+      cameraPos.set(
+        kart.pos.x - Math.sin(kart.yaw) * 8.0,
+        kart.pos.y + 3.5,
+        kart.pos.z - Math.cos(kart.yaw) * 8.0
+      );
+      cameraLookAt.set(
+        kart.pos.x + Math.sin(kart.yaw) * 5.0,
+        kart.pos.y + 0.8,
+        kart.pos.z + Math.cos(kart.yaw) * 5.0
+      );
+      camera.position.copy(cameraPos);
+      camera.lookAt(cameraLookAt);
+      camera.fov = 75;
+      camera.updateProjectionMatrix();
+    }
+    initCamera(playerKart);
+
+    function updateCamera(frameDt, kart) {
+      if (raceState === 'GARAGE') {
+        // 車庫展示旋轉鏡頭
+        const t = performance.now() * 0.0006;
+        const radius = 6.8;
+        camera.position.set(
+          kart.pos.x + Math.sin(t) * radius,
+          kart.pos.y + 2.2,
+          kart.pos.z + Math.cos(t) * radius
+        );
+        camera.lookAt(kart.pos.x, kart.pos.y + 0.6, kart.pos.z);
+        return;
+      }
+
+      const idealPos = new THREE.Vector3(
+        kart.renderPos.x - Math.sin(kart.renderYaw) * 8.0,
+        kart.renderPos.y + 3.5,
+        kart.renderPos.z - Math.cos(kart.renderYaw) * 8.0
+      );
+      const idealLookAt = new THREE.Vector3(
+        kart.renderPos.x + Math.sin(kart.renderYaw) * 5.0,
+        kart.renderPos.y + 0.8,
+        kart.renderPos.z + Math.cos(kart.renderYaw) * 5.0
+      );
+
+      const tPos = 1.0 - Math.exp(-8.0 * frameDt);
+      const tLook = 1.0 - Math.exp(-10.0 * frameDt);
+
+      cameraPos.lerp(idealPos, tPos);
+      cameraLookAt.lerp(idealLookAt, tLook);
+
+      if (cameraShakeTimer > 0) {
+        cameraShakeTimer -= frameDt;
+        const shakeMag = 0.18;
+        cameraPos.x += (Math.random() - 0.5) * shakeMag;
+        cameraPos.y += (Math.random() - 0.5) * shakeMag;
+        cameraPos.z += (Math.random() - 0.5) * shakeMag;
+      }
+
+      camera.position.copy(cameraPos);
+      camera.lookAt(cameraLookAt);
+
+      let targetFov = 75;
+      if (kart.nitroTimer > 0) targetFov = 88;
+      else if (kart.padBoostTimer > 0) targetFov = 85;
+      else if (kart.draftBoostTimer > 0) targetFov = 83;
+      else if (kart.miniBoostTimer > 0) targetFov = 82;
+      camera.fov += (targetFov - camera.fov) * (1 - Math.exp(-6.0 * frameDt));
+      camera.updateProjectionMatrix();
+    }
+
+    // 11. 比賽狀態管理
+    let raceState = 'GARAGE'; // 'GARAGE' | 'COUNTDOWN' | 'RACING' | 'FINISHED'
+    let countdownTimer = 3.8;
+
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      const ms = Math.floor((sec * 100) % 100);
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}.${String(ms).padStart(2, '0')}`;
+    }
+
+    function startRaceFromGarage() {
+      if (net.role === 'host') { netStartRace(); return; }
+      if (net.role === 'client') return; // 等房主開始
+      document.getElementById('garage-screen').classList.add('hidden');
+      resetRace();
+    }
+
+    function openGarage() {
+      raceState = 'GARAGE';
+      document.getElementById('garage-screen').classList.remove('hidden');
+      document.getElementById('settlement-modal').classList.remove('active');
+      updateGarageUI();
+      karts.forEach(k => k.reset());
+      initCamera(playerKart);
+    }
+
+    function resetRace() {
+      raceState = 'COUNTDOWN';
+      countdownTimer = 3.8;
+      rocketStartStatus = 'NONE';
+      playerStallTimer = 0;
+      smoothedPlayerSteer = 0;
+      document.getElementById('settlement-modal').classList.remove('active');
+
+      // 玩家套用當前配置
+      const playerStats = getKartEffectiveStats(gameData.selectedCar);
+      playerKart.reconfigure(gameData.selectedCar, gameData.selectedColor, playerStats);
+
+      karts.forEach(k => k.reset());
+      initCamera(playerKart);
+    }
+
+    function finishRace() {
+      raceState = 'FINISHED';
+
+      // 規格 2：依名次獲得金幣
+      // 第 1 名 100，之後依序 70、50、35、25、15
+      const sortedKarts = [...karts].sort((a, b) => b.progress - a.progress);
+      const playerRank = sortedKarts.findIndex(k => k.isPlayer) + 1;
+
+      const rewardTiers = [100, 70, 50, 35, 25, 15];
+      const earnedCoins = rewardTiers[playerRank - 1] || 15;
+
+      gameData.coins += earnedCoins;
+      saveGameData();
+
+      // 彈出結算畫面
+      const modal = document.getElementById('settlement-modal');
+      const totalTimeEl = document.getElementById('modalTotalTime');
+      const leadEl = document.getElementById('modalLeaderboard');
+      const rewardEl = document.getElementById('modalRewardBadge');
+
+      rewardEl.textContent = `🪙 +${earnedCoins} 金幣獎勵 (第 ${playerRank} 名)`;
+      totalTimeEl.textContent = formatTime(playerKart.finishTime || playerKart.totalTime);
+
+      renderLeaderboard();
+      modal.classList.add('active');
+    }
+
+    // 結算排名表（連線時每秒更新，因為別人可能還在跑）
+    function renderLeaderboard() {
+      const leadEl = document.getElementById('modalLeaderboard');
+      const sortedKarts = [...karts].sort((a, b) => b.progress - a.progress);
+      let html = '';
+      sortedKarts.forEach((k, rank) => {
+        const isPlayer = k.isPlayer ? ' (YOU)' : '';
+        const timeStr = k.isFinished ? formatTime(k.finishTime) : 'RUNNING';
+        const rankColor = rank === 0 ? '#fbbf24' : (rank === 1 ? '#e2e8f0' : (rank === 2 ? '#cd7f32' : '#94a3b8'));
+
+        html += `
+          <div class="leaderboard-row">
+            <span style="color:${rankColor}; font-weight:900;">#${rank + 1} ${k.name}${isPlayer}</span>
+            <span style="font-weight:bold; color:#fff;">${timeStr}</span>
+          </div>
+        `;
+      });
+
+      leadEl.innerHTML = html;
+    }
+    setInterval(() => { if (net.inRace && raceState === 'FINISHED') renderLeaderboard(); }, 1000);
+
+    // 小地圖
+    const minimapCanvas = document.getElementById('minimap');
+    const mctx = minimapCanvas.getContext('2d');
+    const mapPad = 16;
+    const mapScale = Math.min(
+      (minimapCanvas.width - mapPad * 2) / (trackBounds.max.x - trackBounds.min.x),
+      (minimapCanvas.height - mapPad * 2) / (trackBounds.max.z - trackBounds.min.z));
+    const mapOffX = (minimapCanvas.width - (trackBounds.max.x - trackBounds.min.x) * mapScale) / 2;
+    const mapOffY = (minimapCanvas.height - (trackBounds.max.z - trackBounds.min.z) * mapScale) / 2;
+    function toMap(x, z) {
+      return [mapOffX + (x - trackBounds.min.x) * mapScale, mapOffY + (z - trackBounds.min.z) * mapScale];
+    }
+    const minimapBase = document.createElement('canvas');
+    minimapBase.width = minimapCanvas.width;
+    minimapBase.height = minimapCanvas.height;
+    (function drawMinimapBase() {
+      const c = minimapBase.getContext('2d');
+      c.lineCap = 'round';
+      c.lineJoin = 'round';
+      const drawPass = (elevated, color, width) => {
+        c.strokeStyle = color;
+        c.lineWidth = width;
+        c.beginPath();
+        let drawing = false;
+        for (let i = 0; i <= N; i++) {
+          const p = trackCenters[i % N];
+          const on = (p.y > 2.5 && !trackSolid[i % N]) === elevated; // 只把高架橋標成黃色
+          const [mx, my] = toMap(p.x, p.z);
+          if (on) {
+            if (!drawing) { c.moveTo(mx, my); drawing = true; } else c.lineTo(mx, my);
+          } else drawing = false;
+        }
+        c.stroke();
+      };
+      drawPass(false, 'rgba(226,232,240,0.85)', 7);
+      drawPass(true, 'rgba(15,23,42,0.9)', 11);   // 橋的外框，讓上下層看得出來
+      drawPass(true, 'rgba(250,204,21,0.95)', 7);
+      // 起點線
+      const [sx, sy] = toMap(trackCenters[0].x, trackCenters[0].z);
+      c.fillStyle = '#ffffff';
+      c.fillRect(sx - 3, sy - 3, 6, 6);
+    })();
+    function drawMinimap() {
+      mctx.clearRect(0, 0, minimapCanvas.width, minimapCanvas.height);
+      mctx.drawImage(minimapBase, 0, 0);
+      karts.forEach(k => {
+        const [mx, my] = toMap(k.renderPos.x, k.renderPos.z);
+        mctx.beginPath();
+        mctx.arc(mx, my, k.isPlayer ? 6 : 4.5, 0, Math.PI * 2);
+        mctx.fillStyle = '#' + k.color.toString(16).padStart(6, '0');
+        mctx.fill();
+        if (k.isPlayer) {
+          mctx.lineWidth = 2;
+          mctx.strokeStyle = '#ffffff';
+          mctx.stroke();
+        }
+      });
+    }
+
+    // 賽道選擇（換賽道會重新載入頁面）
+    function buildTrackPicker() {
+      const box = document.getElementById('trackPicker');
+      box.innerHTML = '';
+      Object.entries(TRACKS).forEach(([id, t]) => {
+        const btn = document.createElement('button');
+        btn.className = 'track-card' + (id === SELECTED_TRACK_ID ? ' active' : '');
+        btn.innerHTML = `<div class="t-name">${t.name}</div><div class="t-desc">${t.desc}</div>`;
+        btn.addEventListener('click', () => {
+          if (id === SELECTED_TRACK_ID) return;
+          if (typeof net !== 'undefined' && net.role) return; // 連線中不能換（由房主決定）
+          gameData.selectedTrack = id;
+          saveGameData();
+          location.href = location.pathname; // 去掉網址參數重新載入
+        });
+        box.appendChild(btn);
+      });
+    }
+    buildTrackPicker();
+
+    // 13. 車庫 UI 互動與升級邏輯
+    function updateGarageUI() {
+      if (typeof sendProfile === 'function' && net && net.role) sendProfile();
+      document.getElementById('garageCoinAmount').textContent = gameData.coins;
+      document.getElementById('hudCoinsTop').textContent = gameData.coins;
+
+      // 1. 車種卡片
+      const carContainer = document.getElementById('carCardsContainer');
+      carContainer.innerHTML = '';
+      Object.keys(KART_TYPES).forEach(kId => {
+        const car = KART_TYPES[kId];
+        const card = document.createElement('div');
+        card.className = `car-card ${gameData.selectedCar === kId ? 'active' : ''}`;
+        card.onclick = () => {
+          gameData.selectedCar = kId;
+          saveGameData();
+          const stats = getKartEffectiveStats(kId);
+          playerKart.reconfigure(kId, gameData.selectedColor, stats);
+        };
+
+        card.innerHTML = `
+          <div class="car-card-name">${car.icon} ${car.name}</div>
+          <div class="car-card-desc">${car.desc}</div>
+        `;
+        carContainer.appendChild(card);
+      });
+
+      // 2. 顏色選擇
+      const colorContainer = document.getElementById('colorSwatchesContainer');
+      colorContainer.innerHTML = '';
+      KART_COLORS.forEach(c => {
+        const sw = document.createElement('div');
+        sw.className = `color-swatch ${gameData.selectedColor === c.hex ? 'active' : ''}`;
+        sw.style.backgroundColor = c.css;
+        sw.title = c.name;
+        sw.onclick = () => {
+          gameData.selectedColor = c.hex;
+          saveGameData();
+          playerKart.reconfigure(gameData.selectedCar, c.hex, getKartEffectiveStats(gameData.selectedCar));
+        };
+        colorContainer.appendChild(sw);
+      });
+
+      // 3. 當前車種強化升級列表
+      const upContainer = document.getElementById('upgradeItemsContainer');
+      upContainer.innerHTML = '';
+
+      const currentUp = gameData.upgrades[gameData.selectedCar] || { engine: 0, tire: 0, nitro: 0, drift: 0 };
+      const categories = [
+        { id: 'engine', name: '🚀 引擎輸出', desc: '提升極限最高時速 (+1.5%/級)', lvl: currentUp.engine },
+        { id: 'tire',   name: '🛞 競技輪胎', desc: '提升動態過彎敏捷度 (+3%/級)', lvl: currentUp.tire },
+        { id: 'nitro',  name: '🔥 氮氣噴射', desc: '延長大噴燃燒時長 (+0.3s/級)', lvl: currentUp.nitro },
+        { id: 'drift',  name: '🌀 甩尾集氣', desc: '增強側滑充能轉化率 (+6%/級)', lvl: currentUp.drift }
+      ];
+
+      categories.forEach(cat => {
+        const item = document.createElement('div');
+        item.className = 'upgrade-item';
+
+        let dotsHtml = '';
+        for (let i = 0; i < 5; i++) {
+          dotsHtml += `<div class="upgrade-dot ${i < cat.lvl ? 'filled' : ''}"></div>`;
+        }
+
+        const cost = 50 * (cat.lvl + 1);
+        const isMax = cat.lvl >= 5;
+        const canAfford = gameData.coins >= cost;
+
+        const btnText = isMax ? '已達上限 MAX' : `升級 (${cost} 🪙)`;
+        const btnDisabled = isMax || !canAfford;
+
+        item.innerHTML = `
+          <div class="upgrade-info">
+            <div class="upgrade-name">${cat.name} <span style="font-size:12px; color:#38bdf8;">Lv.${cat.lvl}/5</span></div>
+            <div class="upgrade-desc">${cat.desc}</div>
+            <div class="upgrade-dots">${dotsHtml}</div>
+          </div>
+          <button class="btn-upgrade" id="btnUp_${cat.id}" ${btnDisabled ? 'disabled' : ''}>${btnText}</button>
+        `;
+
+        upContainer.appendChild(item);
+
+        const upBtn = item.querySelector(`#btnUp_${cat.id}`);
+        if (!isMax) {
+          upBtn.onclick = () => {
+            if (gameData.coins >= cost) {
+              gameData.coins -= cost;
+              gameData.upgrades[gameData.selectedCar][cat.id]++;
+              saveGameData();
+              const stats = getKartEffectiveStats(gameData.selectedCar);
+              playerKart.reconfigure(gameData.selectedCar, gameData.selectedColor, stats);
+            }
+          };
+        }
+      });
+    }
+
+    document.getElementById('btnStartRaceFromGarage').addEventListener('click', startRaceFromGarage);
+    document.getElementById('btnOpenGarageInGame').addEventListener('click', openGarage);
+    document.getElementById('btnModalGarage').addEventListener('click', () => {
+      if (net.role) { net.inRace = false; openGarage(); mpEls.panel.classList.remove('hidden'); renderLobby(); return; }
+      openGarage();
+    });
+    document.getElementById('btnModalRestart').addEventListener('click', () => {
+      if (net.role) { net.inRace = false; openGarage(); mpEls.panel.classList.remove('hidden'); renderLobby(); return; }
+      resetRace();
+    });
+    document.getElementById('btnReset').addEventListener('click', resetRace);
+
+    // 14. HUD 介面渲染更新
+    const hudRank = document.getElementById('hudRank');
+    const hudLapCount = document.getElementById('hudLapCount');
+    const hudCurrentTimer = document.getElementById('hudCurrentTimer');
+    const hudBestLap = document.getElementById('hudBestLap');
+    const hudCountdown = document.getElementById('hudCountdown');
+    const hudDriftAlert = document.getElementById('hudDriftAlert');
+    const hudBoostAlert = document.getElementById('hudBoostAlert');
+    const hudDraftAlert = document.getElementById('hudDraftAlert');
+    const hudSpeedNumber = document.getElementById('hudSpeedNumber');
+    const hudGaugeFill = document.getElementById('hudGaugeFill');
+    const tankSlot0 = document.getElementById('tankSlot0');
+    const tankSlot1 = document.getElementById('tankSlot1');
+
+    // Debug HUD
+    const debugHud = document.getElementById('debug-hud');
+    const dbgSpeed = document.getElementById('dbgSpeed');
+    const dbgGrip = document.getElementById('dbgGrip');
+    const dbgLat = document.getElementById('dbgLat');
+    const dbgDist = document.getElementById('dbgDist');
+    const dbgDrifting = document.getElementById('dbgDrifting');
+    const dbgDriftAngle = document.getElementById('dbgDriftAngle');
+    const dbgGauge = document.getElementById('dbgGauge');
+    const dbgKartType = document.getElementById('dbgKartType');
+
+    function toggleDebugHud() {
+      debugHud.style.display = debugHud.style.display === 'block' ? 'none' : 'block';
+    }
+
+    document.getElementById('btnToggleDebug').addEventListener('click', toggleDebugHud);
+
+    function updateHUD(dt) {
+      if (raceState === 'GARAGE') return;
+
+      // 1. 倒數邏輯 (與起跑加速)
+      if (raceState === 'COUNTDOWN') {
+        countdownTimer -= dt;
+        hudCountdown.style.display = 'block';
+
+        if (countdownTimer > 2.8) {
+          hudCountdown.textContent = '3';
+          hudCountdown.className = 'countdown-text';
+        } else if (countdownTimer > 1.8) {
+          hudCountdown.textContent = '2';
+          hudCountdown.className = 'countdown-text';
+        } else if (countdownTimer > 0.8) {
+          hudCountdown.textContent = '1';
+          hudCountdown.className = 'countdown-text';
+        } else if (countdownTimer > 0) {
+          hudCountdown.textContent = 'GO!';
+          hudCountdown.className = 'countdown-text go';
+        } else {
+          // 正式開賽起步
+          raceState = 'RACING';
+          hudCountdown.style.display = 'none';
+
+          if (rocketStartStatus === 'SUCCESS') {
+            playerKart.miniBoostTimer = 1.0; // 獲得 1 秒小加速
+            hudBoostAlert.textContent = '⚡ ROCKET START!! (起跑完美噴射)';
+            hudBoostAlert.className = 'boost-alert active rocket';
+          } else if (rocketStartStatus === 'FAIL') {
+            playerStallTimer = 0.5; // 太早按爆缸延遲 0.5 秒起跑
+            hudBoostAlert.textContent = '💥 START STALL! (太早按爆缸延遲)';
+            hudBoostAlert.className = 'boost-alert active stall';
+          }
+        }
+      } else {
+        hudCountdown.style.display = 'none';
+      }
+
+      // 起跑爆缸倒數
+      if (playerStallTimer > 0) {
+        playerStallTimer = Math.max(0, playerStallTimer - dt);
+      }
+
+      // 2. 名次計算
+      const sortedKarts = [...karts].sort((a, b) => b.progress - a.progress);
+      const playerRank = sortedKarts.findIndex(k => k.isPlayer) + 1;
+      hudRank.innerHTML = `${playerRank}<span>/${karts.length}</span>`;
+
+      // 3. 正式 HUD 數值
+      const p = playerKart;
+      if (p.isFinished) {
+        hudLapCount.innerHTML = `FINISH!`;
+      } else {
+        hudLapCount.innerHTML = `${Math.min(3, p.currentLap)}<span>/3</span>`;
+      }
+
+      hudCurrentTimer.textContent = formatTime(p.currentLapTime);
+
+      if (p.lapTimes.length > 0) {
+        let best = Math.min(...p.lapTimes);
+        hudBestLap.textContent = `BEST: ${formatTime(best)}`;
+      } else {
+        hudBestLap.textContent = `BEST: --:--.--`;
+      }
+
+      const kmh = Math.round(p.speed * 3.6);
+      hudSpeedNumber.textContent = kmh;
+
+      // 甩尾與氮氣動態橫幅
+      if (p.isDrifting) {
+        hudDriftAlert.classList.add('active');
+      } else {
+        hudDriftAlert.classList.remove('active');
+      }
+
+      if (playerStallTimer > 0) {
+        hudBoostAlert.textContent = '💥 START STALL! (太早按爆缸)';
+        hudBoostAlert.className = 'boost-alert active stall';
+      } else if (p.nitroTimer > 0) {
+        hudBoostAlert.textContent = '🚀 NITRO BOOST!!';
+        hudBoostAlert.className = 'boost-alert active';
+      } else if (p.padBoostTimer > 0) {
+        hudBoostAlert.textContent = '⏩ 加速帶!';
+        hudBoostAlert.className = 'boost-alert active';
+      } else if (p.draftBoostTimer > 0) {
+        hudBoostAlert.textContent = '💨 尾流加速!';
+        hudBoostAlert.className = 'boost-alert active';
+      } else if (p.miniBoostTimer > 0) {
+        hudBoostAlert.textContent = rocketStartStatus === 'SUCCESS' ? '⚡ ROCKET START!!' : '⚡ MINI BOOST!';
+        hudBoostAlert.className = 'boost-alert active rocket';
+      } else {
+        hudBoostAlert.className = 'boost-alert';
+      }
+
+      if (p.inDraft && p.draftBoostTimer <= 0 && p.draftCharge > 0.05) {
+        hudDraftAlert.textContent = `💨 尾流 ${Math.round(p.draftCharge / DRAFT_CHARGE_TIME * 100)}%`;
+        hudDraftAlert.classList.add('active');
+      } else {
+        hudDraftAlert.classList.remove('active');
+      }
+
+      hudGaugeFill.style.width = `${Math.min(100, p.nitroGauge)}%`;
+
+      tankSlot0.className = p.nitroCount >= 1 ? 'tank-slot ready' : 'tank-slot';
+      tankSlot0.textContent = p.nitroCount >= 1 ? '🚀 READY!' : '🚀 EMPTY';
+
+      tankSlot1.className = p.nitroCount >= 2 ? 'tank-slot ready' : 'tank-slot';
+      tankSlot1.textContent = p.nitroCount >= 2 ? '🚀 READY!' : '🚀 EMPTY';
+
+      // 4. Debug HUD
+      if (debugHud.style.display === 'block') {
+        dbgSpeed.textContent = `${p.speed.toFixed(1)} u/s`;
+        dbgGrip.textContent = p.currentGrip.toFixed(2);
+        dbgLat.textContent = `${Math.abs(p.v_lateral).toFixed(2)} u/s`;
+        dbgDist.textContent = `${p.debugDist.toFixed(1)} / ${p.debugLimit.toFixed(1)}`;
+        if (p.debugDist >= p.debugLimit * 0.9) dbgDist.classList.add('alert');
+        else dbgDist.classList.remove('alert');
+
+        dbgDrifting.textContent = `${p.isDrifting} (dir:${p.driftDir})`;
+        dbgDriftAngle.textContent = `${p.driftAngleDeg}°`;
+        dbgGauge.textContent = `${Math.round(p.nitroGauge)} / 100 (tanks:${p.nitroCount})`;
+        dbgKartType.textContent = `${p.typeId} (W:${p.weight}x)`;
+      }
+    }
+
+    // ==========================================================
+    // 15. 主遊戲迴圈 (固定 60Hz 累加器與狀態插值)
+    // ==========================================================
+    let lastTime = performance.now();
+    let accumulator = 0;
+
+    function animate(now) {
+      requestAnimationFrame(animate);
+
+      let frameTime = (now - lastTime) / 1000;
+      lastTime = now;
+      if (frameTime > MAX_FRAME_TIME) frameTime = MAX_FRAME_TIME;
+      accumulator += frameTime;
+
+      if (net.inRace && raceState === 'COUNTDOWN') {
+        countdownTimer = (net.raceStartAt - net.now()) / 1000 + frameTime; // 依房主時鐘同步倒數
+      }
+
+      while (accumulator >= FIXED_DT) {
+        if (raceState === 'COUNTDOWN' || raceState === 'RACING' || raceState === 'FINISHED') {
+          karts.forEach(k => {
+            k.prevPos.copy(k.pos);
+            k.prevYaw = k.yaw;
+          });
+
+          updateSlipstream(FIXED_DT);
+
+          const pInput = (raceState === 'COUNTDOWN')
+            ? { throttle: false, brake: false, steer: 0, drift: false, nitro: false }
+            : readKeyboardInput(FIXED_DT);
+
+          karts.forEach(k => {
+            if (k.isRemote) { applyRemoteKart(k); return; } // 別人的車：用收到的資料
+            let input;
+            if (k.isPlayer) {
+              input = pInput;
+            } else {
+              input = (raceState === 'COUNTDOWN')
+                ? { throttle: false, brake: false, steer: 0, drift: false, nitro: false }
+                : getAIInput(k, FIXED_DT);
+            }
+            k.update(FIXED_DT, input);
+          });
+
+          handleKartCollisions();
+        }
+
+        accumulator -= FIXED_DT;
+      }
+
+      // 渲染插值
+      const alpha = accumulator / FIXED_DT;
+      karts.forEach(k => {
+        k.renderPos.copy(k.prevPos).lerp(k.pos, alpha);
+        k.renderYaw = lerpAngle(k.prevYaw, k.yaw, alpha);
+
+        const targetVisual = k.isDrifting ? (k.driftDir * 5 * Math.PI / 180) : 0;
+        k.visualDriftAngle += (targetVisual - k.visualDriftAngle) * (1 - Math.exp(-14 * frameTime));
+
+        // 上下坡車身俯仰
+        k.renderPitch += (Math.atan(k.slopeAlong) - k.renderPitch) * (1 - Math.exp(-10 * frameTime));
+
+        k.mesh.rotation.order = 'YXZ';
+        k.mesh.position.copy(k.renderPos);
+        k.mesh.rotation.y = k.renderYaw + k.visualDriftAngle;
+        k.mesh.rotation.x = -k.renderPitch;
+      });
+
+      particleSystem.update(frameTime);
+      padTexture.offset.y -= frameTime * 2.0; // 加速帶箭頭流動
+      netTick(frameTime);
+
+      if (raceState !== 'GARAGE') {
+        drawMinimap();
+      }
+
+      updateCamera(frameTime, playerKart);
+      updateHUD(frameTime);
+
+      renderer.render(scene, camera);
+    }
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // ==========================================================
+    // 多人連線（PeerJS）：房主開房 → 其他人輸入 4 碼房間碼加入
+    //   每台電腦只模擬自己的車，每秒傳 20 次狀態；別人的車延遲 100ms 用插值顯示
+    //   AI 由房主模擬並廣播；倒數依房主時鐘同步
+    // ==========================================================
+    const NET_PREFIX = 'mofish-kart-v1-';
+    const NET_SEND_INTERVAL = 0.05;
+    const NET_INTERP_DELAY = 100;
+    const MAX_RACERS = 6;
+    const ROOM_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+
+    const net = {
+      role: null,          // null | 'host' | 'client'
+      peer: null,
+      conns: new Map(),    // host: kartId -> conn；client: 'host' -> conn
+      code: '',
+      myId: '',
+      players: [],         // 房主維護：[{ id, name, car, color, stats }]
+      clockOffset: 0,      // 房主時間 = performance.now() + clockOffset
+      bestRtt: Infinity,
+      raceStartAt: 0,
+      inRace: false,
+      sendTimer: 0,
+      nextId: 1,
+      pingTimer: null,
+      lastSeen: new Map(),   // 房主：每位玩家最後一次收到資料的時間
+      lastHostSeen: 0,       // 玩家：最後一次收到房主資料的時間
+      now() { return performance.now() + this.clockOffset; }
+    };
+
+    const mpEls = {
+      panel: document.getElementById('mp-panel'),
+      name: document.getElementById('mpName'),
+      menu: document.getElementById('mpMenu'),
+      lobby: document.getElementById('mpLobby'),
+      code: document.getElementById('mpCode'),
+      codeShow: document.getElementById('mpCodeShow'),
+      players: document.getElementById('mpPlayers'),
+      status: document.getElementById('mpStatus'),
+      btnStart: document.getElementById('btnMpStart'),
+      btnLeave: document.getElementById('btnMpLeave'),
+      btnOpen: document.getElementById('btnOpenMp')
+    };
+
+    if (!gameData.playerName) gameData.playerName = '車手' + Math.floor(100 + Math.random() * 900);
+    mpEls.name.value = gameData.playerName;
+    mpEls.name.addEventListener('change', () => {
+      gameData.playerName = (mpEls.name.value || '').trim().slice(0, 10) || gameData.playerName;
+      mpEls.name.value = gameData.playerName;
+      saveGameData();
+      sendProfile();
+    });
+
+    function mpStatus(msg, isError = false) {
+      mpEls.status.textContent = msg;
+      mpEls.status.style.color = isError ? '#f87171' : '#94a3b8';
+    }
+    function peerOptions() { return window.KART_PEER_OPTIONS || { debug: 1 }; }
+    function myProfile() {
+      return { name: gameData.playerName, car: gameData.selectedCar, color: gameData.selectedColor,
+               stats: getKartEffectiveStats(gameData.selectedCar) };
+    }
+    function netSend(conn, msg) { try { if (conn && conn.open) conn.send(msg); } catch (e) { /* 忽略單次失敗 */ } }
+    function netBroadcast(msg, exceptId = null) {
+      net.conns.forEach((c, id) => { if (id !== exceptId) netSend(c, msg); });
+    }
+
+    // ---------- 開房 ----------
+    function hostRoom() {
+      if (typeof Peer === 'undefined') { mpStatus('連線元件載入失敗，請確認有網路', true); return; }
+      leaveRoom(true);
+      net.code = Array.from({ length: 4 }, () => ROOM_CHARS[Math.floor(Math.random() * ROOM_CHARS.length)]).join('');
+      mpStatus('建立房間中...');
+      const peer = new Peer(NET_PREFIX + net.code, peerOptions());
+      net.peer = peer;
+      peer.on('open', () => {
+        net.role = 'host';
+        net.myId = 'host';
+        net.clockOffset = 0;
+        net.players = [Object.assign({ id: 'host' }, myProfile())];
+        mpStatus('房間已建立，把房間碼給朋友');
+        renderLobby();
+      });
+      peer.on('connection', conn => {
+        conn.on('data', d => hostOnData(conn, d));
+        conn.on('close', () => hostRemove(conn.kartId));
+        conn.on('error', () => hostRemove(conn.kartId));
+      });
+      peer.on('error', err => {
+        if (err.type === 'unavailable-id') { hostRoom(); return; } // 房間碼撞到，換一個
+        mpStatus('連線錯誤：' + err.type, true);
+      });
+    }
+
+    function hostOnData(conn, d) {
+      if (!d || !d.t) return;
+      if (conn.kartId) net.lastSeen.set(conn.kartId, performance.now());
+      if (d.t === 'hello') {
+        if (net.inRace) { netSend(conn, { t: 'reject', reason: '比賽進行中，請等這場結束' }); return; }
+        if (net.players.length >= MAX_RACERS) { netSend(conn, { t: 'reject', reason: '房間已滿' }); return; }
+        const id = 'p' + (net.nextId++);
+        conn.kartId = id;
+        net.conns.set(id, conn);
+        net.lastSeen.set(id, performance.now());
+        net.players.push(Object.assign({ id }, d.profile));
+        netSend(conn, { t: 'welcome', id, track: SELECTED_TRACK_ID, code: net.code });
+        broadcastLobby();
+      } else if (d.t === 'ping') {
+        netSend(conn, { t: 'pong', c: d.c, h: performance.now() });
+      } else if (d.t === 'prof') {
+        const p = net.players.find(x => x.id === conn.kartId);
+        if (p) { Object.assign(p, d.profile); broadcastLobby(); }
+      } else if (d.t === 'st') {
+        receiveStates(d.s);
+        netBroadcast(d, conn.kartId); // 轉發給其他人
+      } else if (d.t === 'emo') {
+        showEmote(d.id, d.e);
+        netBroadcast(d, conn.kartId);
+      }
+    }
+
+    function hostRemove(id) {
+      if (!id || !net.conns.has(id)) return;
+      try { net.conns.get(id).close(); } catch (e) {}
+      net.conns.delete(id);
+      net.lastSeen.delete(id);
+      net.players = net.players.filter(p => p.id !== id);
+      removeKart(id);
+      netBroadcast({ t: 'left', id });
+      broadcastLobby();
+    }
+
+    function broadcastLobby() {
+      netBroadcast({ t: 'lobby', players: net.players.map(p => ({ id: p.id, name: p.name, car: p.car, color: p.color })) });
+      renderLobby();
+    }
+
+    // ---------- 加入 ----------
+    function joinRoom(code) {
+      if (typeof Peer === 'undefined') { mpStatus('連線元件載入失敗，請確認有網路', true); return; }
+      code = (code || '').trim().toUpperCase();
+      if (code.length !== 4) { mpStatus('房間碼是 4 個字', true); return; }
+      leaveRoom(true);
+      net.code = code;
+      mpStatus('連線到房間 ' + code + ' ...');
+      const peer = new Peer(undefined, peerOptions());
+      net.peer = peer;
+      peer.on('open', () => {
+        const conn = peer.connect(NET_PREFIX + code, { reliable: true });
+        conn.on('open', () => {
+          net.conns.set('host', conn);
+          netSend(conn, { t: 'hello', profile: myProfile() });
+        });
+        conn.on('data', d => clientOnData(d));
+        conn.on('close', () => hostLost());
+        conn.on('error', () => hostLost());
+      });
+      peer.on('error', err => {
+        if (err.type === 'peer-unavailable') mpStatus('找不到房間 ' + code, true);
+        else mpStatus('連線錯誤：' + err.type, true);
+      });
+    }
+
+    function clientOnData(d) {
+      if (!d || !d.t) return;
+      net.lastHostSeen = performance.now();
+      if (d.t === 'welcome') {
+        if (d.track !== SELECTED_TRACK_ID) {
+          // 房主用的是別張地圖：換過去並自動重新加入
+          location.href = location.pathname + '?track=' + d.track + '&join=' + d.code;
+          return;
+        }
+        net.role = 'client';
+        net.myId = d.id;
+        mpStatus('已加入房間，等待房主開始');
+        startClockSync();
+        renderLobby();
+      } else if (d.t === 'reject') {
+        mpStatus(d.reason, true);
+        leaveRoom(true);
+      } else if (d.t === 'pong') {
+        const now = performance.now();
+        const rtt = now - d.c;
+        if (rtt < net.bestRtt) {
+          net.bestRtt = rtt;
+          net.clockOffset = d.h + rtt / 2 - now;
+        }
+      } else if (d.t === 'lobby') {
+        net.players = d.players;
+        renderLobby();
+      } else if (d.t === 'start') {
+        beginNetRace(d.roster, d.startAt);
+      } else if (d.t === 'st') {
+        receiveStates(d.s);
+      } else if (d.t === 'left') {
+        removeKart(d.id);
+      } else if (d.t === 'emo') {
+        showEmote(d.id, d.e);
+      }
+    }
+
+    function startClockSync() {
+      clearInterval(net.pingTimer);
+      net.bestRtt = Infinity;
+      const ping = () => netSend(net.conns.get('host'), { t: 'ping', c: performance.now() });
+      for (let i = 0; i < 5; i++) setTimeout(ping, i * 150);
+      net.pingTimer = setInterval(ping, 2000);
+    }
+
+    function hostLost() {
+      if (net.role !== 'client') return;
+      mpStatus('房主已離線', true);
+      showToast('⚠️ 房主已離線，3 秒後回到單人模式');
+      setTimeout(() => { location.href = location.pathname; }, 3000);
+    }
+
+    function leaveRoom(silent = false) {
+      clearInterval(net.pingTimer);
+      net.conns.forEach(c => { try { c.close(); } catch (e) {} });
+      net.conns.clear();
+      if (net.peer) { try { net.peer.destroy(); } catch (e) {} }
+      const wasInRace = net.inRace || net.rosterBuilt;
+      Object.assign(net, { role: null, peer: null, myId: '', players: [], clockOffset: 0, bestRtt: Infinity, inRace: false });
+      if (!silent) mpStatus('已離開房間');
+      renderLobby();
+      if (wasInRace) location.href = location.pathname; // 比賽中離開：重載回單人
+    }
+
+    function sendProfile() {
+      if (net.role === 'client') netSend(net.conns.get('host'), { t: 'prof', profile: myProfile() });
+      if (net.role === 'host' && net.players[0]) { Object.assign(net.players[0], myProfile()); broadcastLobby(); }
+    }
+
+    // ---------- 大廳畫面 ----------
+    function renderLobby() {
+      const inRoom = !!net.role;
+      mpEls.menu.style.display = inRoom ? 'none' : 'block';
+      mpEls.lobby.style.display = inRoom ? 'block' : 'none';
+      mpEls.btnStart.style.display = net.role === 'host' ? 'inline-block' : 'none';
+      mpEls.btnLeave.style.display = inRoom ? 'inline-block' : 'none';
+      mpEls.codeShow.textContent = net.code;
+      const carName = id => (KART_TYPES[id] && KART_TYPES[id].name) || id;
+      mpEls.players.innerHTML = net.players.map(p =>
+        `<div class="mp-player"><span class="mp-dot" style="background:#${Number(p.color).toString(16).padStart(6, '0')}"></span>` +
+        `${escapeHtml(p.name)}${p.id === 'host' ? ' 👑' : ''}${p.id === net.myId ? '（你）' : ''}<span class="mp-car">${carName(p.car)}</span></div>`
+      ).join('') + (inRoom ? `<div class="mp-fill">空位由 AI 補滿到 ${MAX_RACERS} 台・賽道：${TRACK_DEF.name}</div>` : '');
+      mpEls.btnOpen.textContent = inRoom ? `🌐 房間 ${net.code}（${net.players.length} 人）` : '🌐 多人連線';
+      const startBtn = document.getElementById('btnStartRaceFromGarage');
+      startBtn.textContent = net.role === 'client' ? '⏳ 等待房主開始' : (net.role === 'host' ? '🏁 開始連線比賽' : '🏁 開始比賽 (START RACE)');
+    }
+    function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+
+    // ---------- 開賽 ----------
+    function netStartRace() {
+      if (net.role !== 'host') return;
+      sendProfile();
+      const aiNames = kartConfigs.filter(c => !c.isPlayer).map(c => c.name);
+      const aiLanes = [-3.2, 3.2, -1.6, 1.6, -2.0, 2.0];
+      const roster = net.players.map((p, i) => ({ id: p.id, name: p.name, car: p.car, color: p.color, stats: p.stats, isAI: false, lane: 0 }));
+      let ai = 0;
+      while (roster.length < MAX_RACERS) {
+        const type = availableTypes[ai % availableTypes.length];
+        roster.push({ id: 'ai' + (ai + 1), name: aiNames[ai % aiNames.length], car: type,
+                      color: KART_COLORS[(ai + 1) % KART_COLORS.length].hex, stats: getKartEffectiveStats(type), isAI: true, lane: aiLanes[ai] });
+        ai++;
+      }
+      // 起跑位置：AI 在前排、真人在後排
+      const order = [...roster.filter(r => r.isAI), ...roster.filter(r => !r.isAI)];
+      order.forEach((r, slot) => { r.slot = slot; });
+      const startAt = net.now() + 4600; // 4.6 秒後開跑（含 3 秒倒數）
+      netBroadcast({ t: 'start', roster: order, startAt });
+      beginNetRace(order, startAt);
+    }
+
+    function removeKart(id) {
+      const idx = karts.findIndex(k => k.id === id);
+      if (idx < 0 || karts[idx] === playerKart) return;
+      scene.remove(karts[idx].mesh);
+      karts.splice(idx, 1);
+      showToast('👋 有玩家離開了');
+    }
+
+    function beginNetRace(roster, startAt) {
+      karts.forEach(k => scene.remove(k.mesh));
+      karts.length = 0;
+      roster.forEach(r => {
+        const row = Math.floor(r.slot / 2), col = (r.slot % 2 === 0) ? -1 : 1;
+        const local = r.id === net.myId;
+        const k = new Kart({
+          id: r.id, name: r.name, isPlayer: local, typeId: r.car, color: r.color,
+          stats: local ? getKartEffectiveStats(gameData.selectedCar) : r.stats,
+          spawnPos: calcGridPos(row, col), spawnYaw: spawnYaw, laneOffset: r.lane || 0
+        });
+        k.isRemote = !local && !(net.role === 'host' && r.isAI);
+        k.netBuffer = [];
+        if (!r.isAI && !local) attachNameTag(k, r.name);
+        if (local) karts.unshift(k); else karts.push(k);
+      });
+      playerKart = karts[0];
+      net.raceStartAt = startAt;
+      net.inRace = true;
+      net.rosterBuilt = true;
+      mpEls.panel.classList.add('hidden');
+      document.getElementById('garage-screen').classList.add('hidden');
+      document.getElementById('settlement-modal').classList.remove('active');
+      raceState = 'COUNTDOWN';
+      countdownTimer = (startAt - net.now()) / 1000;
+      rocketStartStatus = 'NONE';
+      playerStallTimer = 0;
+      smoothedPlayerSteer = 0;
+      karts.forEach(k => k.reset());
+      initCamera(playerKart);
+    }
+
+    // ---------- 狀態同步 ----------
+    function packKart(k) {
+      const f = (k.isDrifting ? 1 : 0) | (k.nitroTimer > 0 ? 2 : 0) | (k.padBoostTimer > 0 ? 4 : 0) |
+                (k.draftBoostTimer > 0 ? 8 : 0) | (k.miniBoostTimer > 0 ? 16 : 0) | (k.isFinished ? 32 : 0);
+      const r2 = v => Math.round(v * 100) / 100;
+      return { id: k.id, t: Math.round(net.now()), x: r2(k.pos.x), y: r2(k.pos.y), z: r2(k.pos.z), yaw: Math.round(k.yaw * 1000) / 1000,
+               vx: r2(k.velocity.x), vz: r2(k.velocity.z), f, dd: k.driftDir, lap: k.currentLap, pr: Math.round(k.progress * 10) / 10,
+               ft: r2(k.finishTime), li: k.lastTrackIndex };
+    }
+    function netTick(dt) {
+      if (!net.inRace) return;
+      net.sendTimer += dt;
+      if (net.sendTimer < NET_SEND_INTERVAL) return;
+      net.sendTimer = 0;
+      const mine = karts.filter(k => !k.isRemote).map(packKart); // 自己 +（房主的話）AI
+      const msg = { t: 'st', s: mine };
+      if (net.role === 'host') netBroadcast(msg);
+      else netSend(net.conns.get('host'), msg);
+    }
+    function receiveStates(list) {
+      if (!net.inRace || !Array.isArray(list)) return;
+      for (const s of list) {
+        const k = karts.find(x => x.id === s.id);
+        if (!k || !k.isRemote) continue;
+        const buf = k.netBuffer;
+        if (buf.length && s.t <= buf[buf.length - 1].t) continue;
+        buf.push(s);
+        if (buf.length > 40) buf.shift();
+        k.currentLap = s.lap;
+        k.progress = s.pr;
+        k.isFinished = !!(s.f & 32);
+        k.finishTime = s.ft;
+        if (s.li !== undefined && k.netBuffer.length === 1) k.lastTrackIndex = s.li;
+      }
+    }
+    function applyRemoteKart(k) {
+      const buf = k.netBuffer;
+      if (!buf || buf.length === 0) return;
+      const target = net.now() - NET_INTERP_DELAY;
+      let s;
+      if (target <= buf[0].t) {
+        s = buf[0];
+        k.pos.set(s.x, s.y, s.z); k.yaw = s.yaw;
+      } else if (target >= buf[buf.length - 1].t) {
+        s = buf[buf.length - 1];
+        const ahead = Math.min(target - s.t, 200) / 1000; // 最多外推 0.2 秒
+        k.pos.set(s.x + s.vx * ahead, s.y, s.z + s.vz * ahead); k.yaw = s.yaw;
+      } else {
+        let i = buf.length - 2;
+        while (i > 0 && buf[i].t > target) i--;
+        const a = buf[i], b = buf[i + 1];
+        const u = (target - a.t) / Math.max(1, b.t - a.t);
+        k.pos.set(a.x + (b.x - a.x) * u, a.y + (b.y - a.y) * u, a.z + (b.z - a.z) * u);
+        k.yaw = lerpAngle(a.yaw, b.yaw, u);
+        s = u < 0.5 ? a : b;
+      }
+      k.velocity.set(s.vx, 0, s.vz);
+      k.speed = Math.hypot(s.vx, s.vz);
+      k.isDrifting = !!(s.f & 1);
+      k.driftDir = s.dd;
+      k.nitroTimer = (s.f & 2) ? 1 : 0;
+      k.padBoostTimer = (s.f & 4) ? 1 : 0;
+      k.draftBoostTimer = (s.f & 8) ? 1 : 0;
+      k.miniBoostTimer = (s.f & 16) ? 1 : 0;
+      const near = findNearestCenter(k.pos, k.lastTrackIndex);
+      k.lastTrackIndex = near.index;
+      const tan = trackTangents[near.index];
+      k.slopeAlong = trackSlopes[near.index] * ((Math.sin(k.yaw) * tan.x + Math.cos(k.yaw) * tan.z) >= 0 ? 1 : -1);
+      k.emitParticles();
+    }
+
+    // ---------- 名牌、表情、提示 ----------
+    function makeTextSprite(text, fontPx, color, bg) {
+      const c = document.createElement('canvas');
+      const ctx = c.getContext('2d');
+      ctx.font = `bold ${fontPx}px sans-serif`;
+      const w = Math.ceil(ctx.measureText(text).width) + 24;
+      c.width = w; c.height = fontPx + 20;
+      ctx.font = `bold ${fontPx}px sans-serif`;
+      if (bg) { ctx.fillStyle = bg; ctx.fillRect(0, 0, c.width, c.height); }
+      ctx.fillStyle = color;
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, 12, c.height / 2);
+      const tex = new THREE.CanvasTexture(c);
+      const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, depthTest: false, transparent: true }));
+      sp.scale.set(c.width / c.height * 0.9, 0.9, 1);
+      sp.renderOrder = 10;
+      return sp;
+    }
+    function attachNameTag(k, name) {
+      const sp = makeTextSprite(name, 36, '#ffffff', 'rgba(15,23,42,0.65)');
+      sp.position.set(0, 2.6, 0);
+      k.mesh.add(sp);
+    }
+    const EMOTES = { Digit1: '😂', Digit2: '😡', Digit3: '👍', Digit4: '💨' };
+    function showEmote(id, emoji) {
+      const k = karts.find(x => x.id === id);
+      if (!k) return;
+      if (k.emoteSprite) k.mesh.remove(k.emoteSprite);
+      const sp = makeTextSprite(emoji, 64, '#ffffff', null);
+      sp.scale.multiplyScalar(2.2);
+      sp.position.set(0, 4.2, 0);
+      k.mesh.add(sp);
+      k.emoteSprite = sp;
+      clearTimeout(k.emoteTimeout);
+      k.emoteTimeout = setTimeout(() => { if (k.emoteSprite === sp) { k.mesh.remove(sp); k.emoteSprite = null; } }, 2200);
+    }
+    function sendEmote(code) {
+      if (!EMOTES[code] || raceState === 'GARAGE') return;
+      showEmote(playerKart.id, EMOTES[code]);
+      const msg = { t: 'emo', id: playerKart.id, e: EMOTES[code] };
+      if (net.role === 'host') netBroadcast(msg);
+      else if (net.role === 'client') netSend(net.conns.get('host'), msg);
+    }
+    let toastTimer = null;
+    function showToast(msg) {
+      const el = document.getElementById('mpToast');
+      el.textContent = msg;
+      el.classList.add('active');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove('active'), 2500);
+    }
+
+    // ---------- 按鈕 ----------
+    mpEls.btnOpen.addEventListener('click', () => { mpEls.panel.classList.remove('hidden'); renderLobby(); });
+    document.getElementById('btnMpClose').addEventListener('click', () => mpEls.panel.classList.add('hidden'));
+    document.getElementById('btnMpHost').addEventListener('click', hostRoom);
+    document.getElementById('btnMpJoin').addEventListener('click', () => joinRoom(mpEls.code.value));
+    mpEls.code.addEventListener('keydown', e => { if (e.key === 'Enter') joinRoom(mpEls.code.value); e.stopPropagation(); });
+    mpEls.name.addEventListener('keydown', e => e.stopPropagation());
+    mpEls.btnStart.addEventListener('click', netStartRace);
+    mpEls.btnLeave.addEventListener('click', () => leaveRoom(false));
+    // 心跳檢查：超過 5 秒沒收到資料就當作斷線（對方關機、斷網時 WebRTC 很久才會回報）
+    setInterval(() => {
+      const now = performance.now();
+      if (net.role === 'host') {
+        net.lastSeen.forEach((t, id) => { if (now - t > 5000) { net.lastSeen.delete(id); hostRemove(id); } });
+      } else if (net.role === 'client' && net.lastHostSeen && now - net.lastHostSeen > 6000) {
+        hostLost();
+      }
+    }, 1000);
+    window.addEventListener('beforeunload', () => { if (net.peer) try { net.peer.destroy(); } catch (e) {} });
+
+    renderLobby();
+    // 網址帶 ?join=XXXX：自動加入（換地圖後重新加入用）
+    if (urlParams.get('join')) {
+      mpEls.panel.classList.remove('hidden');
+      setTimeout(() => joinRoom(urlParams.get('join')), 300);
+    }
+
+
+    // AI 難度：調整 AI 的極速倍率
+    const AI_LEVELS = [
+      { name: '簡單', min: 0.86, max: 0.91 },
+      { name: '普通', min: 0.92, max: 0.97 },
+      { name: '困難', min: 0.97, max: 1.00 }
+    ];
+    function applyAiLevel() {
+      const lv = AI_LEVELS[gameData.aiLevel] || AI_LEVELS[1];
+      karts.forEach(k => {
+        if (k.isPlayer || k.isRemote) return;
+        k.baseAiSpeedMult = lv.min + Math.random() * (lv.max - lv.min);
+        k.aiSpeedMult = k.baseAiSpeedMult;
+      });
+      const btn = document.getElementById('btnAiLevel');
+      btn.innerHTML = `<div class="t-name">🤖 AI：${lv.name}</div><div class="t-desc">點一下切換難度</div>`;
+    }
+    document.getElementById('btnAiLevel').addEventListener('click', () => {
+      gameData.aiLevel = ((gameData.aiLevel ?? 1) + 1) % AI_LEVELS.length;
+      saveGameData();
+      applyAiLevel();
+    });
+    applyAiLevel();
+
+    // 挑戰目標：用一台看不見的 AI 照最佳行車線跑一圈（不用氮氣），算出參考單圈
+    let ghostLapTime = 0;
+    function computeGhostLap() {
+      const savedState = raceState;
+      raceState = 'RACING';
+      const g = new Kart({ id: 'ghost', name: 'ghost', isPlayer: false, typeId: 'balanced', color: 0xffffff,
+                           stats: KART_TYPES_BASE_STATS(), spawnPos: calcGridPos(0, -1), spawnYaw: spawnYaw, laneOffset: 0 });
+      scene.remove(g.mesh);
+      g.isGhost = true; g.aiSkill = 1.0; g.baseLaneOffset = 0; g.currentLaneOffset = 0;
+      g.emitParticles = () => {};
+      for (let step = 0; step < 60 * 200 && g.lapTimes.length < 3; step++) {
+        g.baseAiSpeedMult = 1; g.aiSpeedMult = 1; g.nitroCount = 0;
+        g.prevPos.copy(g.pos); g.prevYaw = g.yaw;
+        g.update(FIXED_DT, getAIInput(g, FIXED_DT));
+      }
+      raceState = savedState;
+      ghostLapTime = g.lapTimes.length >= 3 ? Math.min(g.lapTimes[1], g.lapTimes[2]) : 0;
+      document.getElementById('hudTargetLap').textContent = ghostLapTime ? `🧠 AI 最佳線: ${formatTime(ghostLapTime)}` : '';
+    }
+    function KART_TYPES_BASE_STATS() {
+      return getKartEffectiveStats('balanced', { engine: 0, tire: 0, nitro: 0, drift: 0 });
+    }
+    computeGhostLap();
+
+    // 初始進入車庫介面
+    openGarage();
+
+    // 啟動主迴圈
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>
