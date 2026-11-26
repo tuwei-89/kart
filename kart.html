@@ -681,7 +681,10 @@
     .mp-badge.wait { background: rgba(245, 158, 11, 0.18); color: #fbbf24; }
     .mp-badge.host { background: rgba(250, 204, 21, 0.18); color: #facc15; }
     .mp-card button.mp-kick { background: #7f1d1d; padding: 2px 8px; font-size: 11px; border-radius: 6px; white-space: nowrap; flex: 0 0 auto; }
-    .mp-teams .mp-car { display: none; }   /* 團體賽欄位比較窄：不顯示車種 */
+    .mp-teams .mp-car { max-width: 92px; overflow: hidden; text-overflow: ellipsis; }   /* 團體賽欄位比較窄 */
+    .mp-car.r-mythic { text-shadow: 0 0 8px rgba(239, 68, 68, 0.8); }
+    .mp-car.r-legendary { text-shadow: 0 0 10px rgba(251, 191, 36, 0.9); animation: mpShine 1.6s ease-in-out infinite; }
+    @keyframes mpShine { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.5); } }
     .mp-teams .mp-badge { margin-left: auto; }
     .mp-card button.mp-swap { width: 100%; margin-top: 8px; padding: 7px; font-size: 13px; }
     .mp-fill { color: #64748b; font-size: 12px; margin-top: 8px; }
@@ -937,6 +940,8 @@
     .info-panel .upgrade-dot { width: 10px; height: 10px; }
     .info-panel .btn-upgrade { padding: 6px 10px; }
     .up-locked { color: #64748b; font-size: 12px; padding: 6px 0; }
+    .btn-dis { flex: 1; background: #1e293b; color: #fbbf24; border: 1px solid #92400e; border-radius: 10px; padding: 7px 8px; font-weight: 800; font-size: 12px; cursor: pointer; }
+    .btn-dis:hover { background: #292524; border-color: #fbbf24; }
     .garage-track-row { margin-bottom: 0; gap: 8px; }
     .garage-track-row .track-card { min-width: 0; padding: 5px 10px; }
     .garage-track-row .track-card .t-name { font-size: 13px; }
@@ -1003,6 +1008,19 @@
     .g-res .rnew { display: inline-block; background: #ef4444; color: #fff; font-size: 14px; padding: 2px 8px; border-radius: 8px; margin-left: 8px; vertical-align: middle; }
     .g-res .rbtns { margin-top: auto; display: flex; gap: 12px; pointer-events: auto; }
     @keyframes gPop { 0% { transform: scale(0.3); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    .g-ten { position: absolute; inset: 0; display: none; z-index: 7;
+      background: radial-gradient(ellipse 60% 45% at 50% 88%, #334155 0%, #1e293b 30%, #0b1020 65%, #02040a 100%); }
+    .g-ten.on { display: block; }
+    #gTenCanvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+    .g-ten-msg { position: absolute; left: 0; right: 0; top: 70px; text-align: center; font-size: 30px; font-weight: 900; color: #e2e8f0; text-shadow: 0 2px 12px #000; pointer-events: none; }
+    .g-ten-res { position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 16px; background: rgba(2, 6, 23, 0.88); }
+    .g-ten-res.on { display: flex; }
+    .g-ten-grid { display: grid; grid-template-columns: repeat(5, 140px); gap: 12px; }
+    .g-ten-grid .g-card { animation: gPop 0.45s cubic-bezier(.2,1.6,.4,1) both; position: relative; }
+    .g-ten-grid .g-card.best { box-shadow: 0 0 34px var(--rc), inset 0 -30px 40px -20px var(--rc); }
+    .g-ten-grid .rnew { position: absolute; top: 6px; right: 6px; background: #ef4444; color: #fff; font-size: 11px; font-weight: 900; padding: 1px 6px; border-radius: 6px; }
+    .g-ten-title { font-size: 34px; font-weight: 900; text-shadow: 0 0 20px var(--rc); color: var(--rc); }
+    .g-skip { position: absolute; right: 24px; bottom: 24px; z-index: 2; }
     #gFx { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 95; }
     /* 合成 */
     .m-tabs { display: flex; gap: 8px; margin: 12px 0 8px; }
@@ -1067,6 +1085,10 @@
     .rec-table .rc { display: block; color: #64748b; font-size: 11px; font-weight: 700; }
     .rec-table .none { color: #475569; }
     #modalRecord { font-weight: 900; color: #fbbf24; margin: -4px 0 8px; font-size: 15px; }
+    .sv-h { font-weight: 900; margin: 14px 0 6px; color: #e2e8f0; }
+    .sv-ta { width: 100%; box-sizing: border-box; height: 74px; background: #0b1220; color: #a5f3fc; border: 1px solid #334155; border-radius: 10px; padding: 8px; font-family: monospace; font-size: 11px; resize: none; word-break: break-all; }
+    .sv-row { display: flex; gap: 10px; align-items: center; margin-top: 8px; }
+    .sv-info { color: #94a3b8; font-size: 12px; }
     #uiConfirm { position: absolute; inset: 0; z-index: 120; background: rgba(2, 6, 23, 0.7); display: flex; align-items: center; justify-content: center; }
     #uiConfirm.hidden { display: none; }
     #uiConfirm .box { width: 440px; background: #0f172a; border: 2px solid #fbbf24; border-radius: 16px; padding: 20px 24px; color: #e2e8f0; }
@@ -1222,6 +1244,7 @@
         <button class="gh-btn" id="btnOpenRecords">🏆 賽道紀錄</button>
         <button class="gh-btn" id="btnOpenDaily">📅 連續登入 <b id="ghStreak">0/7</b></button>
         <button class="gh-btn" id="btnFxQuality">✨ 特效：高</button>
+        <button class="gh-btn" id="btnSaveBackup">💾 存檔</button>
         <div class="garage-coins">
           <span>🪙</span>
           <span id="garageCoinAmount">200</span>
@@ -1277,10 +1300,18 @@
     <div class="g-controls">
       <button class="g-btn gold" id="gBuy">🪙 500 金幣買 1 箱</button>
       <button class="g-btn green" id="gOpen" style="font-size:20px;padding:14px 40px">開 1 箱</button>
+      <button class="g-btn" id="gOpen10" style="font-size:20px;padding:14px 32px;background:linear-gradient(135deg,#7c3aed,#4f46e5)">開 10 箱</button>
     </div>
     <div class="g-note">每一箱都是獨立抽選，沒有保底。同一台車可以重複擁有。</div>
     <div class="g-res" id="gRes"></div>
     <div class="g-flash" id="gFlash"></div>
+    <!-- 10 連抽：拋硬幣、落在水溝蓋上 -->
+    <div class="g-ten" id="gTen">
+      <canvas id="gTenCanvas"></canvas>
+      <div class="g-ten-msg" id="gTenMsg"></div>
+      <div class="g-ten-res" id="gTenRes"></div>
+      <button class="g-btn gray g-skip" id="gSkip">跳過 ⏭</button>
+    </div>
   </div>
 
   <!-- 合成 -->
@@ -1328,6 +1359,21 @@
       <div class="d-sub">「練習賽」是只有自己一台車；「比賽」是有對手的比賽（AI 或連線，個人賽、團體賽都算）。單圈取最快的一圈，總時間要跑完 3 圈才算。</div>
       <table class="rec-table" id="recTable"></table>
       <div style="margin-top:16px"><button class="g-btn" id="recClose">關閉</button></div>
+    </div>
+  </div>
+
+  <!-- 存檔備份 -->
+  <div id="save-panel" class="g-overlay hidden">
+    <div class="d-card" style="width:760px; text-align:left">
+      <div class="g-title" style="margin:0; color:#38bdf8; text-align:center">💾 存檔備份</div>
+      <div class="d-sub" style="text-align:center">存檔放在這個瀏覽器裡。清除瀏覽器資料、換電腦或換瀏覽器都會不見，記得定期備份。</div>
+      <div class="sv-h">📤 匯出（把這串文字或檔案存好）</div>
+      <textarea id="svOut" class="sv-ta" readonly></textarea>
+      <div class="sv-row"><button class="g-btn" id="svCopy">📋 複製</button><button class="g-btn" id="svDownload">⬇️ 下載成檔案</button><span id="svInfo" class="sv-info"></span></div>
+      <div class="sv-h">📥 匯入（會覆蓋目前這個瀏覽器的存檔）</div>
+      <textarea id="svIn" class="sv-ta" placeholder="貼上備份文字，或選擇備份檔案"></textarea>
+      <div class="sv-row"><button class="g-btn gray" id="svFile">📂 選擇檔案</button><input type="file" id="svFileInput" accept=".txt,text/plain" style="display:none"><button class="g-btn green" id="svImport">匯入</button></div>
+      <div style="text-align:center; margin-top:14px"><button class="g-btn gray" id="svClose">關閉</button></div>
     </div>
   </div>
 
@@ -1627,7 +1673,7 @@
       const cat = CAR_CATALOG[typeId];
       let base = (cat && !cat.starter)
         ? { topSpeed: statMult(cat.stats.speed), accel: statMult(cat.stats.accel), steer: statMult(cat.stats.handling),
-            weight: 1.0, driftTurn: statMult(cat.stats.drift), nitroCharge: statMult(cat.stats.drift) }
+            weight: cat.weight || 1.0, driftTurn: statMult(cat.stats.drift), nitroCharge: statMult(cat.stats.drift) }
         : (KART_TYPES[typeId] || KART_TYPES.balanced);
       if (forPlayer && (!cat || cat.starter)) {
         const n = STARTER_NERF;
@@ -3082,6 +3128,63 @@
         const m = CM.add(g, geo, mat, 0, y, 0);
         m.scale.set(sx, sy, 1); return m;
       },
+      // 平滑曲線：給幾個 [z, 值] 控制點，回傳 z → 值（Catmull-Rom）
+      spline(pts) {
+        return z => {
+          if (z <= pts[0][0]) return pts[0][1];
+          if (z >= pts[pts.length - 1][0]) return pts[pts.length - 1][1];
+          let i = 0;
+          while (i < pts.length - 2 && z > pts[i + 1][0]) i++;
+          const p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)];
+          const t = (z - p1[0]) / (p2[0] - p1[0]);
+          const m1 = (p2[1] - p0[1]) / Math.max(1e-6, p2[0] - p0[0]) * (p2[0] - p1[0]);
+          const m2 = (p3[1] - p1[1]) / Math.max(1e-6, p3[0] - p1[0]) * (p2[0] - p1[0]);
+          const t2 = t * t, t3 = t2 * t;
+          return (2 * t3 - 3 * t2 + 1) * p1[1] + (t3 - 2 * t2 + t) * m1 + (-2 * t3 + 3 * t2) * p2[1] + (t3 - t2) * m2;
+        };
+      },
+      // 放樣車身：沿著前後方向取很多斷面，每個斷面是「圓角方形」（superellipse），寬、上緣、下緣、圓角都隨位置變化
+      // o: { z0, z1, w(z) 半寬, top(z), bot(z), exp(z) 圓角（2 = 橢圓，越大越方）, x(z) 中心左右偏移, n 斷面數, m 每圈點數, half: 'bottom' 只做下半圈 }
+      loft(g, mat, o) {
+        const N = o.n || 56, M = o.m || 36;
+        const pos = [], idx = [];
+        const expF = typeof o.exp === 'function' ? o.exp : () => (o.exp || 2.6);
+        const xF = o.x || (() => 0);
+        const ring = (z) => {
+          const W = Math.max(0.005, o.w(z)), T = o.top(z), B = o.bot(z), e = expF(z), cx = xF(z);
+          const cy = (T + B) / 2, H = Math.max(0.005, (T - B) / 2), pw = 2 / e;
+          const out = [];
+          for (let j = 0; j < M; j++) {
+            const a = j / M * Math.PI * 2, c = Math.cos(a), s = Math.sin(a);
+            out.push([cx + W * Math.sign(c) * Math.pow(Math.abs(c), pw), cy + H * Math.sign(s) * Math.pow(Math.abs(s), pw), z]);
+          }
+          return out;
+        };
+        for (let i = 0; i <= N; i++) {
+          const u = i / N, z = o.z0 + (o.z1 - o.z0) * (o.ease === false ? u : 0.5 - 0.5 * Math.cos(Math.PI * u));
+          ring(z).forEach(p => pos.push(p[0], p[1], p[2]));
+        }
+        for (let i = 0; i < N; i++) for (let j = 0; j < M; j++) {
+          const a = i * M + j, b = i * M + (j + 1) % M, c2 = (i + 1) * M + j, d = (i + 1) * M + (j + 1) % M;
+          idx.push(a, b, c2, b, d, c2); // 逆時針：法線朝外
+        }
+        // 兩端封口（另外一組頂點，法線才不會被拉歪）
+        [[0, o.z0, -1], [N, o.z1, 1]].forEach(([ri, z, dir]) => {
+          const base = pos.length / 3, center = base + M;
+          let cx = 0, cy = 0;
+          for (let j = 0; j < M; j++) { const k = (ri * M + j) * 3; pos.push(pos[k], pos[k + 1], pos[k + 2]); cx += pos[k]; cy += pos[k + 1]; }
+          pos.push(cx / M, cy / M, z);
+          for (let j = 0; j < M; j++) { const a = base + j, b = base + (j + 1) % M; if (dir > 0) idx.push(a, b, center); else idx.push(b, a, center); }
+        });
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+        geo.setIndex(idx);
+        geo.computeVertexNormals();
+        const m = new THREE.Mesh(geo, mat);
+        m.castShadow = true;
+        g.add(m);
+        return m;
+      },
       // 兩點之間的細長條（發光線條用）
       seg(g, a, b, t, mat) {
         const A = new THREE.Vector3(a[0], a[1], a[2]), B = new THREE.Vector3(b[0], b[1], b[2]);
@@ -3095,7 +3198,8 @@
         const tireMat = CM.std(o.tire || 0x111827, 0.9, 0);
         const rimMat = o.rimMat || CM.std(o.rim || 0xe2e8f0, 0.2, 0.8);
         const tg = new THREE.CylinderGeometry(r, r, w, 16), rg = new THREE.CylinderGeometry(r * 0.6, r * 0.6, w + 0.02, 12);
-        [[x, zf], [-x, zf], [x, zr], [-x, zr]].forEach(([px, pz]) => {
+        const zs = o.zs || [zf, zr];
+        zs.flatMap(z => [[x, z], [-x, z]]).forEach(([px, pz]) => {
           const wg = new THREE.Group();
           const t = new THREE.Mesh(tg, tireMat); t.rotation.z = Math.PI / 2; t.castShadow = true;
           const rim = new THREE.Mesh(rg, rimMat); rim.rotation.z = Math.PI / 2;
@@ -3557,6 +3661,222 @@
       driftFx: { kind: 'aurora' }
     });
 
+
+    // ----- 傳說：重型「磐石要塞」——車身特大、超重，專門卡人 -----
+    defCar('iron_bastion', '磐石要塞', 'legendary', 25, 22, 24, 25, '移動的城堡。巨大裝甲車身、城垛車頂、前方破城衝角、六顆巨輪，車尾的熔爐核心一直在燒。車身特大又超重，撞上誰誰就讓路。', (g, G) => {
+      const armor = CM.std(0x3a3f47, 0.55, 0.55, { emissive: 0x3a1200, emissiveIntensity: 0.4, envMapIntensity: 0.5 });
+      const dark = CM.std(0x15171c, 0.5, 0.8);
+      const gold = CM.std(0xb8862b, 0.25, 1.0);
+      const seam = G(0xff7a1a), core = G(0xffa43a, 'steady'), visor = G(0xffb347);
+      // 主車身（寬 2.5、長 4.2）
+      CM.side(g, [[-2.05, 0.5], [1.7, 0.5], [2.1, 0.68], [1.85, 1.2], [0.9, 1.5], [-1.25, 1.6], [-2.1, 1.35]], 2.5, armor, 0, 0.06);
+      // 破城衝角（金邊楔形）＋尖刺
+      CM.plan(g, [[-1.5, 1.6], [1.5, 1.6], [1.25, 2.3], [0, 2.75], [-1.25, 2.3]], 0.6, 0.22, gold, 0.05);
+      CM.plan(g, [[-1.3, 1.75], [1.3, 1.75], [1.05, 2.3], [0, 2.6], [-1.05, 2.3]], 0.16, 0.83, dark, 0.03);
+      [-0.8, 0, 0.8].forEach(x => CM.cone(g, 0.12, 0.45, 6, gold, x, 0.55, 2.62 - Math.abs(x) * 0.35, Math.PI / 2, 0, 0));
+      [-1, 1].forEach(s => CM.seg(g, [s * 1.5, 0.82, 1.6], [0, 0.82, 2.75], 0.05, seam));
+      // 側面裝甲裙＋發光接縫
+      [-1, 1].forEach(s => {
+        CM.box(g, 0.22, 0.55, 3.7, armor, s * 1.36, 1.05, -0.15);
+        CM.seg(g, [s * 1.48, 0.86, 1.6], [s * 1.48, 0.86, -1.95], 0.045, seam);
+        CM.seg(g, [s * 1.48, 1.26, 1.4], [s * 1.48, 1.26, -1.95], 0.045, seam);
+        for (let i = 0; i < 4; i++) CM.box(g, 0.08, 0.36, 0.08, gold, s * 1.49, 1.06, 1.2 - i * 0.95);
+      });
+      // 指揮塔＋發光觀察窗
+      CM.box(g, 1.7, 0.6, 1.5, dark, 0, 1.9, -0.35);
+      CM.box(g, 1.4, 0.12, 0.05, visor, 0, 1.98, 0.41);
+      // 城垛（車頂一圈小方塊，城堡的感覺）
+      for (let i = 0; i < 4; i++) [-1, 1].forEach(s => CM.box(g, 0.24, 0.26, 0.24, armor, s * 0.73, 2.32, 0.26 - i * 0.42));
+      [-0.25, 0.25].forEach(x => { CM.box(g, 0.24, 0.26, 0.24, armor, x, 2.32, 0.26); CM.box(g, 0.24, 0.26, 0.24, armor, x, 2.32, -0.96); });
+      // 車尾熔爐核心（籠子會轉）
+      const coreBall = CM.ball(g, 0.42, core, 0, 1.85, -1.6);
+      const cage = new THREE.Group();
+      [0, Math.PI / 2, Math.PI / 4].forEach(a => { const ring = CM.add(cage, new THREE.TorusGeometry(0.55, 0.05, 8, 24), gold, 0, 0, 0, 0, a, 0); ring.castShadow = false; });
+      cage.position.set(0, 1.85, -1.6); g.add(cage);
+      // 雙煙囪
+      [-1, 1].forEach(s => {
+        CM.cyl(g, 0.16, 0.2, 0.95, 10, dark, s * 0.95, 2.05, -1.65);
+        CM.cyl(g, 0.17, 0.17, 0.08, 10, seam, s * 0.95, 2.55, -1.65);
+      });
+      // 六顆巨輪
+      CM.wheels(g, { r: 0.55, w: 0.46, x: 1.38, zs: [1.3, 0, -1.35], rimMat: G(0xff8c1a), tire: 0x0b0b0b });
+      return (t, k, st) => {
+        const s = 1 + 0.08 * Math.sin(t * 3) + st.pulse * 0.5 + (k.nitroTimer > 0 ? 0.25 : 0);
+        coreBall.scale.setScalar(s);
+        cage.rotation.y = t * (k.nitroTimer > 0 ? 4 : 0.8);
+        cage.rotation.x = t * 0.5;
+        armor.emissiveIntensity = 0.35 + 0.15 * Math.sin(t * 1.6) + st.pulse * 2 + (k.nitroTimer > 0 ? 0.6 : 0);
+      };
+    }, {
+      legend: true, tagIcon: '🏰', smoke: 0x57534e, nitro: 0xff7a1a, glow: 0xff6a00, marks: 0xff6a00, shock: 0xff8c1a,
+      trail: { colors: [0xffb347, 0x7f1d1d], minSpeed: 2, life: 0.55, width: 0.95, bySpeed: true },
+      driftFx: { kind: 'spark', color: 0xffa94d, rate: 1 }, driveFx: { kind: 'ember' },
+      wheelX: 1.38, wheelZ: 1.35, tail: 2.2
+    });
+    CAR_CATALOG.iron_bastion.collide = 1.75; // 碰撞半徑（一般車 1.3）
+    CAR_CATALOG.iron_bastion.weight = 2.0;   // 重量（重型起始車 1.6）
+
+    // ----- 傳說：平衡型「蒼穹之冠」——花最多工夫做的一台 -----
+    defCar('sky_crown', '蒼穹之冠', 'legendary', 24, 24, 24, 24, '珍珠白與寶石藍的流線超跑，金色飾線沿著車身流動。車尾是一頂皇冠尾翼，頂端鑲著會閃爍的寶石；車頂漂浮著一圈金色光環，三顆水晶繞著車身旋轉。四項全 24，最完美的平衡。', (g, G) => {
+      const pearl = CM.std(0xf5f7ff, 0.16, 0.55, { emissive: 0x9fb8ff, emissiveIntensity: 0.06 });
+      const sapphire = CM.std(0x1e40af, 0.18, 0.85, { emissive: 0x1d4ed8, emissiveIntensity: 0.15 });
+      const gold = CM.std(0xf2c14e, 0.18, 1.0, { emissive: 0x7a4b00, emissiveIntensity: 0.25 });
+      const glass = CM.std(0x7db4ff, 0.04, 0.4, { transparent: true, opacity: 0.62, emissive: 0x3b82f6, emissiveIntensity: 0.35 });
+      const lightW = G(0xf0f9ff, 'steady'), gemGlow = G(0x60a5fa), trimGlow = G(0xfde68a);
+      // 放樣曲面車身：珍珠白主體（低鼻頭、前後輪拱隆起、鴨尾）
+      const S = CM.spline;
+      const w = S([[-1.72, 0.5], [-1.48, 0.84], [-1.0, 0.97], [-0.3, 0.88], [0.4, 0.86], [1.0, 0.95], [1.5, 0.82], [1.86, 0.5], [2.04, 0.18]]);
+      const top = S([[-1.72, 0.74], [-1.45, 0.86], [-1.0, 0.86], [-0.3, 0.82], [0.5, 0.72], [1.2, 0.62], [1.7, 0.5], [2.04, 0.36]]);
+      const bot = S([[-1.72, 0.42], [-1.42, 0.24], [1.62, 0.23], [2.04, 0.3]]);
+      CM.loft(g, pearl, { z0: -1.72, z1: 2.04, w, top, bot, exp: S([[-1.72, 2.4], [-1.0, 3.0], [1.0, 3.0], [2.04, 2.2]]) });
+      // 寶石藍下半部（雙色車身）
+      CM.loft(g, sapphire, { z0: -1.68, z1: 1.98, w: z => w(z) * 1.012, top: z => bot(z) + 0.24, bot: z => bot(z) - 0.01, exp: 3.2 });
+      // 水晶座艙
+      CM.loft(g, glass, { z0: -0.95, z1: 0.8,
+        w: S([[-0.95, 0.2], [-0.55, 0.52], [0.0, 0.58], [0.45, 0.5], [0.8, 0.14]]),
+        top: S([[-0.95, 0.84], [-0.55, 1.02], [-0.05, 1.1], [0.45, 0.98], [0.8, 0.74]]),
+        bot: () => 0.7, exp: 2.3 });
+      // 金色腰線：沿著車身最寬的那一圈
+      [-1, 1].forEach(s => {
+        let prev = null;
+        for (let z = 1.85; z >= -1.6; z -= 0.25) {
+          const pt = [s * (w(z) + 0.012), (top(z) + bot(z)) / 2, z];
+          if (prev) CM.seg(g, prev, pt, 0.03, gold);
+          prev = pt;
+        }
+        // 光刃頭燈
+        CM.seg(g, [s * 0.25, 0.42, 1.93], [s * 0.64, 0.5, 1.7], 0.05, lightW);
+        // 側面進氣口＋下緣發光細線
+        CM.box(g, 0.04, 0.12, 0.5, CM.std(0x0b1220, 0.4, 0.6), s * (w(-0.55) + 0.005), 0.5, -0.55);
+        CM.seg(g, [s * (w(1.2) * 0.98), 0.34, 1.2], [s * (w(-1.3) * 0.98), 0.36, -1.3], 0.025, trimGlow);
+        // 車輪拱（金邊）
+        [1.02, -1.0].forEach(z => {
+          const arch = CM.add(g, new THREE.TorusGeometry(0.42, 0.035, 8, 20, Math.PI), gold, s * (w(z) + 0.01), 0.34, z, 0, Math.PI / 2, 0);
+          arch.castShadow = false;
+        });
+      });
+      // 前下巴（金）＋尾燈
+      CM.box(g, 1.2, 0.04, 0.2, gold, 0, 0.24, 1.78);
+      CM.box(g, 1.1, 0.05, 0.05, G(0x60a5fa, 'steady'), 0, 0.66, -1.7);
+      // 皇冠尾翼：翼板＋五根金色冠尖，尖端鑲發光寶石
+      const crown = new THREE.Group();
+      CM.box(crown, 1.7, 0.05, 0.34, pearl, 0, 0, 0);
+      CM.box(crown, 1.72, 0.03, 0.06, gold, 0, 0.03, 0.15);
+      const gems = [];
+      [-0.8, -0.4, 0, 0.4, 0.8].forEach((x, i) => {
+        const h = i === 2 ? 0.42 : (i % 2 ? 0.26 : 0.32);
+        CM.cone(crown, 0.07, h, 4, gold, x, h / 2 + 0.02, -0.05);
+        const gem = CM.add(crown, new THREE.OctahedronGeometry(i === 2 ? 0.085 : 0.06), gemGlow, x, h + 0.08, -0.05);
+        gem.castShadow = false; gems.push(gem);
+      });
+      [-1, 1].forEach(s => CM.box(crown, 0.05, 0.26, 0.24, gold, s * 0.62, -0.14, 0));
+      crown.position.set(0, 1.04, -1.38);
+      g.add(crown);
+      // 漂浮光環
+      const halo = CM.add(g, new THREE.TorusGeometry(0.5, 0.045, 10, 48), G(0xfde68a, 'steady'), 0, 1.55, -0.35, Math.PI / 2, 0, 0);
+      halo.castShadow = false;
+      const halo2 = CM.add(g, new THREE.TorusGeometry(0.58, 0.015, 6, 48), trimGlow, 0, 1.55, -0.35, Math.PI / 2, 0, 0);
+      halo2.castShadow = false;
+      // 三顆環繞水晶
+      const shards = [];
+      for (let i = 0; i < 3; i++) {
+        const m = CM.add(g, new THREE.OctahedronGeometry(0.11), new THREE.MeshBasicMaterial({ color: 0x93c5fd }), 0, 1, 0);
+        m.scale.set(0.7, 1.5, 0.7); m.castShadow = false; shards.push(m);
+      }
+      CM.wheels(g, { r: 0.34, x: 0.94, zf: 1.02, zr: -1.0, rimMat: G(0xfde68a), tire: 0x0f172a });
+      return (t, k, st) => {
+        const nitro = k.nitroTimer > 0;
+        halo.position.y = halo2.position.y = 1.55 + 0.06 * Math.sin(t * 2);
+        halo.rotation.z = t * (nitro ? 6 : 0.8);
+        halo2.rotation.z = -t * 0.5;
+        halo2.scale.setScalar(1 + 0.08 * Math.sin(t * 3) + (nitro ? 0.35 : 0) + st.pulse * 0.6);
+        shards.forEach((m, i) => {
+          const a = t * (nitro ? 3.2 : 1.1) + i * Math.PI * 2 / 3;
+          m.position.set(Math.cos(a) * 1.35, 0.95 + 0.18 * Math.sin(t * 2 + i), Math.sin(a) * 2.0);
+          m.rotation.y = t * 3;
+        });
+        gems.forEach((m, i) => m.scale.setScalar(1 + 0.35 * Math.max(0, Math.sin(t * 2.5 + i * 1.3))));
+        pearl.emissiveIntensity = 0.06 + 0.06 * (0.5 + 0.5 * Math.sin(t * 1.4)) + st.pulse * 1.2 + (nitro ? 0.5 : 0);
+        gold.emissiveIntensity = 0.25 + 0.15 * Math.sin(t * 2) + (nitro ? 0.5 : 0);
+      };
+    }, {
+      legend: true, tagIcon: '👑', smoke: 0xdbeafe, nitro: 0xe0f2fe, glow: 0x60a5fa, marks: 0x93c5fd, shock: 0xfde68a,
+      trail: { colors: [0xfff7d6, 0x3b82f6], minSpeed: 2, life: 0.6, width: 0.6, bySpeed: true, sparkle: true },
+      driftFx: { kind: 'royal' }
+    });
+
+
+    // ----- 傳說：極速型「翔隼」——放樣曲面車身的低趴超跑 -----
+    defCar('sky_falcon', '翔隼', 'legendary', 26, 23, 24, 23, '深紅色的低趴超跑。車頭又低又尖，前後輪拱隆起、車尾是寬厚的臀部，水滴形座艙往後收成長尾，下緣一圈碳纖維裙邊。', (g, G) => {
+      const paint = CM.std(0x9b111e, 0.2, 0.75, { emissive: 0x2a0003, emissiveIntensity: 0.3 });
+      const carbon = CM.std(0x111318, 0.45, 0.6);
+      const glass = CM.std(0x0b1020, 0.05, 0.9, { envMapIntensity: 1.4 });
+      const S = CM.spline;
+      const w = S([[-2.05, 0.46], [-1.85, 0.82], [-1.25, 1.02], [-0.7, 0.9], [0.1, 0.84], [0.75, 0.9], [1.2, 1.0], [1.6, 0.84], [1.95, 0.5], [2.15, 0.16]]);
+      const top = S([[-2.05, 0.58], [-1.8, 0.74], [-1.25, 0.82], [-0.6, 0.8], [0.2, 0.72], [0.9, 0.62], [1.5, 0.5], [2.15, 0.32]]);
+      const bot = S([[-2.05, 0.42], [-1.75, 0.24], [1.75, 0.22], [2.15, 0.28]]);
+      const exp = S([[-2.05, 2.3], [-1.2, 3.0], [1.2, 3.0], [2.15, 2.2]]);
+      // 車身
+      CM.loft(g, paint, { z0: -2.05, z1: 2.15, w, top, bot, exp });
+      // 碳纖維下裙：比車身寬一點點，只露出下緣
+      CM.loft(g, carbon, { z0: -2.0, z1: 2.08, w: z => w(z) * 1.015, top: z => bot(z) + 0.13, bot: z => bot(z) - 0.01, exp: 3.2 });
+      // 水滴座艙
+      CM.loft(g, glass, { z0: -1.0, z1: 0.8,
+        w: S([[-1.0, 0.16], [-0.6, 0.5], [-0.05, 0.58], [0.45, 0.5], [0.8, 0.12]]),
+        top: S([[-1.0, 0.8], [-0.6, 1.0], [-0.1, 1.08], [0.45, 0.97], [0.8, 0.74]]),
+        bot: () => 0.68, exp: 2.3 });
+      // 細節：頭燈、尾燈、尾翼、擴散器
+      [-1, 1].forEach(s => {
+        CM.seg(g, [s * 0.3, 0.42, 2.02], [s * 0.72, 0.5, 1.72], 0.045, G(0xfff1f2, 'steady'));
+        CM.box(g, 0.05, 0.08, 0.5, carbon, s * 0.98, 0.42, -0.35); // 側進氣口
+      });
+      CM.box(g, 1.5, 0.05, 0.05, G(0xff2d2d), 0, 0.66, -2.03);
+      [-1, 1].forEach(s => CM.box(g, 0.05, 0.22, 0.12, carbon, s * 0.55, 0.88, -1.75));
+      CM.box(g, 1.7, 0.04, 0.32, paint, 0, 1.0, -1.78, -0.08, 0, 0);
+      CM.wheels(g, { r: 0.36, w: 0.3, x: 0.9, zf: 1.2, zr: -1.25, rimMat: G(0xff4d4d), tire: 0x0b0b0b });
+      return (t, k, st) => { paint.emissiveIntensity = 0.25 + 0.12 * Math.sin(t * 1.5) + st.pulse * 2 + (k.nitroTimer > 0 ? 0.7 : 0); };
+    }, {
+      legend: true, tagIcon: '🦅', smoke: 0xfca5a5, nitro: 0xff4d4d, glow: 0xef4444, marks: 0xef4444, shock: 0xff6b6b,
+      trail: { colors: [0xffe4e6, 0xb91c1c], minSpeed: 2, life: 0.6, width: 0.6, bySpeed: true },
+      driftFx: { kind: 'spark', color: 0xff6b6b }, wheelX: 0.9, wheelZ: 1.25, tail: 2.1
+    });
+
+    // ----- 傳說：甩尾型「潮汐」——寬體大輪拱的跑車 -----
+    defCar('tide_runner', '潮汐', 'legendary', 22, 24, 24, 26, '湖水綠珍珠漆的寬體跑車。四個鼓起的大輪拱、短短的前後懸、斜背車頂一路滑到上翹的鴨尾，車頭到車尾兩條白色賽車條紋。', (g, G) => {
+      const paint = CM.std(0x0d9488, 0.2, 0.6, { emissive: 0x053b37, emissiveIntensity: 0.35 });
+      const white = CM.std(0xf8fafc, 0.3, 0.3);
+      const dark = CM.std(0x0f172a, 0.4, 0.6);
+      const glass = CM.std(0x08131a, 0.05, 0.9, { envMapIntensity: 1.4 });
+      const S = CM.spline;
+      const bulge = z => 0.2 * Math.exp(-Math.pow((z - 1.1) / 0.36, 2)) + 0.23 * Math.exp(-Math.pow((z + 1.1) / 0.4, 2));
+      const base = S([[-1.85, 0.5], [-1.6, 0.78], [-1.0, 0.8], [0, 0.76], [1.0, 0.78], [1.55, 0.72], [1.9, 0.46]]);
+      const w = z => base(z) + bulge(z);
+      const top = S([[-1.85, 0.8], [-1.6, 0.88], [-1.2, 0.84], [-0.5, 0.8], [0.5, 0.75], [1.2, 0.7], [1.6, 0.62], [1.9, 0.5]]);
+      const bot = S([[-1.85, 0.34], [-1.6, 0.22], [1.6, 0.22], [1.9, 0.3]]);
+      const exp = S([[-1.85, 3.0], [-1.0, 3.6], [1.0, 3.6], [1.9, 2.8]]);
+      CM.loft(g, paint, { z0: -1.85, z1: 1.9, w, top, bot, exp });
+      // 白色下裙
+      CM.loft(g, white, { z0: -1.8, z1: 1.84, w: z => w(z) * 1.012, top: z => bot(z) + 0.1, bot: z => bot(z) - 0.01, exp: 3.6 });
+      // 斜背座艙
+      const gTop = S([[-1.4, 0.84], [-0.9, 0.98], [-0.2, 1.17], [0.3, 1.13], [0.58, 0.8]]);
+      CM.loft(g, glass, { z0: -1.4, z1: 0.58, w: S([[-1.4, 0.22], [-1.0, 0.55], [-0.3, 0.62], [0.3, 0.58], [0.58, 0.18]]), top: gTop, bot: () => 0.74, exp: 2.7 });
+      // 兩條白色賽車條紋：引擎蓋一段、車尾一段（貼著車身曲面）
+      [-0.17, 0.17].forEach(x => {
+        CM.loft(g, white, { z0: 0.58, z1: 1.86, w: () => 0.065, x: () => x, top: z => top(z) + 0.012, bot: z => top(z) - 0.02, exp: 6, n: 24, m: 12 });
+        CM.loft(g, white, { z0: -1.82, z1: -1.38, w: () => 0.065, x: () => x, top: z => top(z) + 0.012, bot: z => top(z) - 0.02, exp: 6, n: 12, m: 12 });
+      });
+      // 細節：前下巴、頭燈、尾燈
+      CM.box(g, 1.3, 0.04, 0.18, dark, 0, 0.24, 1.7);
+      [-1, 1].forEach(s => CM.box(g, 0.32, 0.06, 0.05, G(0xf0fdfa, 'steady'), s * 0.5, 0.5, 1.86, 0, s * 0.25, 0));
+      [-1, 1].forEach(s => CM.box(g, 0.4, 0.07, 0.05, G(0x5eead4), s * 0.45, 0.72, -1.86));
+      CM.wheels(g, { r: 0.37, w: 0.34, x: 0.96, zf: 1.1, zr: -1.1, rimMat: G(0x99f6e4), tire: 0x0b0b0b });
+      return (t, k, st) => { paint.emissiveIntensity = 0.3 + 0.15 * Math.sin(t * 1.7) + st.pulse * 2 + (k.nitroTimer > 0 ? 0.7 : 0); };
+    }, {
+      legend: true, tagIcon: '🌊', smoke: 0xccfbf1, nitro: 0x2dd4bf, glow: 0x14b8a6, marks: 0x5eead4, shock: 0x99f6e4,
+      trail: { colors: [0xf0fdfa, 0x0d9488], minSpeed: 2, life: 0.6, width: 0.6, bySpeed: true, wave: true },
+      driftFx: { kind: 'foam' }, wheelX: 0.96, wheelZ: 1.1, tail: 1.95
+    });
+
     // 建出新車款的模型（發光材質的呼吸／閃爍在 userData.anim 裡）
     function buildCatalogCar(cat) {
       const g = new THREE.Group();
@@ -3630,6 +3950,11 @@
         if ((raceState === 'RACING' || raceState === 'FINISHED') && karts.length > 1) leader = karts.reduce((a, b) => (b.progress > a.progress ? b : a));
         for (const k of karts) {
           if (!k.mesh) continue;
+          // 名牌：距離鏡頭 14 以內就跟著縮小（螢幕上的大小不會再變大）
+          if (k.nameTag && k.nameTag.userData.baseScale) {
+            const f = Math.min(1, camera.position.distanceTo(k.mesh.position) / 14);
+            k.nameTag.scale.copy(k.nameTag.userData.baseScale).multiplyScalar(Math.max(0.15, f));
+          }
           const st = this.state(k);
           const fx = st.fx;
           if (!fx) continue;
@@ -3662,12 +3987,14 @@
                 if (tr.sparkle) out.multiplyScalar(0.7 + 0.6 * Math.abs(Math.sin(t * 6 + pt.r * 30)));
                 return out;
               };
-            if (!low) st.trail.update(dt, p.x - s * 1.45, p.y + 0.38, p.z - c * 1.45, k.speed >= tr.minSpeed, life, tr.width * (isLeader ? 1.25 : 1), colorFn, isLeader ? 1.45 : 1);
+            const tl = fx.tail || 1.45;
+            if (!low) st.trail.update(dt, p.x - s * tl, p.y + 0.38, p.z - c * tl, k.speed >= tr.minSpeed, life, tr.width * (isLeader ? 1.25 : 1), colorFn, isLeader ? 1.45 : 1);
           }
           // 甩尾地面光軌（後輪）
           if (fx.marks && !low && k.isDrifting && k.speed > 6) {
             for (const side of [-1, 1]) {
-              const wx = p.x + side * c * 0.9 - s * 0.85, wz = p.z - side * s * 0.9 - c * 0.85, wy = p.y + 0.04;
+              const wX = fx.wheelX || 0.9, wZ = fx.wheelZ || 0.85;
+              const wx = p.x + side * c * wX - s * wZ, wz = p.z - side * s * wX - c * wZ, wy = p.y + 0.04;
               const last = st.wl[side];
               if (last && Math.hypot(wx - last[0], wz - last[2]) > 0.22) {
                 if (Math.hypot(wx - last[0], wz - last[2]) < 3) this.marks.add(last[0], last[1], last[2], wx, wy, wz, 0.34, fx.marks, fx.legend ? 3.0 : 2.2);
@@ -3714,7 +4041,8 @@
         const s = Math.sin(k.yaw), c = Math.cos(k.yaw), y = k.pos.y;
         const vx = k.velocity.x, vz = k.velocity.z;
         const rnd = (a) => (Math.random() - 0.5) * a;
-        const wheel = side => [k.pos.x + side * c * 0.9 - s * 0.85, k.pos.z - side * s * 0.9 - c * 0.85];
+        const wX = fx.wheelX || 0.9, wZ = fx.wheelZ || 0.85;
+        const wheel = side => [k.pos.x + side * c * wX - s * wZ, k.pos.z - side * s * wX - c * wZ];
         const drifting = k.isDrifting && k.speed > 8;
         const df = fx.driftFx;
         if (drifting && df) {
@@ -3749,6 +4077,14 @@
               case 'gold':
                 this.add.emit({ x: wx, y: y + 0.3, z: wz, vx: -vx * 0.2 + rnd(5), vy: 3 + Math.random() * 3, vz: -vz * 0.2 + rnd(5), color: Math.random() < 0.6 ? 0xffd54a : 0xfff7cc, size: 0.3, life: 0.6, shape: Math.random() < 0.6 ? 5 : 2, grav: 8 });
                 break;
+              case 'foam':
+                this.norm.emit({ x: wx, y: y + 0.3, z: wz, vx: -vx * 0.15 + rnd(3), vy: 1.2 + Math.random() * 1.5, vz: -vz * 0.15 + rnd(3), color: 0xf0fdfa, size: 0.6, grow: 1.2, life: 0.7, shape: 1, alpha: 0.8, drag: 1.5 });
+                this.add.emit({ x: wx, y: y + 0.3, z: wz, vx: rnd(4), vy: 2 + Math.random() * 2, vz: rnd(4), color: Math.random() < 0.5 ? 0x5eead4 : 0xffffff, size: 0.25, life: 0.6, shape: 0, grav: 8 });
+                break;
+              case 'royal':
+                this.add.emit({ x: wx, y: y + 0.35, z: wz, vx: -vx * 0.15 + rnd(3), vy: 1.5 + Math.random() * 2, vz: -vz * 0.15 + rnd(3),
+                  color: Math.random() < 0.5 ? 0xfde68a : (Math.random() < 0.5 ? 0x60a5fa : 0xffffff), size: Math.random() < 0.4 ? 0.5 : 0.3, life: 0.9, shape: Math.random() < 0.5 ? 2 : 0, spin: rnd(5), grav: 1.2 });
+                break;
               case 'star':
                 this.add.emit({ x: wx, y: y + 0.4, z: wz, vx: -vx * 0.15 + rnd(3), vy: 1.5 + Math.random() * 2, vz: -vz * 0.15 + rnd(3), color: Math.random() < 0.5 ? 0xffffff : 0xe9d5ff, size: 0.45, life: 0.9, shape: 2, spin: rnd(5), grav: 1 });
                 break;
@@ -3759,6 +4095,10 @@
         if (dv && k.speed > 6 && Math.random() < 0.55 * q) {
           const bx = k.pos.x - s * (0.5 + Math.random() * 1.2) + rnd(1.2), bz = k.pos.z - c * (0.5 + Math.random() * 1.2) + rnd(1.2);
           if (dv.kind === 'ice') this.add.emit({ x: bx, y: y + 0.5 + Math.random() * 0.6, z: bz, vx: vx * 0.25 + rnd(1), vy: rnd(1), vz: vz * 0.25 + rnd(1), color: dv.color, size: 0.26, life: 1.1, shape: 6, spin: rnd(3), drag: 1 });
+          if (dv.kind === 'ember') [-1, 1].forEach(side => this.add.emit({
+            x: k.pos.x + side * c * 0.95 - s * 1.65, y: y + 2.6, z: k.pos.z - side * s * 0.95 - c * 1.65,
+            vx: vx * 0.3 + rnd(1.5), vy: 2.5 + Math.random() * 2, vz: vz * 0.3 + rnd(1.5),
+            color: Math.random() < 0.5 ? 0xffa94d : 0xff5a1f, size: 0.25, life: 0.9, shape: 5, grav: -0.5, drag: 0.8 }));
           if (dv.kind === 'star') this.add.emit({ x: bx, y: y + 0.9 + Math.random() * 0.4, z: bz, vx: vx * 0.2 + rnd(1), vy: 0.5, vz: vz * 0.2 + rnd(1), color: [0xffffff, 0xfef9c3, 0xe9d5ff][Math.floor(Math.random() * 3)], size: 0.35, life: 1.2, shape: 2, spin: rnd(3), grav: 2.2 });
         }
         // 深淵鯊：氮氣時排氣口的藍色漩渦
@@ -3820,6 +4160,7 @@
       const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, depthTest: false, transparent: true }));
       const hScale = 0.9 * c.height / (fontPx + 20);
       sp.scale.set(c.width / c.height * hScale, hScale, 1);
+      sp.userData.baseScale = sp.scale.clone();
       sp.renderOrder = 10;
       if (rar === 'mythic' || rar === 'legendary') sp.userData.redraw = draw;
       return sp;
@@ -3994,6 +4335,7 @@
         this.renderYaw = this.yaw;
         this.lastTrackIndex = 0;
         this.radius = KART_RADIUS;
+        this.collideR = kartCollideR(this.typeId);
 
         // 甩尾狀態
         this.isDrifting = false;
@@ -4069,6 +4411,7 @@
         this.color = color;
         this.stats = stats;
         this.weight = stats.weight;
+        this.collideR = kartCollideR(typeId);
 
         // 重造模型
         if (this.mesh) {
@@ -4491,6 +4834,14 @@
     const SOLO_RACERS = 6;
 
     const availableTypes = ['balanced', 'speed', 'drift', 'heavy'];
+    // AI 的外觀：隨機抽一台抽箱車（傳說至少 10%）。性能仍是 availableTypes 的起始車，難度不變
+    const AI_CAR_RATES = { legendary: 0.10, mythic: 0.15, epic: 0.25, rare: 0.25, common: 0.25 };
+    function pickAiCar() {
+      let r = Math.random(), acc = 0, rar = 'common';
+      for (const k of ['legendary', 'mythic', 'epic', 'rare', 'common']) { acc += AI_CAR_RATES[k]; if (r < acc) { rar = k; break; } }
+      const ids = Object.values(CAR_CATALOG).filter(c => !c.starter && c.rarity === rar).map(c => c.id);
+      return ids[Math.floor(Math.random() * ids.length)];
+    }
 
     kartConfigs.forEach((cfg, idx) => {
       const gPos = calcGridPos(cfg.row, cfg.col);
@@ -4563,6 +4914,8 @@
       karts.forEach(k => scene.remove(k.mesh));
       karts.length = 0;
       want.forEach((k, i) => {
+        // AI 每次換一台抽箱車的外觀（stats 不變）
+        if (!k.isPlayer) { k.reconfigure(pickAiCar(), k.color, k.stats); k.mesh.rotation.order = 'YXZ'; }
         karts.push(k);
         scene.add(k.mesh);
         k.team = raceMode === 'team' ? kartConfigs[i].team : null;
@@ -4705,6 +5058,11 @@
     // ==========================================================
     let cameraShakeTimer = 0;
 
+    // 車與車的碰撞半徑：一般車 1.3（兩台相加 2.6，跟原本 KART_COLLISION_DIST 一樣）；特大的傳說車另外設定
+    function kartCollideR(typeId) {
+      const c = CAR_CATALOG[typeId];
+      return (c && c.collide) || KART_COLLISION_DIST / 2;
+    }
     function handleKartCollisions() {
       const len = karts.length;
       for (let i = 0; i < len; i++) {
@@ -4717,7 +5075,8 @@
           const dz = kB.pos.z - kA.pos.z;
           const dist = Math.sqrt(dx * dx + dz * dz);
 
-          if (dist < KART_COLLISION_DIST) {
+          const minDist = (kA.collideR || KART_COLLISION_DIST / 2) + (kB.collideR || KART_COLLISION_DIST / 2);
+          if (dist < minDist) {
             let nx, nz;
             if (dist < 0.001) {
               nx = Math.sin(kA.yaw);
@@ -4727,7 +5086,7 @@
               nz = dz / dist;
             }
 
-            const overlap = KART_COLLISION_DIST - dist;
+            const overlap = minDist - dist;
 
             if (kA.isRemote && kB.isRemote) continue; // 兩台都是別人的車：各自的電腦處理
 
@@ -5107,7 +5466,7 @@
       const isTeam = raceMode === 'team';
       let html = '';
       order.forEach((k, rank) => {
-        const you = k === playerKart ? ' (YOU)' : '';
+        const you = k === playerKart && !/you/i.test(k.name) ? ' (YOU)' : '';
         const timeStr = k.isFinished ? formatTime(k.finishTime) : (final ? '未完賽' : 'RUNNING');
         const rankColor = rank === 0 ? '#fbbf24' : (rank === 1 ? '#e2e8f0' : (rank === 2 ? '#cd7f32' : '#94a3b8'));
         const teamTag = isTeam && k.team
@@ -5341,7 +5700,7 @@
       if (p.isFinished) {
         hudLapCount.innerHTML = `FINISH!`;
       } else {
-        hudLapCount.innerHTML = `${Math.min(3, p.currentLap)}<span>/3</span>`;
+        hudLapCount.innerHTML = `${Math.min(p.totalLaps, p.currentLap)}<span>/${p.totalLaps}</span>`;
       }
 
       hudCurrentTimer.textContent = formatTime(p.currentLapTime);
@@ -6042,14 +6401,22 @@
       mpEls.trackText.textContent = isHost ? '' : TRACK_DEF.name;
 
       const carName = id => (CAR_CATALOG[id] && CAR_CATALOG[id].name) || id;
+      const carTag = id => {
+        const c = CAR_CATALOG[id];
+        if (!c) return `<span class="mp-car">${escapeHtml(String(id))}</span>`;
+        const css = c.starter ? '#94a3b8' : RARITIES[c.rarity].css;
+        const icon = c.fx && c.fx.tagIcon ? c.fx.tagIcon + ' ' : '';
+        return `<span class="mp-car r-${c.rarity}" style="color:${css}" title="${c.starter ? '起始車' : RARITIES[c.rarity].name}">${icon}${escapeHtml(c.name)}</span>`;
+      };
+      const dotColor = p => { const c = CAR_CATALOG[p.car]; return c && !c.starter ? RARITIES[c.rarity].css : '#' + (Number(p.color) || 0).toString(16).padStart(6, '0'); };
       const playerRow = p => {
         const host = p.id === 'host';
         const badge = host ? '<span class="mp-badge host">房主</span>'
           : (p.ready ? '<span class="mp-badge ready">✅ 已準備</span>' : '<span class="mp-badge wait">⏳ 未準備</span>');
         const kick = (isHost && !host) ? `<button class="mp-kick" data-kick="${escapeHtml(p.id)}">踢出</button>` : '';
-        return `<div class="mp-player"><span class="mp-dot" style="background:#${(Number(p.color) || 0).toString(16).padStart(6, '0')}"></span>` +
+        return `<div class="mp-player"><span class="mp-dot" style="background:${dotColor(p)}"></span>` +
           `<span class="mp-pname">${escapeHtml(p.name)}${host ? ' 👑' : ''}${p.id === net.myId ? '（你）' : ''}</span>${badge}` +
-          `<span class="mp-car">${escapeHtml(carName(p.car))}</span>${kick}</div>`;
+          `${carTag(p.car)}${kick}</div>`;
       };
       const aiRow = () => '<div class="mp-player ai"><span class="mp-dot" style="background:#334155"></span>🤖 AI</div>';
       const me = net.players.find(p => p.id === net.myId);
@@ -6169,7 +6536,7 @@
       let ai = 0;
       const makeAI = team => {
         const type = availableTypes[ai % availableTypes.length];
-        const r = { id: 'ai' + (ai + 1), name: aiNames[ai % aiNames.length], car: type,
+        const r = { id: 'ai' + (ai + 1), name: aiNames[ai % aiNames.length], car: pickAiCar(),
                     color: KART_COLORS[(ai + 1) % KART_COLORS.length].hex, stats: getKartEffectiveStats(type), isAI: true, lane: aiLanes[ai % aiLanes.length], team };
         ai++;
         return r;
@@ -6485,6 +6852,10 @@
     // ==========================================================
     const BOX_PRICE = 500; // 大約 5 場比賽的收入
     const STARTER_GIFT_BOXES = 10; // 新手第一次簽到送的箱子
+    // 分解重複的車換金幣（每款至少留 1 台）。開一箱平均只能分解回約 130 金幣，不會變成刷錢漏洞
+    const DISMANTLE_VALUE = { common: 50, rare: 150, epic: 500, mythic: 1500, legendary: 5000 };
+    // 10 連抽：前 9 張固定普通，只有最後 1 張用這組機率（稀有、史詩各 +5 個百分點，神話、傳說不變）
+    const TEN_PULL_LAST_RATES = { common: 0.60, rare: 0.27, epic: 0.11, mythic: 0.019, legendary: 0.001 };
     // 每週四晚上（台灣時間 18:00～23:59）進遊戲送 20 箱，每週一次（開完會慶功）
     const THURSDAY_GIFT = { boxes: 20, weekday: 'Thu', fromHour: 18 };
     function taipeiClock(offsetDays = 0) {
@@ -6592,6 +6963,23 @@
         saveGameData();
         return { boxes: g.boxes, coins: gameData.coins };
       },
+      async openTen() {
+        const g = this.local();
+        if (g.boxes < 10) throw new Error('箱子不到 10 個');
+        const ids = [];
+        for (let i = 0; i < 9; i++) ids.push(pickOne(gachaCars('common')));
+        let r = secureRandom(), acc = 0, last = 'common';
+        for (const k of RARITY_ORDER) { acc += TEN_PULL_LAST_RATES[k]; if (r < acc) { last = k; break; } }
+        ids.push(pickOne(gachaCars(last)));
+        g.boxes -= 10;
+        const results = ids.map(carId => {
+          const isNew = !g.inventory[carId];
+          g.inventory[carId] = (g.inventory[carId] || 0) + 1;
+          return { carId, rarity: CAR_CATALOG[carId].rarity, isNew };
+        });
+        saveGameData();
+        return { results, boxes: g.boxes };
+      },
       async openBox() {
         const g = this.local();
         if (g.boxes <= 0) throw new Error('沒有箱子了');
@@ -6636,6 +7024,32 @@
         if (!ownsCar(gameData.selectedCar)) { gameData.selectedCar = 'balanced'; unequipped = true; }
         saveGameData();
         return { success, carId, rarity: outRarity, isNew, rate: rule.rate, unequipped };
+      },
+      // 分解：只能分解重複的，每款至少留 1 台
+      async dismantle(carId, n) {
+        const g = this.local();
+        const c = CAR_CATALOG[carId];
+        n = Math.floor(n);
+        if (!c || c.starter) throw new Error('起始車不能分解');
+        if (!(n >= 1) || (g.inventory[carId] || 0) - n < 1) throw new Error('每款至少要留 1 台');
+        g.inventory[carId] -= n;
+        const coins = DISMANTLE_VALUE[c.rarity] * n;
+        gameData.coins += coins;
+        saveGameData();
+        return { coins, left: g.inventory[carId] };
+      },
+      async dismantleDupes(rarity) {
+        const g = this.local();
+        let coins = 0, cars = 0;
+        for (const id of Object.keys(g.inventory)) {
+          const c = CAR_CATALOG[id];
+          if (!c || c.rarity !== rarity || g.inventory[id] <= 1) continue;
+          const n = g.inventory[id] - 1;
+          g.inventory[id] = 1; cars += n; coins += DISMANTLE_VALUE[rarity] * n;
+        }
+        gameData.coins += coins;
+        if (cars) saveGameData();
+        return { coins, cars };
       },
       async equip(carId) {
         this.local();
@@ -6808,8 +7222,19 @@
         }
         html += '</div>';
       }
+      const dupCommon = gachaCars('common').reduce((a, id) => a + Math.max(0, carCount(id) - 1), 0);
+      if (dupCommon > 0) html = `<button class="btn-dis" id="btnDisCommon" style="width:100%;margin-bottom:6px">🧹 分解所有重複的普通車：${dupCommon} 台（+${(dupCommon * DISMANTLE_VALUE.common).toLocaleString()} 🪙）</button>` + html;
       const st = grid.scrollTop;
       grid.innerHTML = html;
+      const dc = document.getElementById('btnDisCommon');
+      if (dc) dc.onclick = async e => {
+        e.stopPropagation();
+        if (!await uiConfirm('分解重複的普通車', `每款普通車只留 1 台，其餘 ${dupCommon} 台全部分解，換 <b>${(dupCommon * DISMANTLE_VALUE.common).toLocaleString()} 金幣</b>？`, '分解')) return;
+        const r = await gachaApi.dismantleDupes('common');
+        showToast(`🧹 分解了 ${r.cars} 台普通車：+${r.coins.toLocaleString()} 金幣`);
+        sfx.tone(660, 0.12, 'square', 0.06); sfx.tone(990, 0.2, 'triangle', 0.08, 0.08);
+        updateGarageUI();
+      };
       grid.scrollTop = st;
       document.getElementById('dexCount').textContent = `已收集 ${owned} / ${total}`;
     }
@@ -6824,10 +7249,24 @@
         const w = Math.max(4, Math.min(100, (s.v - 5) / 25 * 100));
         html += `<div class="ci-stat"><b>${s.n}</b><div class="bar"><i style="width:${w}%;background:${c.starter ? '#38bdf8' : css}"></i></div><span>${s.text}</span></div>`;
       }
+      if (!c.starter && (c.weight || c.collide)) html += `<div class="ci-desc" style="margin-top:4px;color:#fbbf24">🏰 特大車身：重量 ×${c.weight || 1}、碰撞範圍 ×${((c.collide || 1.3) / 1.3).toFixed(2)}，撞到誰誰讓路。</div>`;
       if (c.starter) html += `<div class="ci-desc" style="margin-top:4px">起始車性能打 ${Math.round(STARTER_NERF * 100)} 折${c.kartType.weight !== 1 ? `，重量 ×${c.kartType.weight}` : ''}。想跑快就去抽車吧！</div>`;
       html += `<div class="ci-actions"><button class="btn-equip" id="btnEquip" ${(!have || equipped) ? 'disabled' : ''}>${equipped ? '✔ 已裝備' : (have ? '裝備這台車' : '🔒 尚未擁有')}</button></div>`;
+      const dupes = !c.starter ? carCount(id) - 1 : 0;
+      if (dupes > 0) {
+        const v = DISMANTLE_VALUE[c.rarity];
+        html += `<div class="ci-actions"><button class="btn-dis" id="btnDis1">🔨 分解 1 台（+${v.toLocaleString()} 🪙）</button>${dupes > 1 ? `<button class="btn-dis" id="btnDisAll">分解 ${dupes} 台（+${(v * dupes).toLocaleString()} 🪙）</button>` : ''}</div>`;
+      }
       document.getElementById('carInfo').innerHTML = html;
       const eq = document.getElementById('btnEquip');
+      const doDis = async n => {
+        const v = DISMANTLE_VALUE[c.rarity] * n;
+        if (!await uiConfirm('分解車子', `分解 ${n} 台「${escapeHtml(c.name)}」，換 <b>${v.toLocaleString()} 金幣</b>？<br>（會留下 1 台，圖鑑不會消失）`, '分解')) return;
+        try { const r = await gachaApi.dismantle(id, n); showToast(`🔨 分解完成：+${r.coins.toLocaleString()} 金幣`); sfx.tone(660, 0.12, 'square', 0.06); sfx.tone(990, 0.2, 'triangle', 0.08, 0.08); updateGarageUI(); }
+        catch (e) { showToast('❌ ' + e.message); }
+      };
+      if (document.getElementById('btnDis1')) document.getElementById('btnDis1').onclick = () => doDis(1);
+      if (document.getElementById('btnDisAll')) document.getElementById('btnDisAll').onclick = () => doDis(carCount(id) - 1);
       if (have && !equipped) eq.onclick = async () => {
         try { await gachaApi.equip(id); showToast('✔ 已裝備：' + carLabel(id)); showroom.show(id); updateGarageUI(); }
         catch (e) { showToast('❌ ' + e.message); }
@@ -7069,6 +7508,7 @@
       document.getElementById('gOpen').disabled = gacha.busy || gameData.gacha.boxes <= 0;
       document.getElementById('gOpen').textContent = gameData.gacha.boxes > 0 ? '開 1 箱' : '沒有箱子';
       document.getElementById('gBuy').disabled = gacha.busy || gameData.coins < BOX_PRICE;
+      document.getElementById('gOpen10').disabled = gacha.busy || gameData.gacha.boxes < 10;
       document.getElementById('gSound').textContent = gameData.gachaSound ? '🔊 音效：開' : '🔇 音效：關';
       document.getElementById('gClose').disabled = gacha.busy;
     }
@@ -7193,6 +7633,219 @@
       document.getElementById('gAgain').onclick = () => { gacha.panel.classList.remove('result'); gachaOpen(); };
       document.getElementById('gBack').onclick = () => { gacha.panel.classList.remove('result'); gachaIdleReel(); gachaRefresh(); };
     }
+    // ---------- 10 連抽：拋硬幣 → 白的飛上去就不回來 → 最後一枚依稀有度落在水溝蓋上 ----------
+    const COIN_COLOR = { common: '#e5e7eb', rare: '#3b82f6', epic: '#a855f7', mythic: '#ef4444', legendary: '#fbbf24' };
+    let tenSkip = false;
+    function coinShow(results) {
+      return new Promise(done => {
+        const cv = document.getElementById('gTenCanvas'), msg = document.getElementById('gTenMsg');
+        const W = cv.width = cv.clientWidth, H = cv.height = cv.clientHeight;
+        const ctx = cv.getContext('2d');
+        const R = 34, GRAV = 1500;
+        const grate = { x: W / 2, y: H * 0.8, w: 340, h: 74 };
+        const last = results[9], rar = last.rarity, col = last.carId === 'aurora' ? '#7dd3fc' : COIN_COLOR[rar];
+        const coins = [];
+        for (let i = 0; i < 10; i++) coins.push({ x: W / 2 + (i - 4.5) * 14, y: H + 50, vx: (Math.random() - 0.5) * 140, vy: -(1650 + Math.random() * 150),
+          spin: Math.random() * 6, spinV: 12 + Math.random() * 8, at: 0.4 + i * 0.2, state: 'wait', alpha: 1, ry: R, tilt: 0, trail: [] });
+        const hero = coins[9];
+        const parts = [];
+        let t = 0, prev = performance.now(), heroPhase = 'wait', phaseT = 0, bounces = 0, finished = false, endAt = null, revealed = false, extra = 0;
+        msg.textContent = '';
+        const burst = (x, y, color, n, sp, up = 0) => { for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, v = sp * (0.3 + Math.random()); parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - up, life: 1, c: color, r: 2 + Math.random() * 3 }); } };
+        const clank = () => { sfx.tone(2300, 0.07, 'square', 0.05); sfx.tone(3300, 0.12, 'triangle', 0.04, 0.01); };
+        const drawCoin = (c, glow) => {
+          if (c.alpha <= 0) return;
+          ctx.save();
+          ctx.globalAlpha = c.alpha;
+          ctx.translate(c.x, c.y); ctx.rotate(c.tilt);
+          if (glow) { ctx.shadowColor = glow; ctx.shadowBlur = 28; }
+          const ry = Math.max(2, c.ry);
+          const gr = ctx.createRadialGradient(-R * 0.3, -ry * 0.3, 2, 0, 0, R);
+          gr.addColorStop(0, '#fff7cc'); gr.addColorStop(0.5, '#fbbf24'); gr.addColorStop(1, '#b45309');
+          ctx.fillStyle = gr;
+          ctx.beginPath(); ctx.ellipse(0, 0, R, ry, 0, 0, Math.PI * 2); ctx.fill();
+          ctx.shadowBlur = 0;
+          ctx.strokeStyle = 'rgba(120,53,15,0.8)'; ctx.lineWidth = 3;
+          ctx.beginPath(); ctx.ellipse(0, 0, R * 0.78, ry * 0.78, 0, 0, Math.PI * 2); ctx.stroke();
+          if (ry > R * 0.45) {
+            ctx.scale(1, ry / R);
+            ctx.fillStyle = 'rgba(120,53,15,0.9)'; ctx.font = 'bold 30px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText('🏎', 0, 2);
+          }
+          ctx.restore();
+        };
+        const drawGrate = () => {
+          const { x, y, w, h } = grate, tw = w * 0.84;
+          ctx.save();
+          ctx.fillStyle = 'rgba(0,0,0,0.45)';
+          ctx.beginPath(); ctx.ellipse(x, y + h * 0.6, w * 0.62, h * 0.7, 0, 0, Math.PI * 2); ctx.fill();
+          const gr = ctx.createLinearGradient(0, y, 0, y + h);
+          gr.addColorStop(0, '#6b7280'); gr.addColorStop(1, '#374151');
+          ctx.fillStyle = gr;
+          ctx.beginPath(); ctx.moveTo(x - tw / 2, y); ctx.lineTo(x + tw / 2, y); ctx.lineTo(x + w / 2, y + h); ctx.lineTo(x - w / 2, y + h); ctx.closePath(); ctx.fill();
+          ctx.fillStyle = '#0b0f19';
+          for (let i = 0; i < 8; i++) {
+            const u0 = (i + 0.5) / 8.5 + 0.03, u1 = u0 + 0.06;
+            const a = x - tw / 2 + tw * u0, b = x - tw / 2 + tw * u1, c2 = x - w / 2 + w * u1, d = x - w / 2 + w * u0;
+            ctx.beginPath(); ctx.moveTo(a, y + 8); ctx.lineTo(b, y + 8); ctx.lineTo(c2, y + h - 8); ctx.lineTo(d, y + h - 8); ctx.closePath(); ctx.fill();
+          }
+          ctx.strokeStyle = '#9ca3af'; ctx.lineWidth = 3;
+          ctx.beginPath(); ctx.moveTo(x - tw / 2, y); ctx.lineTo(x + tw / 2, y); ctx.stroke();
+          ctx.restore();
+        };
+        const finish = () => { if (finished) return; finished = true; done(); };
+        const frame = now => {
+          if (finished) return;
+          if (tenSkip) { finish(); return; }
+          const dt = Math.min(0.05, (now - prev) / 1000); prev = now; t += dt;
+          ctx.clearRect(0, 0, W, H);
+          // 路燈的光
+          const lamp = ctx.createRadialGradient(W / 2, -40, 10, W / 2, -40, H * 0.9);
+          lamp.addColorStop(0, 'rgba(253,230,138,0.18)'); lamp.addColorStop(1, 'rgba(253,230,138,0)');
+          ctx.fillStyle = lamp; ctx.fillRect(0, 0, W, H);
+          // 往上拋
+          for (const c of coins) {
+            if (c.state === 'wait' && t >= c.at) { c.state = 'up'; sfx.tone(700, 0.15, 'triangle', 0.07, 0, 1500); }
+            if (c.state === 'up') {
+              c.vy += GRAV * dt * 0.35; c.x += c.vx * dt; c.y += c.vy * dt; c.spin += c.spinV * dt; c.ry = R * Math.abs(Math.cos(c.spin));
+              if (c.y < -R * 2) { c.state = 'gone'; if (c !== hero) sfx.tone(2400, 0.2, 'sine', 0.02); }
+            }
+          }
+          // 最後一枚：所有硬幣都飛走之後才決定要不要掉下來
+          const allGone = coins.every(c => c.state === 'gone');
+          if (heroPhase === 'wait' && allGone) { heroPhase = 'hang'; phaseT = 0; msg.textContent = '……'; }
+          if (heroPhase === 'hang') {
+            phaseT += dt;
+            if (phaseT > 1.1) {
+              if (rar === 'common') { heroPhase = 'none'; msg.textContent = '……什麼都沒掉下來'; sfx.tone(320, 0.5, 'sawtooth', 0.06, 0, 140); endAt = t + 1.4; }
+              else { heroPhase = 'fall'; msg.textContent = ''; Object.assign(hero, { x: grate.x + (Math.random() - 0.5) * 60, y: -R * 2, vx: 0, vy: 260, alpha: 1, state: 'hero' }); sfx.tone(1700, 0.9, 'sine', 0.05, 0, 480); }
+            }
+          }
+          if (heroPhase !== 'wait' && heroPhase !== 'hang' && heroPhase !== 'none' && heroPhase !== 'done') {
+            const h = hero;
+            phaseT += dt;
+            if (heroPhase === 'fall' || heroPhase === 'bounce' || heroPhase === 'hop') {
+              h.vy += GRAV * dt; h.y += h.vy * dt; h.spin += 10 * dt; h.ry = R * (0.3 + 0.7 * Math.abs(Math.cos(h.spin)));
+              h.trail.push([h.x, h.y]); if (h.trail.length > 14) h.trail.shift();
+              if (h.y + R * 0.3 >= grate.y && h.vy > 0) {
+                if (heroPhase !== 'hop') {
+                  // 不管什麼稀有度，先一樣彈 3 下（看不出結果）
+                  if (bounces < 3) { bounces++; h.y = grate.y - R * 0.3; h.vy = -h.vy * 0.5; clank(); burst(h.x, grate.y, '#cbd5e1', 8, 140); heroPhase = 'bounce'; }
+                  else { heroPhase = 'rest'; phaseT = 0; h.y = grate.y - R * 0.25; h.vy = 0; h.ry = R * 0.25; clank(); }
+                } else if (extra < 2) {
+                  // 紫色：亮色之後再多彈幾下才掉下去
+                  extra++; h.y = grate.y - R * 0.3; h.vy = -380; clank(); burst(h.x, grate.y, col, 12, 180);
+                } else { heroPhase = 'sink'; phaseT = 0; }
+              }
+            } else if (heroPhase === 'rest') {
+              // 躺在水溝蓋上晃一下，然後才亮出稀有度
+              h.ry = R * (0.25 + 0.06 * Math.sin(phaseT * 20) * Math.max(0, 1 - phaseT * 1.4));
+              if (phaseT > 0.9) {
+                revealed = true; phaseT = 0;
+                burst(h.x, h.y, col, 40, 240, 60); sfx.tone(880, 0.15, 'triangle', 0.08);
+                if (rar === 'rare') heroPhase = 'sink';
+                else if (rar === 'epic') { heroPhase = 'hop'; h.vy = -520; h.y = grate.y - R * 0.3; }
+                else if (rar === 'mythic') {
+                  heroPhase = 'stuck'; h.y = grate.y - R * 0.25; h.tilt = 0.6; h.ry = R * 0.7; clank(); clank();
+                  burst(h.x, grate.y, col, 40, 260, 60); sfx.reveal('mythic');
+                  document.getElementById('gacha-panel').classList.remove('shake'); void document.getElementById('gacha-panel').offsetWidth; document.getElementById('gacha-panel').classList.add('shake');
+                } else heroPhase = 'flat';
+              }
+            } else if (heroPhase === 'sink') {
+              h.vy = Math.max(h.vy, 220); h.y += h.vy * dt * 0.6; h.ry = R * 0.25;
+              if (phaseT < dt * 1.5) { sfx.boom(0.25); burst(h.x, grate.y, col, 26, 200, 80); sfx.reveal(rar); }
+              if (h.y - R > grate.y + 10) { heroPhase = 'done'; endAt = t + 1.0; }
+            } else if (heroPhase === 'stuck') {
+              h.x += Math.sin(phaseT * 60) * (phaseT < 1 ? 1.5 : 0);
+              if (phaseT > 1.8) { heroPhase = 'done'; endAt = t + 0.6; }
+            } else if (heroPhase === 'flat') {
+              h.ry = R * (0.25 + 0.08 * Math.sin(phaseT * 18) * Math.max(0, 1 - phaseT));
+              if (phaseT > 1.0) { heroPhase = 'stand'; phaseT = 0; sfx.tone(500, 0.8, 'sine', 0.06, 0, 1000); }
+            } else if (heroPhase === 'stand') {
+              const u = Math.min(1, phaseT / 0.9), e = 1 - Math.pow(1 - u, 3);
+              h.ry = R * (0.25 + 0.75 * e); h.y = grate.y - R * (0.25 + 0.75 * e);
+              if (u >= 1) { heroPhase = 'shine'; phaseT = 0; sfx.reveal('legendary'); burst(h.x, h.y, '#fde68a', 80, 420, 120); burst(h.x, h.y, '#ffffff', 40, 300, 80); }
+            } else if (heroPhase === 'shine') {
+              if (phaseT > 2.0) { heroPhase = 'done'; endAt = t + 0.3; }
+            }
+          }
+          // 畫：尾跡 → 硬幣（掉進去的部分被水溝蓋擋住）→ 水溝蓋 → 光芒、粒子
+          if (hero.state === 'hero' && heroPhase !== 'done' || heroPhase === 'done' && rar !== 'rare' && rar !== 'epic') {
+            hero.trail.forEach(([tx, ty], i) => { ctx.globalAlpha = (i / hero.trail.length) * 0.5; ctx.fillStyle = revealed ? col : '#fde68a'; ctx.beginPath(); ctx.arc(tx, ty, R * (i / hero.trail.length), 0, Math.PI * 2); ctx.fill(); });
+            ctx.globalAlpha = 1;
+          }
+          for (const c of coins) {
+            if (c.state === 'up') drawCoin(c);
+          }
+          if (heroPhase === 'stuck' || (heroPhase === 'done' && rar === 'mythic')) {
+            ctx.save(); ctx.globalAlpha = 0.25 + 0.2 * Math.sin(t * 8); ctx.fillStyle = col;
+            ctx.beginPath(); ctx.ellipse(hero.x, grate.y, 70, 22, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+          }
+          if (hero.state === 'hero' && !(heroPhase === 'done' && (rar === 'rare' || rar === 'epic'))) {
+            ctx.save();
+            if (heroPhase === 'sink' || heroPhase === 'stuck') { ctx.beginPath(); ctx.rect(0, 0, W, grate.y + 10); ctx.clip(); }
+            if (heroPhase === 'shine') {
+              ctx.save(); ctx.translate(hero.x, hero.y);
+              for (let i = 0; i < 14; i++) { ctx.rotate(Math.PI * 2 / 14 + (i === 0 ? phaseT * 0.6 : 0)); ctx.fillStyle = 'rgba(253,224,71,0.18)'; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-18, -H); ctx.lineTo(18, -H); ctx.closePath(); ctx.fill(); }
+              ctx.restore();
+            }
+            drawCoin(hero, revealed ? col : null);
+            ctx.restore();
+          }
+          drawGrate();
+          for (let i = parts.length - 1; i >= 0; i--) {
+            const p = parts[i]; p.vy += 600 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt * 1.2;
+            if (p.life <= 0) { parts.splice(i, 1); continue; }
+            ctx.globalAlpha = p.life; ctx.fillStyle = p.c; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+          }
+          ctx.globalAlpha = 1;
+          if (endAt !== null && t >= endAt) { finish(); return; }
+          requestAnimationFrame(frame);
+        };
+        requestAnimationFrame(frame);
+      });
+    }
+    function showTenResults(results) {
+      const order = ['common', 'rare', 'epic', 'mythic', 'legendary'];
+      const best = results.reduce((a, b) => (order.indexOf(b.rarity) > order.indexOf(a.rarity) ? b : a));
+      const R = RARITIES[best.rarity];
+      const titles = { common: '……全部都是普通', rare: '還不錯，有一台稀有', epic: '史詩！', mythic: '神話！卡在水溝蓋上了！', legendary: '傳說！硬幣立起來了！' };
+      const el = document.getElementById('gTenRes');
+      el.style.setProperty('--rc', R.css);
+      el.innerHTML = `<div class="g-ten-title">${titles[best.rarity]}</div>
+        <div class="g-ten-grid">${results.map((r, i) => gachaCardHtml(r.carId, i === 9 && r.rarity !== 'common' ? 'best' : '')
+          .replace('style="--rc:', `style="animation-delay:${i * 0.07}s;--rc:`)
+          .replace('</div></div>', `</div>${r.isNew ? '<span class="rnew">NEW</span>' : ''}</div>`)).join('')}</div>
+        <div style="display:flex;gap:12px">
+          <button class="g-btn" id="gTenAgain" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)" ${gameData.gacha.boxes >= 10 ? '' : 'disabled'}>再開 10 箱（剩 ${gameData.gacha.boxes} 箱）</button>
+          <button class="g-btn gray" id="gTenBack">返回</button>
+        </div>`;
+      el.classList.add('on');
+      document.getElementById('gSkip').style.display = 'none';
+      if (best.rarity !== 'common') fx2d.burst(window.innerWidth / 2, window.innerHeight * 0.3, best.carId === 'aurora' ? AURORA_FX : RARITY_FX[best.rarity], 90, 9);
+      document.getElementById('gTenAgain').onclick = () => gachaOpenTen();
+      document.getElementById('gTenBack').onclick = () => { document.getElementById('gTen').classList.remove('on'); gachaIdleReel(); gachaRefresh(); };
+      garageSel = results[9].carId;
+    }
+    async function gachaOpenTen() {
+      if (gacha.busy) return;
+      let res;
+      try { res = await gachaApi.openTen(); } catch (e) { showToast('❌ ' + e.message); return; }
+      gacha.busy = true;
+      gacha.panel.classList.remove('result');
+      gachaRefresh();
+      tenSkip = false;
+      document.getElementById('gTenRes').classList.remove('on');
+      document.getElementById('gSkip').style.display = '';
+      document.getElementById('gTen').classList.add('on');
+      await coinShow(res.results);
+      document.getElementById('gTenMsg').textContent = '';
+      gacha.busy = false;
+      showTenResults(res.results);
+      gachaRefresh();
+    }
+    document.getElementById('gOpen10').addEventListener('click', gachaOpenTen);
+    document.getElementById('gSkip').addEventListener('click', () => { tenSkip = true; });
     document.getElementById('btnOpenGacha').addEventListener('click', openGachaPanel);
     document.getElementById('gOpen').addEventListener('click', gachaOpen);
     document.getElementById('gBuy').addEventListener('click', gachaBuy);
@@ -7456,12 +8109,70 @@
     }, 60000);
     document.getElementById('btnOpenDaily').addEventListener('click', () => showDaily({ already: true, gotBox: false, broke: false }));
 
+    // ---------- 存檔備份：匯出成一串文字（含檢查碼），匯入時檢查後覆蓋存檔並重新載入 ----------
+    const SAVE_CODE_PREFIX = 'KART1';
+    function saveChecksum(str) { return adminHash(str).slice(0, 8); }
+    function exportSaveCode() {
+      const json = JSON.stringify(gameData);
+      const b64 = btoa(unescape(encodeURIComponent(json)));
+      return `${SAVE_CODE_PREFIX}:${b64}:${saveChecksum(b64)}`;
+    }
+    function parseSaveCode(code) {
+      const parts = String(code || '').trim().replace(/\s+/g, '').split(':');
+      if (parts.length !== 3 || parts[0] !== SAVE_CODE_PREFIX) throw new Error('這不是卡丁車的備份文字');
+      if (saveChecksum(parts[1]) !== parts[2]) throw new Error('備份文字不完整或被改過（檢查碼不符）');
+      let data;
+      try { data = JSON.parse(decodeURIComponent(escape(atob(parts[1])))); } catch (e) { throw new Error('備份內容讀不出來'); }
+      if (!data || typeof data !== 'object' || typeof data.coins !== 'number') throw new Error('備份內容格式不對');
+      return data;
+    }
+    function openSavePanel() {
+      const code = exportSaveCode();
+      document.getElementById('svOut').value = code;
+      const owned = Object.values(gameData.gacha.inventory).reduce((a, b) => a + b, 0);
+      document.getElementById('svInfo').textContent = `目前：🪙 ${gameData.coins.toLocaleString()}、車 ${owned} 台、箱子 ${gameData.gacha.boxes} 個`;
+      document.getElementById('svIn').value = '';
+      document.getElementById('save-panel').classList.remove('hidden');
+    }
+    document.getElementById('btnSaveBackup').addEventListener('click', openSavePanel);
+    document.getElementById('svClose').addEventListener('click', () => document.getElementById('save-panel').classList.add('hidden'));
+    document.getElementById('svCopy').addEventListener('click', async () => {
+      const ta = document.getElementById('svOut');
+      try { await navigator.clipboard.writeText(ta.value); } catch (e) { ta.select(); document.execCommand('copy'); }
+      showToast('📋 已複製備份文字');
+    });
+    document.getElementById('svDownload').addEventListener('click', () => {
+      const blob = new Blob([document.getElementById('svOut').value], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `kart-save-${taipeiDate()}.txt`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    });
+    document.getElementById('svFile').addEventListener('click', () => document.getElementById('svFileInput').click());
+    document.getElementById('svFileInput').addEventListener('change', async e => {
+      const f = e.target.files && e.target.files[0];
+      if (!f) return;
+      document.getElementById('svIn').value = await f.text();
+      e.target.value = '';
+    });
+    document.getElementById('svImport').addEventListener('click', async () => {
+      let data;
+      try { data = parseSaveCode(document.getElementById('svIn').value); } catch (e) { showToast('❌ ' + e.message); return; }
+      const inv = data.gacha && data.gacha.inventory ? Object.values(data.gacha.inventory).reduce((a, b) => a + (Number(b) || 0), 0) : 0;
+      const ok = await uiConfirm('匯入存檔？', `備份內容：🪙 ${Number(data.coins).toLocaleString()}、車 ${inv} 台、箱子 ${(data.gacha && data.gacha.boxes) || 0} 個<br><span style="color:#f87171">目前這個瀏覽器的存檔會被覆蓋，不能復原。</span>`, '匯入');
+      if (!ok) return;
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) { showToast('❌ 寫入存檔失敗'); return; }
+      location.reload();
+    });
+
     // Esc 關閉面板
     window.addEventListener('keydown', e => {
       if (e.key !== 'Escape') return;
       if (!document.getElementById('uiConfirm').classList.contains('hidden')) { document.getElementById('ucNo').click(); return; }
       if (!document.getElementById('daily-panel').classList.contains('hidden')) { document.getElementById('dClose').click(); return; }
       if (!document.getElementById('records-panel').classList.contains('hidden')) { document.getElementById('recClose').click(); return; }
+      if (!document.getElementById('save-panel').classList.contains('hidden')) { document.getElementById('svClose').click(); return; }
       if (!gacha.panel.classList.contains('hidden') && !gacha.busy) { closeOverlay('gacha-panel'); return; }
       if (!document.getElementById('merge-panel').classList.contains('hidden') && !merge.busy) closeOverlay('merge-panel');
     });
