@@ -875,6 +875,215 @@
     .btn-modal:hover {
       transform: translateY(-2px);
     }
+
+    /* ===== 車庫改版：圖鑑、展示台、屬性 ===== */
+    #garage-screen {
+      background: radial-gradient(ellipse 34% 46% at 50% 47%, rgba(10, 15, 30, 0) 0%, rgba(10, 15, 30, 0) 55%, rgba(10, 15, 30, 0.82) 100%);
+      backdrop-filter: none;
+      padding: 14px 20px;
+      gap: 8px;
+    }
+    body.in-garage #racing-hud, body.in-garage #minimap { display: none; }
+    .garage-title { font-size: 24px; }
+    .garage-hbtns { display: flex; gap: 8px; align-items: center; }
+    .gh-btn {
+      background: rgba(15, 23, 42, 0.9); color: #e2e8f0; border: 2px solid rgba(148, 163, 184, 0.35); border-radius: 12px;
+      padding: 7px 12px; font-size: 14px; font-weight: 800; cursor: pointer; white-space: nowrap; position: relative;
+    }
+    .gh-btn:hover { border-color: #38bdf8; }
+    .gh-btn b { color: #fbbf24; margin-left: 2px; }
+    .gh-btn.hot { border-color: #fbbf24; box-shadow: 0 0 14px rgba(251, 191, 36, 0.45); }
+    .garage-coins { padding: 6px 14px; font-size: 18px; }
+    .garage-main { align-items: stretch; flex: 1; min-height: 0; margin-bottom: 0; }
+    .garage-panel { padding: 12px 14px; border-radius: 16px; }
+    .dex-panel { width: 372px; display: flex; flex-direction: column; min-height: 0; }
+    .panel-heading { margin-bottom: 8px; }
+    .dex-count { margin-left: auto; font-size: 12px; color: #94a3b8; font-weight: 700; }
+    .dex-grid { flex: 1; overflow-y: auto; padding-right: 4px; min-height: 0; }
+    .dex-sec { font-size: 12px; font-weight: 900; letter-spacing: 1px; margin: 8px 0 4px; }
+    .dex-sec:first-child { margin-top: 0; }
+    .dex-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .dex-card {
+      position: relative; background: rgba(30, 41, 59, 0.75); border: 2px solid var(--rc, #475569); border-radius: 10px;
+      padding: 2px 2px 4px; cursor: pointer; text-align: center; transition: transform 0.12s;
+    }
+    .dex-card:hover { transform: translateY(-2px); }
+    .dex-card.sel { box-shadow: 0 0 0 2px #fff, 0 0 14px var(--rc, #38bdf8); }
+    .dex-card img { width: 100%; height: 48px; object-fit: contain; display: block; }
+    .dex-card.locked img { filter: brightness(0) opacity(0.75); }
+    .dex-card .dn { font-size: 11px; font-weight: 800; color: #e2e8f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .dex-card.locked .dn { color: #64748b; }
+    .dex-card .dc { position: absolute; top: 2px; right: 4px; font-size: 10px; font-weight: 900; color: #fbbf24; text-shadow: 0 1px 2px #000; }
+    .dex-card .de { position: absolute; top: 2px; left: 4px; font-size: 10px; font-weight: 900; color: #34d399; text-shadow: 0 1px 2px #000; }
+    .dex-card.r-mythic, .dex-card.r-legendary { background: linear-gradient(160deg, rgba(30, 41, 59, 0.8), color-mix(in srgb, var(--rc) 28%, rgba(30, 41, 59, 0.8))); }
+    .info-panel { width: 340px; display: flex; flex-direction: column; min-height: 0; overflow-y: auto; }
+    .ci-name { font-size: 22px; font-weight: 900; }
+    .ci-rar { font-size: 13px; font-weight: 900; margin: 2px 0 6px; display: flex; gap: 8px; align-items: center; }
+    .ci-own { color: #94a3b8; font-weight: 700; }
+    .ci-desc { font-size: 12px; color: #94a3b8; line-height: 1.35; margin-bottom: 6px; }
+    .ci-stat { display: flex; align-items: center; gap: 8px; margin: 3px 0; font-size: 13px; font-weight: 800; }
+    .ci-stat b { width: 32px; color: #cbd5e1; }
+    .ci-stat .bar { flex: 1; height: 9px; background: #1e293b; border-radius: 5px; overflow: hidden; }
+    .ci-stat .bar i { display: block; height: 100%; border-radius: 5px; }
+    .ci-stat span { width: 74px; text-align: right; color: #e2e8f0; font-size: 12px; }
+    .ci-actions { display: flex; gap: 8px; margin: 8px 0 4px; align-items: center; }
+    .btn-equip { flex: 1; background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; border-radius: 10px; padding: 9px; font-weight: 900; font-size: 15px; cursor: pointer; }
+    .btn-equip:disabled { background: #334155; color: #94a3b8; cursor: default; }
+    .info-panel .color-swatches { margin-top: 4px; gap: 8px; }
+    .info-panel .color-swatch { width: 22px; height: 22px; }
+    .info-panel .upgrade-item { padding: 5px 0; }
+    .info-panel .upgrade-name { font-size: 13px; }
+    .info-panel .upgrade-dots { margin-top: 3px; }
+    .info-panel .upgrade-dot { width: 10px; height: 10px; }
+    .info-panel .btn-upgrade { padding: 6px 10px; }
+    .up-locked { color: #64748b; font-size: 12px; padding: 6px 0; }
+    .garage-track-row { margin-bottom: 0; gap: 8px; }
+    .garage-track-row .track-card { min-width: 0; padding: 5px 10px; }
+    .garage-track-row .track-card .t-name { font-size: 13px; }
+    .garage-track-row #trackPicker .track-card .t-desc { display: none; }  /* 車庫底部空間有限：只顯示賽道名稱，說明放在滑鼠提示 */
+    .garage-track-row .track-card .t-desc { font-size: 10px; }
+    .info-panel .upgrade-desc { display: none; }
+    .info-panel .upgrade-item { padding: 4px 0; }
+    .ci-desc { margin-bottom: 4px; }
+    #trackPicker { flex-wrap: nowrap !important; gap: 6px !important; }
+    .btn-start-race { padding: 12px 46px; font-size: 20px; }
+    .btn-open-mp { padding: 12px 22px; font-size: 16px; }
+    #stageLabel { position: absolute; left: 50%; bottom: 150px; transform: translateX(-50%); text-align: center; pointer-events: none; z-index: 51; }
+    #stageLabel .sl-name { font-size: 26px; font-weight: 900; color: #fff; text-shadow: 0 2px 12px #000; }
+    #stageLabel .sl-rar { font-size: 14px; font-weight: 900; letter-spacing: 3px; text-shadow: 0 2px 8px #000; }
+
+    /* ===== 共用全螢幕面板（開箱、合成、登入） ===== */
+    .g-overlay { position: absolute; inset: 0; z-index: 90; display: flex; flex-direction: column; align-items: center; color: #e2e8f0;
+      background: rgba(2, 6, 23, 0.94); padding: 16px 24px; box-sizing: border-box; }
+    .g-overlay.hidden { display: none; }
+    .g-head { width: 100%; display: flex; align-items: center; gap: 12px; }
+    .g-title { font-size: 26px; font-weight: 900; color: #fbbf24; margin-right: auto; }
+    .g-btn { background: #1d4ed8; color: #fff; border: none; border-radius: 12px; padding: 10px 18px; font-weight: 900; font-size: 15px; cursor: pointer; white-space: nowrap; }
+    .g-btn:hover:not(:disabled) { filter: brightness(1.15); }
+    .g-btn:disabled { background: #334155 !important; color: #64748b; cursor: not-allowed; }
+    .g-btn.gold { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .g-btn.green { background: linear-gradient(135deg, #10b981, #059669); }
+    .g-btn.gray { background: #475569; }
+    .g-pill { background: rgba(15, 23, 42, 0.9); border: 1px solid #334155; border-radius: 10px; padding: 7px 12px; font-weight: 800; white-space: nowrap; }
+    .g-pill b { color: #fbbf24; }
+    /* 開箱卷軸 */
+    .g-reel-wrap { position: relative; width: 100%; height: 190px; margin-top: 40px; overflow: hidden; border-top: 2px solid #1e293b; border-bottom: 2px solid #1e293b;
+      background: linear-gradient(90deg, rgba(2,6,23,1) 0%, rgba(15,23,42,0.6) 20%, rgba(15,23,42,0.6) 80%, rgba(2,6,23,1) 100%); }
+    .g-reel { position: absolute; top: 15px; left: 0; display: flex; gap: 10px; will-change: transform; }
+    .g-pointer { position: absolute; left: 50%; top: 0; bottom: 0; width: 4px; margin-left: -2px; background: #fbbf24; z-index: 3; box-shadow: 0 0 14px #fbbf24; }
+    .g-pointer::before, .g-pointer::after { content: ''; position: absolute; left: -9px; border: 11px solid transparent; }
+    .g-pointer::before { top: 0; border-top-color: #fbbf24; }
+    .g-pointer::after { bottom: 0; border-bottom-color: #fbbf24; }
+    .g-card { width: 140px; height: 156px; flex: 0 0 auto; border-radius: 12px; background: linear-gradient(180deg, #1e293b, #0f172a);
+      border: 3px solid var(--rc); box-shadow: inset 0 -30px 40px -20px var(--rc); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .g-card img { width: 128px; height: 92px; object-fit: contain; }
+    .g-card .gn { font-weight: 900; font-size: 14px; margin-top: 4px; }
+    .g-card .gr { font-size: 11px; font-weight: 900; color: var(--rc); }
+    .g-card.win { animation: gWin 0.6s ease-out; }
+    @keyframes gWin { 0% { transform: scale(1); filter: brightness(1); } 30% { transform: scale(1.12); filter: brightness(2.2); } 100% { transform: scale(1.06); filter: brightness(1.2); } }
+    .g-darken { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; z-index: 4; transition: opacity 0.45s; }
+    .g-flash { position: absolute; inset: 0; pointer-events: none; z-index: 6; opacity: 0; }
+    .g-flash.go { animation: gFlash 1.4s ease-out forwards; }
+    @keyframes gFlash { 0% { opacity: 0; } 8% { opacity: 1; } 100% { opacity: 0; } }
+    .g-overlay.shake { animation: gShake 0.5s linear; }
+    @keyframes gShake { 0%,100% { transform: translate(0,0); } 20% { transform: translate(-12px, 6px); } 40% { transform: translate(10px, -8px); } 60% { transform: translate(-8px, -4px); } 80% { transform: translate(6px, 8px); } }
+    .g-rates { margin-top: auto; width: 100%; max-width: 980px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; font-size: 12px; }
+    .g-rates > div { background: rgba(15, 23, 42, 0.9); border: 1px solid #1e293b; border-top: 3px solid var(--rc); border-radius: 10px; padding: 6px 10px; }
+    .g-rates b { color: var(--rc); font-size: 14px; }
+    .g-rates .gl { color: #94a3b8; margin-top: 2px; line-height: 1.4; }
+    .g-controls { display: flex; gap: 12px; margin-top: 26px; align-items: center; }
+    .g-note { color: #64748b; font-size: 12px; margin-top: 8px; }
+    /* 開箱結果（展示台上的 3D 車透出來） */
+    .g-overlay.result { background: radial-gradient(ellipse 30% 42% at 50% 50%, rgba(2,6,23,0) 0%, rgba(2,6,23,0.2) 60%, rgba(2,6,23,0.92) 100%); }
+    .g-overlay.result .g-reel-wrap, .g-overlay.result .g-rates, .g-overlay.result .g-controls, .g-overlay.result .g-note { display: none; }
+    .g-res { display: none; position: absolute; left: 0; right: 0; top: 70px; bottom: 20px; flex-direction: column; align-items: center; pointer-events: none; }
+    .g-overlay.result .g-res { display: flex; }
+    .g-res .rr { font-size: 64px; font-weight: 900; letter-spacing: 12px; text-shadow: 0 0 30px var(--rc), 0 4px 16px #000; color: var(--rc); animation: gPop 0.7s cubic-bezier(.2,1.6,.4,1); }
+    .g-res .rn { font-size: 34px; font-weight: 900; color: #fff; text-shadow: 0 3px 14px #000; }
+    .g-res .rnew { display: inline-block; background: #ef4444; color: #fff; font-size: 14px; padding: 2px 8px; border-radius: 8px; margin-left: 8px; vertical-align: middle; }
+    .g-res .rbtns { margin-top: auto; display: flex; gap: 12px; pointer-events: auto; }
+    @keyframes gPop { 0% { transform: scale(0.3); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    #gFx { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 95; }
+    /* 合成 */
+    .m-tabs { display: flex; gap: 8px; margin: 12px 0 8px; }
+    .m-tab { background: #1e293b; color: #cbd5e1; border: 2px solid #334155; border-radius: 10px; padding: 7px 14px; font-weight: 900; cursor: pointer; }
+    .m-tab.on { border-color: var(--rc); color: #fff; box-shadow: 0 0 12px var(--rc); }
+    .m-body { display: flex; gap: 18px; width: 100%; flex: 1; min-height: 0; }
+    .m-inv { width: 420px; background: rgba(15, 23, 42, 0.9); border: 1px solid #1e293b; border-radius: 14px; padding: 10px; overflow-y: auto; }
+    .m-inv .dex-row { grid-template-columns: repeat(4, 1fr); }
+    .m-main { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; }
+    .m-slots { display: flex; gap: 12px; margin-top: 18px; }
+    .m-slot { width: 110px; height: 128px; border: 2px dashed #475569; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      color: #475569; font-size: 30px; cursor: pointer; background: rgba(15, 23, 42, 0.6); transition: transform 0.6s cubic-bezier(.5,0,.3,1), opacity 0.6s; }
+    .m-slot.full { border: 3px solid var(--rc); color: #e2e8f0; font-size: 12px; font-weight: 800; }
+    .m-slot img { width: 100px; height: 70px; object-fit: contain; }
+    .m-info { margin-top: 16px; text-align: center; font-size: 15px; line-height: 1.6; }
+    .m-info b { color: #fbbf24; }
+    .m-info .bad { color: #f87171; }
+    .m-stage { position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center; }
+    .m-stage.on { display: flex; }
+    .m-main.staging > :not(.m-stage):not(.m-shard) { visibility: hidden; }
+    .m-orb { width: 120px; height: 120px; border-radius: 50%; background: radial-gradient(circle, #fff 0%, var(--rc) 45%, rgba(0,0,0,0) 72%);
+      animation: mOrb 0.8s ease-in-out infinite alternate; position: relative; }
+    @keyframes mOrb { from { transform: scale(0.9); filter: brightness(1); } to { transform: scale(1.12); filter: brightness(1.6); } }
+    .m-orb.crack { animation: mCrack 0.7s forwards; }
+    @keyframes mCrack { 0% { transform: scale(1.1); } 40% { transform: scale(1.15) rotate(4deg); filter: grayscale(0.6); } 100% { transform: scale(0.2); opacity: 0; filter: grayscale(1); } }
+    .m-orb.burst { animation: mBurst 0.6s forwards; }
+    @keyframes mBurst { 0% { transform: scale(1.1); } 100% { transform: scale(4); opacity: 0; } }
+    .m-prog { width: 360px; height: 12px; background: #1e293b; border-radius: 6px; overflow: hidden; margin-top: 30px; }
+    .m-prog i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #38bdf8, #fbbf24); }
+    .m-result { margin-top: 24px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .m-result .g-card { animation: gPop 0.6s cubic-bezier(.2,1.6,.4,1); }
+    .m-result .g-card.drop { animation: mDrop 0.7s cubic-bezier(.3,1.5,.5,1); }
+    @keyframes mDrop { 0% { transform: translateY(-160px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+    .m-msg { font-size: 26px; font-weight: 900; }
+    .g-card.tease1 { animation: mTease 0.5s ease-in-out infinite; box-shadow: 0 0 24px var(--rc); }
+    .g-card.tease2 { animation: mTease 0.22s ease-in-out infinite; box-shadow: 0 0 36px var(--rc); }
+    .g-card.tease3 { animation: mTease 0.09s linear infinite; box-shadow: 0 0 50px #ef4444; filter: brightness(1.4) saturate(1.5); }
+    @keyframes mTease { 0%,100% { transform: translate(0,0) rotate(0); } 25% { transform: translate(-3px, 1px) rotate(-2deg); } 75% { transform: translate(3px, -1px) rotate(2deg); } }
+    .g-card.boom { animation: mBoom 0.5s forwards; }
+    @keyframes mBoom { 0% { transform: scale(1); filter: brightness(1); } 30% { transform: scale(1.35); filter: brightness(3) sepia(1) saturate(4) hue-rotate(-20deg); } 100% { transform: scale(0.1) rotate(25deg); opacity: 0; } }
+    .m-boomflash { position: absolute; inset: 0; pointer-events: none; z-index: 5; background: radial-gradient(circle at 60% 50%, rgba(255,247,200,0.95), rgba(251,146,60,0.6) 35%, rgba(239,68,68,0) 70%); animation: gFlash 0.9s ease-out forwards; }
+    .m-troll { font-size: 34px; font-weight: 900; color: #f87171; text-shadow: 0 0 18px rgba(239,68,68,0.6); animation: gPop 0.6s cubic-bezier(.2,1.6,.4,1); }
+    .m-congrats { font-size: 26px; font-weight: 900; color: #fde047; animation: mWiggle 0.6s ease-in-out infinite; }
+    @keyframes mWiggle { 0%,100% { transform: rotate(-4deg) scale(1); } 50% { transform: rotate(4deg) scale(1.08); } }
+    .m-shard { position: absolute; width: 18px; height: 18px; background: var(--rc); clip-path: polygon(50% 0, 100% 100%, 0 70%); transition: transform 0.9s ease-out, opacity 0.9s; }
+    /* 確認視窗 */
+    /* 車庫面板可收合 */
+    .pc-btn { margin-left: 6px; background: #1e293b; color: #cbd5e1; border: 1px solid #334155; border-radius: 8px; padding: 2px 9px; font-weight: 900; cursor: pointer; font-size: 13px; }
+    .pc-btn:hover { border-color: #38bdf8; color: #fff; }
+    .garage-panel.collapsed { width: auto !important; align-self: flex-start; padding: 8px 12px; cursor: pointer; overflow: hidden; }
+    .garage-panel.collapsed > :not(.panel-heading) { display: none !important; }
+    .garage-panel.collapsed .panel-heading { margin: 0; }
+    .garage-panel.collapsed > .panel-heading:not(:first-child) { display: none !important; }
+    .garage-panel.collapsed .dex-count { margin-left: 8px; }
+    /* 賽道紀錄 */
+    .rec-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 14px; }
+    .rec-table th { color: #94a3b8; font-size: 12px; font-weight: 800; padding: 4px 6px; border-bottom: 1px solid #334155; }
+    .rec-table td { padding: 7px 6px; border-bottom: 1px solid #1e293b; font-weight: 800; }
+    .rec-table td.tn { text-align: left; color: #e2e8f0; }
+    .rec-table tr.cur td { background: rgba(56, 189, 248, 0.1); }
+    .rec-table .rt { color: #fbbf24; font-family: monospace; font-size: 15px; }
+    .rec-table .rc { display: block; color: #64748b; font-size: 11px; font-weight: 700; }
+    .rec-table .none { color: #475569; }
+    #modalRecord { font-weight: 900; color: #fbbf24; margin: -4px 0 8px; font-size: 15px; }
+    #uiConfirm { position: absolute; inset: 0; z-index: 120; background: rgba(2, 6, 23, 0.7); display: flex; align-items: center; justify-content: center; }
+    #uiConfirm.hidden { display: none; }
+    #uiConfirm .box { width: 440px; background: #0f172a; border: 2px solid #fbbf24; border-radius: 16px; padding: 20px 24px; color: #e2e8f0; }
+    #uiConfirm .t { font-size: 20px; font-weight: 900; color: #fbbf24; margin-bottom: 10px; }
+    #uiConfirm .c { font-size: 15px; line-height: 1.6; }
+    #uiConfirm .b { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; }
+    /* 連續登入日曆 */
+    .d-card { margin: auto; width: 760px; background: #0f172a; border: 2px solid #38bdf8; border-radius: 20px; padding: 22px 26px; text-align: center; }
+    .d-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin: 18px 0; }
+    .d-day { border: 2px solid #334155; border-radius: 14px; padding: 12px 4px; background: #111a2e; }
+    .d-day .dl { font-size: 12px; color: #94a3b8; font-weight: 800; }
+    .d-day .di { font-size: 30px; margin: 6px 0; }
+    .d-day.done { border-color: #10b981; background: rgba(16, 185, 129, 0.12); }
+    .d-day.today { border-color: #fbbf24; box-shadow: 0 0 16px rgba(251, 191, 36, 0.55); animation: gPop 0.6s; }
+    .d-day.box .di { filter: drop-shadow(0 0 8px #fbbf24); }
+    .d-msg { font-size: 18px; font-weight: 900; }
+    .d-sub { color: #94a3b8; font-size: 13px; margin-top: 6px; }
   </style>
   <!-- Three.js CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -1000,49 +1209,47 @@
     </div>
   </div>
 
-  <!-- 賽車車庫大廳畫面 (Garage Screen) -->
+  <!-- 賽車車庫大廳畫面 (Garage Screen)：左邊圖鑑、中間 3D 展示台、右邊屬性與強化 -->
   <div id="garage-screen">
     <div class="garage-header">
       <div class="garage-title">
         <span>🏎️</span>
-        <span>賽車整備車庫 (GRAND PRIX GARAGE)</span>
+        <span>賽車整備車庫</span>
       </div>
-      <div class="garage-coins">
-        <span>🪙</span>
-        <span id="garageCoinAmount">200</span>
+      <div class="garage-hbtns">
+        <button class="gh-btn" id="btnOpenGacha">🎁 開箱 <b id="ghBoxes">0</b></button>
+        <button class="gh-btn" id="btnOpenMerge">⚗️ 合成</button>
+        <button class="gh-btn" id="btnOpenRecords">🏆 賽道紀錄</button>
+        <button class="gh-btn" id="btnOpenDaily">📅 連續登入 <b id="ghStreak">0/7</b></button>
+        <button class="gh-btn" id="btnFxQuality">✨ 特效：高</button>
+        <div class="garage-coins">
+          <span>🪙</span>
+          <span id="garageCoinAmount">200</span>
+        </div>
       </div>
     </div>
 
     <div class="garage-main">
-      <!-- 換車面板 -->
-      <div class="garage-panel car-select-panel">
-        <div class="panel-heading">
-          <span>🏎️</span> 選擇參賽賽車
-        </div>
-        <div class="car-cards-grid" id="carCardsContainer">
-          <!-- JS 動態生成 4 款車種 -->
-        </div>
-
-        <div style="font-size: 13px; font-weight: 700; color: #94a3b8; margin-top: 10px;">車身車漆顏色：</div>
-        <div class="color-swatches" id="colorSwatchesContainer">
-          <!-- JS 動態生成 6 種顏色 -->
-        </div>
+      <!-- 圖鑑 -->
+      <div class="garage-panel dex-panel">
+        <div class="panel-heading"><span>📖</span> 車輛圖鑑 <span class="dex-count" id="dexCount"></span><button class="pc-btn" data-pc="dex" title="收合／展開">◀</button></div>
+        <div class="dex-grid" id="dexGrid"></div>
       </div>
 
-      <!-- 強化面板 -->
-      <div class="garage-panel upgrade-panel">
-        <div class="panel-heading">
-          <span>⚡</span> 賽車零件改裝強化 (當前車種)
-        </div>
-        <div id="upgradeItemsContainer">
-          <!-- JS 動態生成 4 項強化屬性 -->
-        </div>
+      <!-- 選中車款：屬性、裝備、強化 -->
+      <div class="garage-panel info-panel">
+        <div class="panel-heading"><span>🔧</span> 屬性・裝備・強化<button class="pc-btn" data-pc="info" style="margin-left:auto" title="收合／展開">▶</button></div>
+        <div id="carInfo"></div>
+        <div class="color-swatches" id="colorSwatchesContainer"></div>
+        <div class="panel-heading" style="margin-top:8px"><span>⚡</span> 零件強化（此車款）</div>
+        <div id="upgradeItemsContainer"></div>
       </div>
     </div>
+    <div id="stageLabel"></div>
 
     <div class="garage-track-row">
       <span class="track-row-label">🗺️ 賽道</span>
-      <div id="trackPicker" style="display:flex; gap:10px;"></div>
+      <div id="trackPicker" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
       <button class="track-card" id="btnAiLevel" style="min-width:110px"></button>
       <button class="track-card" id="btnRaceMode" style="min-width:120px"></button>
     </div>
@@ -1052,6 +1259,84 @@
       <button class="btn-start-race" id="btnStartRaceFromGarage">🏁 開始比賽 (START RACE)</button>
     </div>
   </div>
+
+  <!-- 開箱 -->
+  <div id="gacha-panel" class="g-overlay hidden">
+    <div class="g-head">
+      <div class="g-title">🎁 開箱</div>
+      <div class="g-pill">箱子 <b id="gBoxes">0</b></div>
+      <div class="g-pill">🪙 <b id="gCoins">0</b></div>
+      <button class="g-btn gray" id="gSound">🔊 音效：開</button>
+      <button class="g-btn gray" id="gClose">✖ 關閉</button>
+    </div>
+    <div class="g-reel-wrap" id="gReelWrap">
+      <div class="g-reel" id="gReel"></div>
+      <div class="g-pointer"></div>
+      <div class="g-darken" id="gDarken"></div>
+    </div>
+    <div class="g-controls">
+      <button class="g-btn gold" id="gBuy">🪙 10,000 金幣買 1 箱</button>
+      <button class="g-btn green" id="gOpen" style="font-size:20px;padding:14px 40px">開 1 箱</button>
+    </div>
+    <div class="g-note">每一箱都是獨立抽選，沒有保底。同一台車可以重複擁有。</div>
+    <div class="g-res" id="gRes"></div>
+    <div class="g-flash" id="gFlash"></div>
+  </div>
+
+  <!-- 合成 -->
+  <div id="merge-panel" class="g-overlay hidden">
+    <div class="g-head">
+      <div class="g-title" style="color:#c084fc">⚗️ 合成</div>
+      <div class="g-pill" style="color:#94a3b8">5 台同稀有度的車 → 1 台高一階的車（起始車不能合成）</div>
+      <button class="g-btn gray" id="mClose">✖ 關閉</button>
+    </div>
+    <div class="m-tabs" id="mTabs"></div>
+    <div class="m-body">
+      <div class="m-inv" id="mInv"></div>
+      <div class="m-main">
+        <div class="m-slots" id="mSlots"></div>
+        <div class="m-info" id="mInfo"></div>
+        <div style="display:flex; gap:10px; margin-top:14px">
+          <button class="g-btn gray" id="mAuto">自動放入</button>
+          <button class="g-btn gray" id="mClear">清空</button>
+          <button class="g-btn green" id="mGo" style="padding:12px 36px; font-size:18px">⚗️ 合成</button>
+        </div>
+        <div class="m-stage" id="mStage">
+          <div class="m-orb" id="mOrb"></div>
+          <div class="m-prog"><i id="mProg"></i></div>
+          <div class="m-result" id="mResult"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 連續登入 -->
+  <div id="daily-panel" class="g-overlay hidden">
+    <div class="d-card">
+      <div class="g-title" style="margin:0; color:#38bdf8">📅 連續登入獎勵</div>
+      <div class="d-days" id="dDays"></div>
+      <div class="d-msg" id="dMsg"></div>
+      <div class="d-sub">以台灣時間的日期計算。中斷一天，連續天數會歸零重新計算；第 7 天領完箱子後從第 1 天重新累積。</div>
+      <div style="margin-top:16px"><button class="g-btn" id="dClose">好</button></div>
+    </div>
+  </div>
+
+  <!-- 賽道紀錄 -->
+  <div id="records-panel" class="g-overlay hidden">
+    <div class="d-card" style="width:860px">
+      <div class="g-title" style="margin:0; color:#fbbf24">🏆 賽道紀錄</div>
+      <div class="d-sub">「練習賽」是只有自己一台車；「比賽」是有對手的比賽（AI 或連線，個人賽、團體賽都算）。單圈取最快的一圈，總時間要跑完 3 圈才算。</div>
+      <table class="rec-table" id="recTable"></table>
+      <div style="margin-top:16px"><button class="g-btn" id="recClose">關閉</button></div>
+    </div>
+  </div>
+
+  <!-- 確認視窗 -->
+  <div id="uiConfirm" class="hidden">
+    <div class="box"><div class="t" id="ucT"></div><div class="c" id="ucC"></div>
+      <div class="b"><button class="g-btn gray" id="ucNo">取消</button><button class="g-btn green" id="ucYes">確定</button></div></div>
+  </div>
+  <canvas id="gFx"></canvas>
 
   <!-- 多人連線面板 -->
   <div id="mp-panel" class="hidden">
@@ -1110,6 +1395,11 @@
         <button data-admin="coins10k">🪙 +10,000 金幣</button>
         <button data-admin="coins100k">🪙 +100,000 金幣</button>
         <button data-admin="maxall" style="background:#d97706">⚡ 全部車輛強化滿級</button>
+        <button data-admin="boxes10" style="background:#7c3aed">🎁 +10 箱子</button>
+        <button data-admin="allcars" style="background:#7c3aed">🚗 每台車 +1</button>
+        <button data-admin="clearinv" style="background:#7c3aed">🧹 清空車庫背包</button>
+        <button data-admin="nextday" style="background:#0e7490">📅 模擬隔天</button>
+        <button data-admin="skipday" style="background:#0e7490">📅 模擬斷一天</button>
         <button data-admin="reset" style="background:#b91c1c">🗑️ 重置存檔</button>
       </div>
       <div class="mp-actions"><button id="btnAdminClose">關閉</button></div>
@@ -1122,6 +1412,7 @@
       <div class="modal-title" id="modalTitle">🏆 GRAND PRIX FINISH!</div>
       <div id="modalTeamResult"></div>
       <div class="modal-reward-badge" id="modalRewardBadge">🪙 +100 金幣獎勵</div>
+      <div id="modalRecord"></div>
       <div style="font-size: 13px; color: #94a3b8; margin-bottom: 2px;">YOUR TOTAL TIME</div>
       <div class="modal-total-time" id="modalTotalTime">02:15.80</div>
       <div class="leaderboard-list" id="modalLeaderboard">
@@ -1257,6 +1548,24 @@
       }
     };
 
+    // ---------- 車輛圖鑑（抽箱系統）----------
+    const GACHA_MODE = 'local'; // 'local'：單機試玩，存在 localStorage；'server'：之後改由伺服器決定抽箱與合成結果
+    const RARITIES = {
+      common:    { name: '普通', css: '#9ca3af', sum: 80, rate: 0.70 },
+      rare:      { name: '稀有', css: '#3b82f6', sum: 84, rate: 0.22 },
+      epic:      { name: '史詩', css: '#a855f7', sum: 88, rate: 0.06 },
+      mythic:    { name: '神話', css: '#ef4444', sum: 92, rate: 0.019 },
+      legendary: { name: '傳說', css: '#fbbf24', sum: 96, rate: 0.001 }
+    };
+    const RARITY_ORDER = ['common', 'rare', 'epic', 'mythic', 'legendary'];
+    // 屬性換算：倍率 = 1 + (屬性值 - 20) × 0.01
+    const statMult = v => 1 + (v - 20) * 0.01;
+    const CAR_CATALOG = {};
+    // 起始車：沿用 KART_TYPES 的數值與外型，不在抽箱池、不能合成
+    Object.values(KART_TYPES).forEach(t => {
+      CAR_CATALOG[t.id] = { id: t.id, name: t.name, rarity: 'starter', starter: true, kartType: t, desc: t.desc, fx: null };
+    });
+
     const KART_COLORS = [
       { id: 'blue',   name: '經典藍', hex: 0x2563eb, css: '#2563eb' },
       { id: 'red',    name: '赤焰紅', hex: 0xef4444, css: '#ef4444' },
@@ -1275,6 +1584,7 @@
       selectedColor: 0x2563eb,
       selectedTrack: 'figure8',
       aiLevel: 1,            // 0 簡單 / 1 普通 / 2 困難
+      fxQuality: 'high',     // 畫面特效：'high' / 'low'
       upgrades: {
         balanced: { engine: 0, tire: 0, nitro: 0, drift: 0 },
         speed:    { engine: 0, tire: 0, nitro: 0, drift: 0 },
@@ -1310,7 +1620,11 @@
 
     // 依車種與強化等級計算綜合倍率屬性 (Stats)
     function getKartEffectiveStats(typeId, customUpgrades = null) {
-      const base = KART_TYPES[typeId] || KART_TYPES.balanced;
+      const cat = CAR_CATALOG[typeId];
+      const base = (cat && !cat.starter)
+        ? { topSpeed: statMult(cat.stats.speed), accel: statMult(cat.stats.accel), steer: statMult(cat.stats.handling),
+            weight: 1.0, driftTurn: statMult(cat.stats.drift), nitroCharge: statMult(cat.stats.drift) }
+        : (KART_TYPES[typeId] || KART_TYPES.balanced);
       const up = customUpgrades || (gameData.upgrades[typeId] || { engine: 0, tire: 0, nitro: 0, drift: 0 });
 
       // 四種強化：
@@ -1548,6 +1862,43 @@
         pads: [470, 660, 870],
         ice: [],
         theme: 'desert'
+      },
+      maple: {
+        name: '楓紅髮夾谷', desc: '技術賽道・連續髮夾彎・減速彎・短直線',
+        startHeading: 0,
+        segments: [
+          ['S', 70], ['A', 30, 90], ['S', 20], ['A', 22, 55], ['A', 22, -55], ['A', 26, 90],
+          ['S', 8], ['A', 20, 60], ['A', 20, -120], ['A', 20, 60], ['S', 8],
+          ['A', 17, -180], ['S', 70], ['A', 17, 180], ['S', 90.95], ['A', 16, 90], ['S', 56.51],
+          ['A', 20, -55], ['A', 20, 110], ['A', 20, -55], ['S', 20], ['A', 22, 90], ['S', 45]
+        ],
+        hills: [
+          { center: 140, plateau: 10, ramp: 45, height: 6.0, solid: true },
+          { center: 708, plateau: 0, ramp: 40, height: 3.5, solid: true }
+        ],
+        widths: [ { from: 222, to: 318, half: 7.0 }, { from: 318, to: 380, half: 9.5 }, { from: 436, to: 500, half: 9.5 } ],
+        pads: [30, 530],
+        ice: [],
+        theme: 'autumn'
+      },
+      dusk: {
+        name: '暮光迷城', desc: '高難度・窄路階梯彎・冰面雙髮夾・折返',
+        startHeading: 0,
+        segments: [
+          ['S', 70], ['A', 20, 90], ['S', 15], ['A', 20, -90], ['S', 15], ['A', 20, 90], ['S', 15], ['A', 20, -90],
+          ['S', 20], ['A', 24, 90], ['S', 30.73], ['A', 18, -60], ['A', 18, 120], ['A', 18, -60], ['S', 20],
+          ['A', 17, 180], ['S', 40], ['A', 17, -180], ['A', 24, 90], ['S', 30],
+          ['A', 16, 90], ['S', 50], ['A', 17, -180], ['S', 50], ['A', 16, 90], ['S', 63.44],
+          ['A', 22, 90], ['S', 80], ['A', 20, -55], ['A', 20, 110], ['A', 20, -55], ['S', 30],
+          ['A', 40, 45], ['A', 18, 45], ['S', 40]
+        ],
+        hills: [
+          { center: 975, plateau: 20, ramp: 35, height: 4.0, solid: true }
+        ],
+        widths: [ { from: 75, to: 250, half: 6.5 }, { from: 325, to: 405, half: 6.5 }, { from: 640, to: 845, half: 7.0 } ],
+        pads: [20, 875],
+        ice: [ { from: 430, to: 572 } ],
+        theme: 'dusk'
       }
     };
 
@@ -1560,7 +1911,11 @@
       snow:   { sky: 0xcfe3f2, fogNear: 110, fogFar: 560, ground: 0xeef3f8, ambient: [0xffffff, 0.8], sun: [0xffffff, 0.85],
                 wallA: [0.20, 0.45, 0.90], wallB: [0.97, 0.98, 1.00], road: 0.22, decor: 'pines' },
       desert: { sky: 0xf6cf96, fogNear: 160, fogFar: 680, ground: 0xd8b06a, ambient: [0xfff1dc, 0.72], sun: [0xffe2b0, 1.0],
-                wallA: [0.93, 0.45, 0.12], wallB: [0.98, 0.93, 0.82], road: 0.20, decor: 'desert' }
+                wallA: [0.93, 0.45, 0.12], wallB: [0.98, 0.93, 0.82], road: 0.20, decor: 'desert' },
+      autumn: { sky: 0xf4c58e, fogNear: 140, fogFar: 620, ground: 0x7a6a35, ambient: [0xfff0dc, 0.72], sun: [0xffd9a0, 0.95],
+                wallA: [0.85, 0.30, 0.10], wallB: [0.98, 0.90, 0.70], road: 0.19, decor: 'trees', leaf: 0xd9622b },
+      dusk:   { sky: 0x3b2a5c, fogNear: 100, fogFar: 520, ground: 0x2b3a2e, ambient: [0xc4b0ff, 0.6], sun: [0xff9a62, 0.6],
+                wallA: [0.98, 0.55, 0.15], wallB: [0.55, 0.30, 0.85], road: 0.15, decor: 'pines', pine: 0x243b33, noCap: true }
     };
 
     // 選賽道：網址 ?track=xxx 優先（連線用），其次是車庫裡上次選的
@@ -1989,9 +2344,9 @@
       const trunkGeo = new THREE.CylinderGeometry(0.5, 0.7, 3, 6);
       const trunkMat = new THREE.MeshStandardMaterial({ color: 0x6b4423, roughness: 0.9 });
       const leafGeo = new THREE.SphereGeometry(3.2, 7, 6);
-      const leafMat = new THREE.MeshStandardMaterial({ color: 0x2f7d32, roughness: 0.8, flatShading: true });
+      const leafMat = new THREE.MeshStandardMaterial({ color: THEME.leaf || 0x2f7d32, roughness: 0.8, flatShading: true });
       const pineGeo = new THREE.ConeGeometry(3.2, 9, 7);
-      const pineMat = new THREE.MeshStandardMaterial({ color: 0x1f4d3a, roughness: 0.8, flatShading: true });
+      const pineMat = new THREE.MeshStandardMaterial({ color: THEME.pine || 0x1f4d3a, roughness: 0.8, flatShading: true });
       const snowCapGeo = new THREE.ConeGeometry(1.7, 3.2, 7);
       const snowCapMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.6 });
       const cactusGeo = new THREE.CylinderGeometry(0.7, 0.8, 1, 7);
@@ -2031,8 +2386,8 @@
         } else if (decor === 'pines') {
           const t = new THREE.Mesh(trunkGeo, trunkMat); t.position.y = 1.5;
           const p = new THREE.Mesh(pineGeo, pineMat); p.position.y = 7;
-          const cap = new THREE.Mesh(snowCapGeo, snowCapMat); cap.position.y = 10.4;
-          g.add(t, p, cap);
+          g.add(t, p);
+          if (!THEME.noCap) { const cap = new THREE.Mesh(snowCapGeo, snowCapMat); cap.position.y = 10.4; g.add(cap); }
         } else if (decor === 'desert') {
           if (rand() < 0.55) {
             const h = 4 + rand() * 4;
@@ -2229,7 +2584,7 @@
         }
       }
 
-      emit(x, y, z, vx, vy, vz, isFire = false, life = 0.45) {
+      emit(x, y, z, vx, vy, vz, isFire = false, life = 0.45, color = null) {
         for (const p of this.pool) {
           if (!p.active && p.isFire === isFire) {
             p.active = true;
@@ -2240,6 +2595,7 @@
             p.mesh.visible = true;
             p.mesh.scale.set(1, 1, 1);
             p.mesh.material.opacity = isFire ? 0.9 : 0.6;
+            p.mesh.material.color.setHex(color !== null ? color : (isFire ? 0x38bdf8 : 0xe2e8f0));
             break;
           }
         }
@@ -2266,8 +2622,1205 @@
 
     const particleSystem = new ParticleSystem();
 
+    // ==========================================================
+    // 6b. 車輛圖鑑：共用特效模組（彩帶尾跡、底盤光暈、粒子、地面光軌、衝擊波）
+    // ==========================================================
+    const fxLow = () => gameData.fxQuality === 'low';
+    const AUR_COLS = [new THREE.Color(0x3b82f6), new THREE.Color(0x34d399), new THREE.Color(0xa855f7)];
+    // 極光色：藍 → 綠 → 紫 循環（p 0~1）
+    function auroraColor(p, out = new THREE.Color()) {
+      p = ((p % 1) + 1) % 1;
+      const s = p * 3, i = Math.floor(s) % 3, f = s - Math.floor(s);
+      return out.copy(AUR_COLS[i]).lerp(AUR_COLS[(i + 1) % 3], f);
+    }
+
+    // 金屬漆用的環境反射（不然 metalness 高的車會很暗）
+    let carEnvMap = null;
+    function getCarEnvMap() {
+      if (carEnvMap) return carEnvMap;
+      const mk = (top, bottom) => {
+        const c = document.createElement('canvas'); c.width = c.height = 64;
+        const x = c.getContext('2d'); const g = x.createLinearGradient(0, 0, 0, 64);
+        g.addColorStop(0, top); g.addColorStop(1, bottom); x.fillStyle = g; x.fillRect(0, 0, 64, 64);
+        return c;
+      };
+      const side = mk('#a5b4c8', '#1e293b'), up = mk('#e2e8f0', '#e2e8f0'), down = mk('#0f172a', '#0f172a');
+      const cube = new THREE.CubeTexture([side, side, up, down, side, side]);
+      cube.needsUpdate = true;
+      const pm = new THREE.PMREMGenerator(renderer);
+      carEnvMap = pm.fromCubemap(cube).texture;
+      pm.dispose();
+      return carEnvMap;
+    }
+
+    // 粒子貼圖集（4×2 格）：0 光點 1 煙團 2 星星 3 花瓣 4 葉片 5 火星 6 冰晶 7 氣泡
+    const FX_ATLAS = (() => {
+      const c = document.createElement('canvas'); c.width = 256; c.height = 128;
+      const x = c.getContext('2d');
+      const cell = (i, f) => { x.save(); x.translate((i % 4) * 64 + 32, Math.floor(i / 4) * 64 + 32); f(); x.restore(); };
+      const radial = (r, stops) => {
+        const g = x.createRadialGradient(0, 0, 0, 0, 0, r);
+        stops.forEach(([o, col]) => g.addColorStop(o, col));
+        x.fillStyle = g; x.beginPath(); x.arc(0, 0, r, 0, Math.PI * 2); x.fill();
+      };
+      cell(0, () => radial(30, [[0, 'rgba(255,255,255,1)'], [0.3, 'rgba(255,255,255,0.65)'], [1, 'rgba(255,255,255,0)']]));
+      cell(1, () => radial(30, [[0, 'rgba(255,255,255,0.95)'], [0.55, 'rgba(255,255,255,0.55)'], [1, 'rgba(255,255,255,0)']]));
+      cell(2, () => {
+        radial(16, [[0, 'rgba(255,255,255,1)'], [1, 'rgba(255,255,255,0)']]);
+        x.fillStyle = '#fff'; x.beginPath();
+        for (let k = 0; k < 8; k++) { const a = k * Math.PI / 4 - Math.PI / 2, r = k % 2 ? 6 : 28; x.lineTo(Math.cos(a) * r, Math.sin(a) * r); }
+        x.closePath(); x.fill();
+      });
+      cell(3, () => {
+        x.fillStyle = '#fff'; x.beginPath(); x.moveTo(0, -26);
+        x.bezierCurveTo(24, -18, 20, 14, 5, 25); x.lineTo(0, 18); x.lineTo(-5, 25);
+        x.bezierCurveTo(-20, 14, -24, -18, 0, -26); x.fill();
+      });
+      cell(4, () => {
+        x.fillStyle = '#fff'; x.beginPath(); x.moveTo(0, -28);
+        x.quadraticCurveTo(26, 0, 0, 28); x.quadraticCurveTo(-26, 0, 0, -28); x.fill();
+        x.strokeStyle = 'rgba(0,0,0,0.35)'; x.lineWidth = 2.5; x.beginPath(); x.moveTo(0, -24); x.lineTo(0, 26); x.stroke();
+      });
+      cell(5, () => {
+        radial(12, [[0, 'rgba(255,255,255,1)'], [1, 'rgba(255,255,255,0)']]);
+        const g = x.createLinearGradient(-30, 0, 30, 0);
+        g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(0.5, 'rgba(255,255,255,0.9)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+        x.fillStyle = g; x.fillRect(-30, -2.5, 60, 5);
+      });
+      cell(6, () => {
+        radial(10, [[0, 'rgba(255,255,255,0.9)'], [1, 'rgba(255,255,255,0)']]);
+        x.strokeStyle = '#fff'; x.lineWidth = 3.5; x.lineCap = 'round';
+        for (let k = 0; k < 6; k++) {
+          x.save(); x.rotate(k * Math.PI / 3);
+          x.beginPath(); x.moveTo(0, 0); x.lineTo(0, -26);
+          x.moveTo(0, -15); x.lineTo(7, -21); x.moveTo(0, -15); x.lineTo(-7, -21); x.stroke();
+          x.restore();
+        }
+      });
+      cell(7, () => {
+        x.fillStyle = 'rgba(255,255,255,0.18)'; x.beginPath(); x.arc(0, 0, 22, 0, Math.PI * 2); x.fill();
+        x.strokeStyle = 'rgba(255,255,255,0.95)'; x.lineWidth = 3; x.stroke();
+        x.fillStyle = '#fff'; x.beginPath(); x.arc(-8, -8, 5, 0, Math.PI * 2); x.fill();
+      });
+      return new THREE.CanvasTexture(c);
+    })();
+
+    // 粒子：一個系統一次 draw call（自訂 shader：每顆粒子有自己的顏色、透明度、大小、旋轉、形狀）
+    const FX_VS = `
+      attribute vec3 aColor; attribute float aAlpha; attribute float aSize; attribute float aRot; attribute float aShape;
+      uniform float uScale;
+      varying vec3 vColor; varying float vAlpha; varying float vRot; varying float vShape;
+      void main() {
+        vColor = aColor; vAlpha = aAlpha; vRot = aRot; vShape = aShape;
+        vec4 mv = modelViewMatrix * vec4(position, 1.0);
+        gl_Position = projectionMatrix * mv;
+        gl_PointSize = aSize * uScale / max(0.1, -mv.z);
+      }`;
+    const FX_FS = `
+      uniform sampler2D uTex;
+      varying vec3 vColor; varying float vAlpha; varying float vRot; varying float vShape;
+      void main() {
+        vec2 p = gl_PointCoord - 0.5;
+        float c = cos(vRot), s = sin(vRot);
+        p = vec2(c * p.x - s * p.y, s * p.x + c * p.y) + 0.5;
+        if (p.x < 0.0 || p.x > 1.0 || p.y < 0.0 || p.y > 1.0) discard;
+        float col = mod(vShape, 4.0), row = floor(vShape / 4.0);
+        vec4 t = texture2D(uTex, vec2((col + p.x) / 4.0, 1.0 - (row + p.y) / 2.0));
+        float a = t.a * vAlpha;
+        if (a < 0.01) discard;
+        gl_FragColor = vec4(vColor * t.rgb, a);
+      }`;
+    class FxPoints {
+      constructor(cap, additive) {
+        this.cap = cap; this.next = 0; this.dirty = true;
+        const A = n => new Float32Array(cap * n);
+        this.pos = A(3); this.col = A(3); this.alpha = A(1); this.size = A(1); this.rot = A(1); this.shape = A(1);
+        this.vel = A(3); this.life = A(1); this.maxLife = A(1); this.size0 = A(1); this.grow = A(1);
+        this.spin = A(1); this.grav = A(1); this.drag = A(1); this.a0 = A(1);
+        const g = new THREE.BufferGeometry();
+        const dyn = (arr, n) => new THREE.BufferAttribute(arr, n).setUsage(THREE.DynamicDrawUsage);
+        g.setAttribute('position', dyn(this.pos, 3)); g.setAttribute('aColor', dyn(this.col, 3));
+        g.setAttribute('aAlpha', dyn(this.alpha, 1)); g.setAttribute('aSize', dyn(this.size, 1));
+        g.setAttribute('aRot', dyn(this.rot, 1)); g.setAttribute('aShape', dyn(this.shape, 1));
+        this.geo = g;
+        this.mat = new THREE.ShaderMaterial({
+          uniforms: { uTex: { value: FX_ATLAS }, uScale: { value: 400 } },
+          vertexShader: FX_VS, fragmentShader: FX_FS, transparent: true, depthWrite: false,
+          blending: additive ? THREE.AdditiveBlending : THREE.NormalBlending
+        });
+        this.points = new THREE.Points(g, this.mat);
+        this.points.frustumCulled = false;
+        this.points.renderOrder = 5;
+        scene.add(this.points);
+      }
+      // o: { x,y,z, vx,vy,vz, color, size, life, shape, rot, spin, grow, grav, drag, alpha }
+      emit(o) {
+        const i = this.next; this.next = (i + 1) % this.cap;
+        const c = typeof o.color === 'number' ? _fxCol.setHex(o.color) : o.color;
+        this.pos[i * 3] = o.x; this.pos[i * 3 + 1] = o.y; this.pos[i * 3 + 2] = o.z;
+        this.vel[i * 3] = o.vx || 0; this.vel[i * 3 + 1] = o.vy || 0; this.vel[i * 3 + 2] = o.vz || 0;
+        this.col[i * 3] = c.r; this.col[i * 3 + 1] = c.g; this.col[i * 3 + 2] = c.b;
+        this.size0[i] = o.size || 0.3; this.size[i] = this.size0[i];
+        this.life[i] = this.maxLife[i] = o.life || 0.6;
+        this.shape[i] = o.shape || 0; this.rot[i] = o.rot !== undefined ? o.rot : Math.random() * 6.28;
+        this.spin[i] = o.spin || 0; this.grow[i] = o.grow || 0; this.grav[i] = o.grav || 0;
+        this.drag[i] = o.drag || 0; this.a0[i] = o.alpha !== undefined ? o.alpha : 1;
+        this.alpha[i] = 0;
+        this.dirty = true;
+      }
+      update(dt) {
+        this.mat.uniforms.uScale.value = renderer.domElement.height / (2 * Math.tan(camera.fov * Math.PI / 360));
+        if (!this.dirty) return;
+        let alive = false;
+        for (let i = 0; i < this.cap; i++) {
+          if (this.life[i] <= 0) continue;
+          this.life[i] -= dt;
+          if (this.life[i] <= 0) { this.alpha[i] = 0; this.size[i] = 0; continue; }
+          alive = true;
+          const j = i * 3;
+          this.vel[j + 1] -= this.grav[i] * dt;
+          const d = Math.max(0, 1 - this.drag[i] * dt);
+          this.vel[j] *= d; this.vel[j + 1] *= d; this.vel[j + 2] *= d;
+          this.pos[j] += this.vel[j] * dt; this.pos[j + 1] += this.vel[j + 1] * dt; this.pos[j + 2] += this.vel[j + 2] * dt;
+          this.rot[i] += this.spin[i] * dt;
+          const u = this.life[i] / this.maxLife[i]; // 1 → 0
+          this.alpha[i] = this.a0[i] * Math.min(1, (1 - u) * 12) * Math.min(1, u * 2.5);
+          this.size[i] = this.size0[i] * (1 + this.grow[i] * (1 - u));
+        }
+        const at = this.geo.attributes;
+        at.position.needsUpdate = at.aColor.needsUpdate = at.aAlpha.needsUpdate = at.aSize.needsUpdate = at.aRot.needsUpdate = at.aShape.needsUpdate = true;
+        this.dirty = alive;
+      }
+    }
+    const _fxCol = new THREE.Color();
+
+    // 電弧：短直線段隨機閃現（紫電）
+    class ArcFx {
+      constructor(cap = 48) {
+        this.cap = cap; this.next = 0;
+        this.pos = new Float32Array(cap * 8 * 3); this.col = new Float32Array(cap * 8 * 3);
+        this.life = new Float32Array(cap); this.max = new Float32Array(cap); this.base = new Float32Array(cap * 3);
+        const g = new THREE.BufferGeometry();
+        g.setAttribute('position', new THREE.BufferAttribute(this.pos, 3).setUsage(THREE.DynamicDrawUsage));
+        g.setAttribute('color', new THREE.BufferAttribute(this.col, 3).setUsage(THREE.DynamicDrawUsage));
+        this.geo = g;
+        this.lines = new THREE.LineSegments(g, new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
+        this.lines.frustumCulled = false;
+        scene.add(this.lines);
+      }
+      emit(x, y, z, color, len = 1.1) {
+        const i = this.next; this.next = (i + 1) % this.cap;
+        let dx = Math.random() - 0.5, dy = 0.4 + Math.random() * 0.6, dz = Math.random() - 0.5;
+        const L = Math.hypot(dx, dy, dz); dx /= L; dy /= L; dz /= L;
+        let px = x, py = y, pz = z;
+        const step = len / 4;
+        for (let s = 0; s < 4; s++) {
+          const o = (i * 8 + s * 2) * 3;
+          const nx = px + dx * step + (Math.random() - 0.5) * 0.35, ny = py + dy * step + (Math.random() - 0.5) * 0.2, nz = pz + dz * step + (Math.random() - 0.5) * 0.35;
+          this.pos[o] = px; this.pos[o + 1] = py; this.pos[o + 2] = pz;
+          this.pos[o + 3] = nx; this.pos[o + 4] = ny; this.pos[o + 5] = nz;
+          px = nx; py = ny; pz = nz;
+        }
+        _fxCol.setHex(color);
+        this.base[i * 3] = _fxCol.r; this.base[i * 3 + 1] = _fxCol.g; this.base[i * 3 + 2] = _fxCol.b;
+        this.life[i] = this.max[i] = 0.06 + Math.random() * 0.07;
+        this.geo.attributes.position.needsUpdate = true;
+      }
+      update(dt) {
+        for (let i = 0; i < this.cap; i++) {
+          let f = 0;
+          if (this.life[i] > 0) { this.life[i] -= dt; f = this.life[i] > 0 ? 0.6 + Math.random() * 0.6 : 0; }
+          for (let v = 0; v < 8; v++) {
+            const o = (i * 8 + v) * 3;
+            this.col[o] = this.base[i * 3] * f; this.col[o + 1] = this.base[i * 3 + 1] * f; this.col[o + 2] = this.base[i * 3 + 2] * f;
+          }
+        }
+        this.geo.attributes.color.needsUpdate = true;
+      }
+    }
+
+    // 彩帶尾跡：每幀更新的 BufferGeometry 條帶（additive）
+    class RibbonTrail {
+      constructor() {
+        this.M = 64; this.pts = [];
+        this.pos = new Float32Array(this.M * 6); this.col = new Float32Array(this.M * 6);
+        const idx = [];
+        for (let i = 0; i < this.M - 1; i++) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 2, a + 1, a + 3); }
+        const g = new THREE.BufferGeometry();
+        g.setAttribute('position', new THREE.BufferAttribute(this.pos, 3).setUsage(THREE.DynamicDrawUsage));
+        g.setAttribute('color', new THREE.BufferAttribute(this.col, 3).setUsage(THREE.DynamicDrawUsage));
+        g.setIndex(idx);
+        g.setDrawRange(0, 0);
+        this.mesh = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
+        this.mesh.frustumCulled = false;
+        this.mesh.renderOrder = 4;
+        scene.add(this.mesh);
+      }
+      dispose() { scene.remove(this.mesh); this.mesh.geometry.dispose(); this.mesh.material.dispose(); }
+      update(dt, hx, hy, hz, emit, life, width, colorFn, bright) {
+        for (const p of this.pts) p.age += dt;
+        while (this.pts.length && this.pts[this.pts.length - 1].age > life) this.pts.pop();
+        if (emit) {
+          const p0 = this.pts[0];
+          if (!p0 || Math.hypot(hx - p0.x, hz - p0.z) > 0.45) {
+            this.pts.unshift({ x: hx, y: hy, z: hz, age: 0, r: Math.random() });
+            if (this.pts.length > this.M - 1) this.pts.pop();
+          }
+        }
+        const list = emit ? [{ x: hx, y: hy, z: hz, age: 0, r: 0.5 }].concat(this.pts) : this.pts;
+        const n = Math.min(list.length, this.M);
+        if (n < 2) { this.mesh.geometry.setDrawRange(0, 0); return; }
+        for (let i = 0; i < n; i++) {
+          const p = list[i], a = list[Math.max(0, i - 1)], b = list[Math.min(n - 1, i + 1)];
+          let dx = a.x - b.x, dz = a.z - b.z;
+          const L = Math.hypot(dx, dz) || 1; dx /= L; dz /= L;
+          const u = Math.min(1, p.age / life), f = 1 - u;
+          const w = width * (0.3 + 0.7 * f);
+          const o = i * 6;
+          this.pos[o] = p.x - dz * w; this.pos[o + 1] = p.y; this.pos[o + 2] = p.z + dx * w;
+          this.pos[o + 3] = p.x + dz * w; this.pos[o + 4] = p.y; this.pos[o + 5] = p.z - dx * w;
+          colorFn(u, p, _fxCol);
+          const k = f * f * bright;
+          this.col[o] = this.col[o + 3] = _fxCol.r * k;
+          this.col[o + 1] = this.col[o + 4] = _fxCol.g * k;
+          this.col[o + 2] = this.col[o + 5] = _fxCol.b * k;
+        }
+        const g = this.mesh.geometry;
+        g.setDrawRange(0, (n - 1) * 6);
+        g.attributes.position.needsUpdate = true; g.attributes.color.needsUpdate = true;
+      }
+    }
+
+    // 地面發光軌跡（甩尾時後輪留下的光痕）
+    class GroundMarks {
+      constructor(cap = 900) {
+        this.cap = cap; this.next = 0; this.dirty = false;
+        this.pos = new Float32Array(cap * 12); this.col = new Float32Array(cap * 12);
+        this.age = new Float32Array(cap); this.life = new Float32Array(cap); this.rgb = new Float32Array(cap * 3); this.hue = new Float32Array(cap).fill(-1);
+        const idx = [];
+        for (let q = 0; q < cap; q++) { const a = q * 4; idx.push(a, a + 1, a + 2, a + 2, a + 1, a + 3); }
+        const g = new THREE.BufferGeometry();
+        g.setAttribute('position', new THREE.BufferAttribute(this.pos, 3).setUsage(THREE.DynamicDrawUsage));
+        g.setAttribute('color', new THREE.BufferAttribute(this.col, 3).setUsage(THREE.DynamicDrawUsage));
+        g.setIndex(idx);
+        this.geo = g;
+        this.mesh = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -4 }));
+        this.mesh.frustumCulled = false;
+        this.mesh.renderOrder = 3;
+        scene.add(this.mesh);
+      }
+      // color：數字 = 固定色；'aurora' = 會漸漸變色
+      add(ax, ay, az, bx, by, bz, w, color, life) {
+        const q = this.next; this.next = (q + 1) % this.cap;
+        const dx = bx - ax, dz = bz - az, L = Math.hypot(dx, dz) || 1;
+        const sx = -dz / L * w / 2, sz = dx / L * w / 2;
+        const p = this.pos, o = q * 12;
+        p[o] = ax + sx; p[o + 1] = ay; p[o + 2] = az + sz;
+        p[o + 3] = ax - sx; p[o + 4] = ay; p[o + 5] = az - sz;
+        p[o + 6] = bx + sx; p[o + 7] = by; p[o + 8] = bz + sz;
+        p[o + 9] = bx - sx; p[o + 10] = by; p[o + 11] = bz - sz;
+        this.age[q] = 0; this.life[q] = life;
+        if (color === 'aurora') this.hue[q] = (CarFX.time * 0.15) % 1;
+        else { this.hue[q] = -1; _fxCol.setHex(color); this.rgb[q * 3] = _fxCol.r; this.rgb[q * 3 + 1] = _fxCol.g; this.rgb[q * 3 + 2] = _fxCol.b; }
+        this.geo.attributes.position.needsUpdate = true;
+        this.dirty = true;
+      }
+      update(dt) {
+        if (!this.dirty) return;
+        let alive = false;
+        for (let q = 0; q < this.cap; q++) {
+          if (this.age[q] >= this.life[q]) continue;
+          this.age[q] += dt;
+          const f = Math.max(0, 1 - this.age[q] / this.life[q]);
+          if (f > 0) alive = true;
+          let r, g, b;
+          if (this.hue[q] >= 0) { auroraColor(this.hue[q] + this.age[q] * 0.35, _fxCol); r = _fxCol.r; g = _fxCol.g; b = _fxCol.b; }
+          else { r = this.rgb[q * 3]; g = this.rgb[q * 3 + 1]; b = this.rgb[q * 3 + 2]; }
+          const k = f * (0.85 + 0.15 * f);
+          for (let v = 0; v < 4; v++) { const o = q * 12 + v * 3; this.col[o] = r * k; this.col[o + 1] = g * k; this.col[o + 2] = b * k; }
+        }
+        this.geo.attributes.color.needsUpdate = true;
+        this.dirty = alive;
+      }
+    }
+
+    // 氮氣衝擊波光環
+    class ShockFx {
+      constructor(n = 8) {
+        const geo = new THREE.RingGeometry(0.8, 1.0, 64);
+        this.pool = [];
+        for (let i = 0; i < n; i++) {
+          const mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
+          mesh.rotation.x = -Math.PI / 2; mesh.visible = false; mesh.renderOrder = 6;
+          scene.add(mesh);
+          this.pool.push({ mesh, t: 0, dur: 1, max: 10, color: 0xffffff, on: false });
+        }
+      }
+      trigger(x, y, z, color, max = 12, dur = 0.7) {
+        const s = this.pool.find(p => !p.on) || this.pool.reduce((a, b) => (b.t / b.dur > a.t / a.dur ? b : a));
+        s.on = true; s.t = 0; s.dur = dur; s.max = max; s.color = color;
+        s.mesh.position.set(x, y + 0.35, z); s.mesh.visible = true;
+      }
+      update(dt) {
+        for (const s of this.pool) {
+          if (!s.on) continue;
+          s.t += dt;
+          const u = s.t / s.dur;
+          if (u >= 1) { s.on = false; s.mesh.visible = false; continue; }
+          const e = 1 - Math.pow(1 - u, 3);
+          const sc = 1 + (s.max - 1) * e;
+          s.mesh.scale.set(sc, sc, sc);
+          if (s.color === 'aurora') auroraColor(u * 1.2 + CarFX.time * 0.2, s.mesh.material.color);
+          else s.mesh.material.color.setHex(s.color);
+          s.mesh.material.opacity = Math.pow(1 - u, 1.3);
+        }
+      }
+    }
+
+    // 底盤光暈貼圖（白色徑向漸層，用材質顏色上色）
+    let underglowTex = null;
+    function getUnderglowTex() {
+      if (underglowTex) return underglowTex;
+      const c = document.createElement('canvas'); c.width = c.height = 128;
+      const x = c.getContext('2d');
+      const g = x.createRadialGradient(64, 64, 4, 64, 64, 64);
+      g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.5, 'rgba(255,255,255,0.55)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+      x.fillStyle = g; x.fillRect(0, 0, 128, 128);
+      underglowTex = new THREE.CanvasTexture(c);
+      return underglowTex;
+    }
+
+    // 星塵的星空材質（會閃爍）
+    const starSky = { tex: null, ctx: null, stars: [], timer: 0, used: false };
+    function getStarTex() {
+      if (starSky.tex) return starSky.tex;
+      const c = document.createElement('canvas'); c.width = 256; c.height = 128;
+      starSky.ctx = c.getContext('2d');
+      for (let i = 0; i < 120; i++) starSky.stars.push({ x: Math.random() * 256, y: Math.random() * 128, r: 0.6 + Math.random() * 1.6, ph: Math.random() * 6.28, sp: 1 + Math.random() * 4 });
+      starSky.tex = new THREE.CanvasTexture(c);
+      starSky.tex.wrapS = starSky.tex.wrapT = THREE.RepeatWrapping;
+      drawStarSky(0);
+      return starSky.tex;
+    }
+    function drawStarSky(t) {
+      const x = starSky.ctx;
+      const g = x.createLinearGradient(0, 0, 256, 128);
+      g.addColorStop(0, '#1e0b3a'); g.addColorStop(0.5, '#3b0764'); g.addColorStop(1, '#0b1033');
+      x.fillStyle = g; x.fillRect(0, 0, 256, 128);
+      for (const s of starSky.stars) {
+        x.globalAlpha = 0.25 + 0.75 * Math.abs(Math.sin(t * s.sp + s.ph));
+        x.fillStyle = s.r > 1.6 ? '#fde68a' : '#ffffff';
+        x.beginPath(); x.arc(s.x, s.y, s.r, 0, Math.PI * 2); x.fill();
+      }
+      x.globalAlpha = 1;
+      starSky.tex.needsUpdate = true;
+    }
+
+    // ---------- 建模小工具 ----------
+    const CM = {
+      std(color, r = 0.5, m = 0.2, extra) {
+        const o = Object.assign({ color, roughness: r, metalness: m }, extra || {});
+        if (m >= 0.2 && !o.envMap) o.envMap = getCarEnvMap();
+        return new THREE.MeshStandardMaterial(o);
+      },
+      // 依稀有度的車身烤漆（B0）
+      paint(rarity, color, extra) {
+        const p = { common: [0.8, 0.0], rare: [0.35, 0.2], epic: [0.25, 0.7], mythic: [0.22, 0.75], legendary: [0.15, 1.0] }[rarity];
+        return CM.std(color, p[0], p[1], extra);
+      },
+      glass(color = 0x1e293b) { return CM.std(color, 0.12, 0.6); },
+      add(g, geo, mat, x = 0, y = 0, z = 0, rx = 0, ry = 0, rz = 0, shadow = true) {
+        const m = new THREE.Mesh(geo, mat);
+        m.position.set(x, y, z); m.rotation.set(rx, ry, rz); m.castShadow = shadow;
+        g.add(m); return m;
+      },
+      box(g, w, h, l, mat, x, y, z, rx, ry, rz) { return CM.add(g, new THREE.BoxGeometry(w, h, l), mat, x, y, z, rx, ry, rz); },
+      cyl(g, rt, rb, h, seg, mat, x, y, z, rx, ry, rz) { return CM.add(g, new THREE.CylinderGeometry(rt, rb, h, seg), mat, x, y, z, rx, ry, rz); },
+      cone(g, r, h, seg, mat, x, y, z, rx, ry, rz) { return CM.add(g, new THREE.ConeGeometry(r, h, seg), mat, x, y, z, rx, ry, rz); },
+      ball(g, r, mat, x, y, z, sx = 1, sy = 1, sz = 1) {
+        const m = CM.add(g, new THREE.SphereGeometry(r, 22, 14), mat, x, y, z);
+        m.scale.set(sx, sy, sz); return m;
+      },
+      shape(pts) {
+        const s = new THREE.Shape();
+        pts.forEach((p, i) => {
+          if (p[0] === 'q') s.quadraticCurveTo(p[1], p[2], p[3], p[4]);
+          else if (i === 0) s.moveTo(p[0], p[1]);
+          else s.lineTo(p[0], p[1]);
+        });
+        return s;
+      },
+      extrudeOpts(depth, bevel) {
+        return { depth: Math.max(0.01, depth), bevelEnabled: bevel > 0, bevelThickness: bevel, bevelSize: bevel, bevelSegments: 2, curveSegments: 10 };
+      },
+      // 側視輪廓 [z, y]，左右擠出成車身
+      side(g, pts, width, mat, x = 0, bevel = 0.04) {
+        const geo = new THREE.ExtrudeGeometry(CM.shape(pts), CM.extrudeOpts(width - bevel * 2, bevel));
+        geo.rotateY(-Math.PI / 2);
+        geo.translate(x + width / 2 - bevel, 0, 0);
+        return CM.add(g, geo, mat);
+      },
+      // 俯視輪廓 [x, z]，往上擠出
+      plan(g, pts, h, y0, mat, bevel = 0.04) {
+        const geo = new THREE.ExtrudeGeometry(CM.shape(pts), CM.extrudeOpts(h - bevel * 2, bevel));
+        geo.rotateX(Math.PI / 2);
+        geo.translate(0, y0 + h - bevel, 0);
+        return CM.add(g, geo, mat);
+      },
+      // 旋轉體（[半徑, 前後位置]），軸線沿車身前後
+      lathe(g, pts, mat, sx, sy, y) {
+        const geo = new THREE.LatheGeometry(pts.map(p => new THREE.Vector2(p[0], p[1])), 28);
+        geo.rotateX(Math.PI / 2);
+        const m = CM.add(g, geo, mat, 0, y, 0);
+        m.scale.set(sx, sy, 1); return m;
+      },
+      // 兩點之間的細長條（發光線條用）
+      seg(g, a, b, t, mat) {
+        const A = new THREE.Vector3(a[0], a[1], a[2]), B = new THREE.Vector3(b[0], b[1], b[2]);
+        const m = new THREE.Mesh(new THREE.BoxGeometry(t, t, A.distanceTo(B)), mat);
+        m.position.copy(A).add(B).multiplyScalar(0.5);
+        g.add(m); m.lookAt(B);
+        return m;
+      },
+      wheels(g, o = {}) {
+        const r = o.r || 0.35, w = o.w || 0.28, x = o.x || 0.94, zf = o.zf !== undefined ? o.zf : 0.85, zr = o.zr !== undefined ? o.zr : -0.85;
+        const tireMat = CM.std(o.tire || 0x111827, 0.9, 0);
+        const rimMat = o.rimMat || CM.std(o.rim || 0xe2e8f0, 0.2, 0.8);
+        const tg = new THREE.CylinderGeometry(r, r, w, 16), rg = new THREE.CylinderGeometry(r * 0.6, r * 0.6, w + 0.02, 12);
+        [[x, zf], [-x, zf], [x, zr], [-x, zr]].forEach(([px, pz]) => {
+          const wg = new THREE.Group();
+          const t = new THREE.Mesh(tg, tireMat); t.rotation.z = Math.PI / 2; t.castShadow = true;
+          const rim = new THREE.Mesh(rg, rimMat); rim.rotation.z = Math.PI / 2;
+          wg.add(t, rim); wg.position.set(px, r, pz); g.add(wg);
+        });
+      },
+      canvasTex(w, h, draw, repeat) {
+        const c = document.createElement('canvas'); c.width = w; c.height = h;
+        draw(c.getContext('2d'), w, h);
+        const t = new THREE.CanvasTexture(c);
+        if (repeat) t.wrapS = t.wrapT = THREE.RepeatWrapping;
+        return t;
+      },
+      // 左右兩側貼紙
+      decal(g, tex, w, h, x, y, z) {
+        const mat = new THREE.MeshStandardMaterial({ map: tex, transparent: true, roughness: 0.6, polygonOffset: true, polygonOffsetFactor: -2 });
+        const geo = new THREE.PlaneGeometry(w, h);
+        CM.add(g, geo, mat, x, y, z, 0, Math.PI / 2, 0, false);
+        CM.add(g, geo, mat, -x, y, z, 0, -Math.PI / 2, 0, false);
+      }
+    };
+
+    // ==========================================================
+    // 6c. 22 台抽箱車款（全部原創設計）
+    // ==========================================================
+    // build(g, G)：g = 車子 Group；G(color, mode) 產生發光材質（mode：breath 呼吸、flicker 不規則閃、steady 常亮）
+    // 回傳值（可選）：每幀動畫 (t, k, st) => {}
+    // fx：smoke 甩尾煙色、nitro 氮氣火焰色、marks 地面光軌、glow 底盤光暈、trail 彩帶尾跡、
+    //     driftFx 甩尾專屬粒子、driveFx 行駛粒子、nitroBurst 氮氣啟動演出、shock 衝擊波、legend 傳說、tagIcon 名牌圖示
+    function defCar(id, name, rarity, s, a, h, d, desc, build, fx = {}) {
+      CAR_CATALOG[id] = { id, name, rarity, starter: false, stats: { speed: s, accel: a, handling: h, drift: d }, desc, build, fx };
+    }
+
+    // ----- 普通 -----
+    defCar('tofu_block', '豆腐方塊', 'common', 19, 20, 21, 20, '方正的小白車，圓圓的大車燈看起來呆呆的。', (g) => {
+      const P = CM.paint('common', 0xf8fafc), glass = CM.glass();
+      CM.box(g, 1.5, 0.95, 1.8, P, 0, 0.78, 0);
+      CM.box(g, 1.3, 0.36, 0.04, glass, 0, 1.03, 0.91);
+      CM.box(g, 1.52, 0.3, 1.0, glass, 0, 1.03, -0.2);
+      const eye = CM.std(0xfffbeb, 0.5, 0), pupil = CM.std(0x111827, 0.5, 0);
+      [-1, 1].forEach(s => {
+        CM.cyl(g, 0.27, 0.27, 0.08, 22, eye, s * 0.42, 0.6, 0.92, Math.PI / 2, 0, 0);
+        CM.cyl(g, 0.1, 0.1, 0.04, 14, pupil, s * 0.36, 0.56, 0.975, Math.PI / 2, 0, 0); // 鬥雞眼
+      });
+      CM.box(g, 1.56, 0.14, 0.14, CM.std(0x9ca3af, 0.7, 0), 0, 0.34, 0.95);
+      CM.wheels(g, { r: 0.3, x: 0.82, zf: 0.62, zr: -0.62 });
+    });
+
+    defCar('corner_rocket', '街角小鋼砲', 'common', 20, 22, 19, 19, '短車身配上特別大的車頭，車頂頂著一片小尾翼。', (g) => {
+      const P = CM.paint('common', 0xdc2626), dark = CM.std(0x111827, 0.6, 0), glass = CM.glass();
+      CM.box(g, 1.8, 0.8, 1.0, P, 0, 0.62, 0.5);
+      CM.box(g, 1.5, 0.5, 1.1, P, 0, 0.5, -0.5);
+      CM.box(g, 1.25, 0.42, 0.75, glass, 0, 0.95, -0.4);
+      CM.box(g, 1.3, 0.32, 0.06, dark, 0, 0.6, 1.02);
+      [-1, 1].forEach(s => CM.box(g, 0.34, 0.2, 0.05, CM.std(0xfef3c7, 0.4, 0), s * 0.66, 0.8, 1.01));
+      [-1, 1].forEach(s => CM.box(g, 0.06, 0.18, 0.06, dark, s * 0.35, 1.25, -0.62));
+      CM.box(g, 1.1, 0.06, 0.32, dark, 0, 1.35, -0.66);
+      CM.wheels(g, { r: 0.37, x: 0.98, zf: 0.6, zr: -0.68 });
+    });
+
+    defCar('postman', '郵差號', 'common', 21, 19, 20, 20, '綠色箱型車，側面貼著信封貼紙。', (g) => {
+      const P = CM.paint('common', 0x16a34a), glass = CM.glass();
+      CM.side(g, [[-1.25, 0.22], [1.15, 0.22], [1.3, 0.45], [1.3, 0.72], [0.85, 1.38], [-1.25, 1.42]], 1.6, P);
+      const ws = CM.box(g, 1.4, 0.05, 0.8, glass, 0, 1.067, 1.1);
+      ws.lookAt(0, 1.397, 0.875); // 貼著斜擋風面
+      CM.box(g, 1.62, 0.3, 1.0, glass, 0, 1.12, 0.05);
+      const env = CM.canvasTex(128, 96, (x) => {
+        x.fillStyle = '#ffffff'; x.fillRect(6, 10, 116, 76);
+        x.strokeStyle = '#94a3b8'; x.lineWidth = 4; x.strokeRect(6, 10, 116, 76);
+        x.beginPath(); x.moveTo(6, 10); x.lineTo(64, 54); x.lineTo(122, 10); x.stroke();
+        x.fillStyle = '#dc2626'; x.beginPath(); x.arc(100, 66, 11, 0, Math.PI * 2); x.fill();
+      });
+      CM.decal(g, env, 0.85, 0.64, 0.815, 0.72, -0.5);
+      CM.box(g, 0.5, 0.12, 0.5, CM.std(0xfacc15, 0.7, 0), 0, 1.47, -0.6);
+      CM.wheels(g, { r: 0.34, x: 0.92, zf: 0.82, zr: -0.82 });
+    });
+
+    defCar('night_market', '夜市推車', 'common', 18, 21, 21, 20, '黃色小車，車尾掛著小攤子，車頂一顆紅燈籠。', (g) => {
+      const P = CM.paint('common', 0xfacc15), glass = CM.glass(), wood = CM.std(0x92400e, 0.85, 0);
+      CM.box(g, 1.5, 0.55, 1.6, P, 0, 0.5, 0.45);
+      CM.box(g, 1.15, 0.45, 0.75, glass, 0, 0.99, 0.45);
+      CM.box(g, 1.2, 0.07, 0.8, P, 0, 1.25, 0.45);
+      CM.box(g, 1.45, 0.75, 0.95, wood, 0, 0.78, -0.78);
+      CM.box(g, 1.2, 0.32, 0.04, CM.std(0x1f2937, 0.8, 0), 0, 0.9, -1.27);
+      const awn = CM.canvasTex(128, 32, (x) => { for (let i = 0; i < 8; i++) { x.fillStyle = i % 2 ? '#ffffff' : '#ef4444'; x.fillRect(i * 16, 0, 16, 32); } });
+      CM.box(g, 1.7, 0.05, 0.8, CM.std(0xffffff, 0.8, 0, { map: awn }), 0, 1.27, -0.95, -0.22, 0, 0);
+      [-1, 1].forEach(s => CM.cyl(g, 0.025, 0.025, 0.4, 6, wood, s * 0.75, 1.15, -1.25));
+      const red = CM.std(0xdc2626, 0.6, 0), gold = CM.std(0xca8a04, 0.6, 0);
+      CM.ball(g, 0.22, red, 0, 1.62, 0.45, 1, 1.15, 1);
+      CM.cyl(g, 0.13, 0.13, 0.07, 12, gold, 0, 1.89, 0.45);
+      CM.cyl(g, 0.13, 0.13, 0.07, 12, gold, 0, 1.35, 0.45);
+      CM.wheels(g, { r: 0.33, x: 0.88, zf: 0.8, zr: -0.8 });
+    });
+
+    defCar('trainee', '練習生', 'common', 20, 20, 21, 19, '橘白雙色的教練車，車頂頂著「練」字牌。', (g) => {
+      const O = CM.paint('common', 0xf97316), W = CM.paint('common', 0xffffff), glass = CM.glass();
+      CM.box(g, 1.6, 0.42, 2.3, O, 0, 0.43, 0);
+      CM.box(g, 1.6, 0.22, 2.3, W, 0, 0.75, 0);
+      CM.box(g, 1.3, 0.46, 1.15, W, 0, 1.09, -0.15);
+      CM.box(g, 1.32, 0.24, 0.95, glass, 0, 1.12, -0.15);
+      CM.box(g, 1.15, 0.26, 0.04, glass, 0, 1.12, 0.43);
+      const sign = CM.canvasTex(128, 64, (x) => {
+        x.fillStyle = '#ffffff'; x.fillRect(0, 0, 128, 64);
+        x.strokeStyle = '#dc2626'; x.lineWidth = 8; x.strokeRect(4, 4, 120, 56);
+        x.fillStyle = '#111827'; x.font = 'bold 46px sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle';
+        x.fillText('練', 64, 35);
+      });
+      const sm = CM.std(0xffffff, 0.7, 0, { map: sign });
+      const plain = CM.std(0xffffff, 0.7, 0);
+      const s = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.42, 0.08), [plain, plain, plain, plain, sm, sm]);
+      s.position.set(0, 1.56, -0.15); g.add(s);
+      CM.wheels(g);
+    });
+
+    defCar('grey_wolf', '灰狼', 'common', 22, 19, 19, 20, '深灰低趴車身，車頭兩道斜線像狼的眼睛。', (g) => {
+      const P = CM.paint('common', 0x374151), glass = CM.glass();
+      CM.side(g, [[-1.4, 0.2], [1.45, 0.2], [1.6, 0.32], [1.05, 0.55], [-0.2, 0.62], [-1.3, 0.66], [-1.42, 0.5]], 1.72, P);
+      CM.box(g, 1.1, 0.3, 1.0, glass, 0, 0.77, -0.45);
+      const eye = CM.std(0xfde68a, 0.6, 0);
+      [-1, 1].forEach(s => CM.box(g, 0.5, 0.04, 0.09, eye, s * 0.42, 0.6, 1.0, 0, s * 0.45, -s * 0.06));
+      CM.box(g, 1.6, 0.08, 0.3, P, 0, 0.72, -1.35, 0.25, 0, 0);
+      CM.wheels(g, { r: 0.34, x: 0.98, zf: 0.95, zr: -0.95 });
+    });
+
+    // ----- 稀有（亮面烤漆＋車身條紋＋車尾小燈條） -----
+    defCar('blue_whale', '藍鯨衝刺', 'rare', 22, 21, 20, 21, '海藍色車身配白色腹部，圓弧車頭與車尾小尾鰭。', (g, G) => {
+      const P = CM.paint('rare', 0x1d4ed8), W = CM.paint('rare', 0xf8fafc);
+      CM.box(g, 1.6, 0.42, 2.0, P, 0, 0.66, -0.1);
+      CM.box(g, 1.62, 0.26, 2.0, W, 0, 0.34, -0.1);
+      CM.ball(g, 0.5, P, 0, 0.62, 0.9, 1.6, 0.62, 1.2);
+      CM.ball(g, 0.5, W, 0, 0.4, 0.95, 1.55, 0.36, 1.12);
+      CM.ball(g, 0.5, CM.glass(), 0, 0.92, -0.2, 1.1, 0.55, 1.4);
+      [-1, 1].forEach(s => CM.ball(g, 0.07, CM.std(0x0f172a, 0.3, 0.2), s * 0.74, 0.72, 1.0));
+      CM.box(g, 0.08, 0.5, 0.45, P, 0, 1.05, -1.18, -0.5, 0, 0);
+      [-1, 1].forEach(s => CM.box(g, 0.7, 0.05, 0.3, P, s * 0.32, 1.27, -1.42, 0, s * 0.4, s * 0.15));
+      [-1, 1].forEach(s => CM.box(g, 0.02, 0.07, 1.9, W, s * 0.81, 0.7, -0.1));
+      CM.box(g, 1.0, 0.07, 0.05, G(0x7dd3fc, 'steady'), 0, 0.72, -1.12);
+      CM.wheels(g, { r: 0.34, x: 0.95 });
+    }, { smoke: 0xbae6fd });
+
+    defCar('night_patrol', '夜巡者', 'rare', 21, 20, 22, 21, '黑色車身，兩側各兩條青色發光燈條。', (g, G) => {
+      const P = CM.paint('rare', 0x0f172a), cyan = G(0x22d3ee, 'steady');
+      CM.side(g, [[-1.3, 0.22], [1.35, 0.22], [1.42, 0.46], [0.65, 0.6], [0.25, 0.95], [-0.75, 0.97], [-1.25, 0.75], [-1.32, 0.5]], 1.62, P);
+      CM.box(g, 1.64, 0.22, 0.85, CM.glass(), 0, 0.8, -0.25);
+      [-1, 1].forEach(s => {
+        CM.box(g, 0.04, 0.06, 2.3, cyan, s * 0.83, 0.48, 0);
+        CM.box(g, 0.04, 0.04, 1.25, cyan, s * 0.83, 0.64, -0.3);
+        CM.box(g, 0.4, 0.06, 0.04, G(0xe0f2fe, 'steady'), s * 0.45, 0.42, 1.41);
+      });
+      CM.box(g, 1.5, 0.05, 0.3, P, 0, 1.08, -1.12);
+      [-1, 1].forEach(s => CM.box(g, 0.05, 0.14, 0.05, P, s * 0.55, 1.0, -1.1));
+      CM.box(g, 0.02, 0.02, 1.8, CM.paint('rare', 0x22d3ee), 0, 0.975, -0.25);
+      CM.box(g, 1.2, 0.07, 0.05, G(0x22d3ee, 'steady'), 0, 0.6, -1.33);
+      CM.wheels(g, { x: 0.95, rim: 0x334155 });
+    }, { smoke: 0x22d3ee });
+
+    defCar('sakura', '櫻舞', 'rare', 20, 20, 21, 23, '粉白漸層車身，滿是櫻花圖案，甩尾時花瓣紛飛。', (g, G) => {
+      const tex = CM.canvasTex(256, 256, (x) => {
+        const gr = x.createLinearGradient(0, 0, 0, 256);
+        gr.addColorStop(0, '#ec4899'); gr.addColorStop(0.45, '#f9a8d4'); gr.addColorStop(0.9, '#fdf2f8'); gr.addColorStop(1, '#ffffff');
+        x.fillStyle = gr; x.fillRect(0, 0, 256, 256);
+        const flower = (cx, cy, r) => {
+          x.fillStyle = 'rgba(255,255,255,0.85)';
+          for (let k = 0; k < 5; k++) { const a = k * Math.PI * 2 / 5; x.beginPath(); x.ellipse(cx + Math.cos(a) * r * 0.55, cy + Math.sin(a) * r * 0.55, r * 0.5, r * 0.32, a, 0, Math.PI * 2); x.fill(); }
+          x.fillStyle = '#facc15'; x.beginPath(); x.arc(cx, cy, r * 0.18, 0, Math.PI * 2); x.fill();
+        };
+        [[40, 50, 26], [170, 30, 20], [120, 120, 30], [220, 150, 22], [60, 190, 18], [180, 220, 26]].forEach(f => flower(...f));
+      }, true);
+      const P = CM.paint('rare', 0xffffff, { map: tex });
+      CM.side(g, [[-1.25, 0.22], [1.3, 0.22], [1.4, 0.4], [0.8, 0.56], [0.3, 0.9], [-0.6, 0.93], [-1.2, 0.66]], 1.6, P);
+      CM.box(g, 1.62, 0.2, 0.8, CM.glass(0x3b1d2e), 0, 0.78, -0.12);
+      const pk = CM.paint('rare', 0xf9a8d4);
+      CM.box(g, 1.4, 0.05, 0.28, pk, 0, 1.06, -1.08);
+      [-1, 1].forEach(s => CM.box(g, 0.05, 0.16, 0.05, pk, s * 0.5, 0.97, -1.05));
+      CM.box(g, 0.2, 0.02, 1.0, CM.paint('rare', 0xffffff), 0, 0.94, -0.15);
+      CM.box(g, 1.0, 0.07, 0.05, G(0xf472b6, 'steady'), 0, 0.55, -1.27);
+      CM.wheels(g, { rim: 0xfbcfe8 });
+    }, { smoke: 0xf9a8d4, driftFx: { kind: 'petal', color: 0xf9a8d4 } });
+
+    defCar('red_fox', '赤狐', 'rare', 21, 22, 21, 20, '橘紅車身，尾翼是一條往上翹的狐狸尾巴。', (g, G) => {
+      const P = CM.paint('rare', 0xea580c), W = CM.paint('rare', 0xfff7ed);
+      CM.side(g, [[-1.2, 0.22], [1.55, 0.22], [1.62, 0.3], [0.7, 0.54], [0.15, 0.86], [-0.65, 0.88], [-1.15, 0.62]], 1.6, P);
+      CM.box(g, 1.2, 0.12, 0.6, W, 0, 0.28, 1.25);
+      CM.box(g, 1.62, 0.2, 0.75, CM.glass(), 0, 0.74, -0.12);
+      // 蓬鬆的尾巴：從車尾往後伸，再往上捲，尾端白色
+      for (let i = 0; i <= 8; i++) {
+        const t = i / 8, a = t * 1.9;
+        const r = 0.14 + Math.sin(Math.PI * Math.min(1, t * 1.15)) * 0.16;
+        CM.ball(g, r, t > 0.8 ? W : P, 0, 0.7 + Math.sin(a) * 0.55, -1.15 - (1 - Math.cos(a)) * 0.15 - Math.sin(a * 0.5) * 0.45, 0.8, 1, 1);
+      }
+      [-1, 1].forEach(s => CM.cone(g, 0.12, 0.28, 4, P, s * 0.33, 1.0, -0.15, 0, 0, -s * 0.15));
+      CM.box(g, 0.18, 0.02, 1.1, W, 0, 0.885, -0.25);
+      CM.box(g, 1.0, 0.07, 0.05, G(0xfb923c, 'steady'), 0, 0.52, -1.17);
+      CM.wheels(g);
+    }, { smoke: 0xfb923c });
+
+    defCar('thunder', '雷鳴', 'rare', 21, 23, 20, 20, '黃黑警示條紋，車頭像雷電切出的鋸齒。', (g, G) => {
+      const hz = CM.canvasTex(128, 128, (x) => {
+        x.fillStyle = '#facc15'; x.fillRect(0, 0, 128, 128);
+        x.fillStyle = '#111827';
+        for (let i = -128; i < 256; i += 48) { x.beginPath(); x.moveTo(i, 0); x.lineTo(i + 24, 0); x.lineTo(i + 24 + 128, 128); x.lineTo(i + 128, 128); x.fill(); }
+      }, true);
+      hz.repeat.set(1.4, 1.4);
+      const P = CM.paint('rare', 0xffffff, { map: hz }), K = CM.paint('rare', 0x111827);
+      CM.plan(g, [[-0.8, -1.25], [0.8, -1.25], [0.82, 0.55], [0.42, 0.85], [0.62, 1.15], [0.05, 1.62], [-0.25, 1.05], [-0.55, 1.2], [-0.82, 0.6]], 0.45, 0.25, P);
+      CM.plan(g, [[-0.5, -0.9], [0.5, -0.9], [0.45, 0.3], [0, 0.6], [-0.45, 0.3]], 0.32, 0.7, CM.glass());
+      CM.box(g, 1.7, 0.07, 0.35, K, 0, 1.05, -1.1);
+      [-1, 1].forEach(s => CM.box(g, 0.06, 0.38, 0.4, K, s * 0.85, 0.88, -1.1));
+      CM.box(g, 1.1, 0.07, 0.05, G(0xfde047, 'steady'), 0, 0.5, -1.28);
+      CM.wheels(g, { x: 0.96, rim: 0x111827 });
+    }, { smoke: 0xfde047 });
+
+    defCar('mint', '薄荷', 'rare', 20, 21, 22, 21, '薄荷綠加白色，圓滾滾的可愛小車。', (g, G) => {
+      const P = CM.paint('rare', 0x6ee7b7), W = CM.paint('rare', 0xffffff);
+      CM.ball(g, 1, P, 0, 0.62, 0, 0.82, 0.42, 1.28);
+      CM.ball(g, 1, W, 0, 0.42, 0, 0.83, 0.12, 1.29);
+      CM.ball(g, 0.5, CM.glass(0x134e4a), 0, 0.97, -0.15, 1.05, 0.7, 1.1);
+      CM.cyl(g, 0.015, 0.015, 0.5, 6, W, 0.3, 1.35, -0.4);
+      CM.ball(g, 0.08, CM.paint('rare', 0xf9a8d4), 0.3, 1.62, -0.4);
+      [-1, 1].forEach(s => CM.ball(g, 0.09, CM.paint('rare', 0xfda4af), s * 0.62, 0.72, 0.85, 1, 0.7, 0.5));
+      CM.box(g, 0.8, 0.06, 0.05, G(0x34d399, 'steady'), 0, 0.62, -1.27);
+      CM.wheels(g, { r: 0.33, x: 0.86, zf: 0.8, zr: -0.8, rim: 0xffffff });
+    }, { smoke: 0x6ee7b7 });
+
+    // ----- 史詩（金屬漆＋呼吸發光紋路＋專屬粒子＋甩尾地面光軌） -----
+    defCar('violet_bolt', '紫電', 'epic', 23, 22, 21, 22, '深紫金屬車身，側面的閃電紋路會不規則閃爍，甩尾時車輪冒出電弧。', (g, G) => {
+      const P = CM.paint('epic', 0x4c1d95), bolt = G(0xd8b4fe, 'flicker');
+      CM.side(g, [[-1.3, 0.22], [1.45, 0.22], [1.55, 0.36], [0.75, 0.56], [0.2, 0.9], [-0.7, 0.92], [-1.3, 0.72]], 1.65, P);
+      CM.box(g, 1.67, 0.2, 0.8, CM.glass(0x1e1b4b), 0, 0.78, -0.2);
+      const zig = [[1.2, 0.42], [0.55, 0.62], [0.3, 0.4], [-0.3, 0.64], [-0.55, 0.38], [-1.15, 0.56]];
+      [-1, 1].forEach(s => {
+        for (let i = 0; i < zig.length - 1; i++) CM.seg(g, [s * 0.84, zig[i][1], zig[i][0]], [s * 0.84, zig[i + 1][1], zig[i + 1][0]], 0.05, bolt);
+      });
+      CM.box(g, 1.6, 0.06, 0.35, P, 0, 1.08, -1.12);
+      [-1, 1].forEach(s => CM.box(g, 0.05, 0.32, 0.42, P, s * 0.6, 0.92, -1.1));
+      CM.box(g, 1.2, 0.07, 0.05, G(0xa855f7), 0, 0.6, -1.32);
+      CM.wheels(g, { x: 0.96, rimMat: G(0xa855f7) });
+    }, { smoke: 0xa855f7, marks: 0xa855f7, driftFx: { kind: 'arc', color: 0xc084fc } });
+
+    defCar('frost_blade', '霜刃', 'epic', 22, 21, 23, 22, '冰藍色半透明車身，車頭像冰刃一樣尖，行駛時飄出冰晶。', (g, G) => {
+      const P = CM.paint('epic', 0x7dd3fc, { transparent: true, opacity: 0.85 }), edge = G(0xe0f2fe);
+      CM.plan(g, [[-0.82, -1.2], [0.82, -1.2], [0.78, 0.35], [0.18, 1.85], [0, 2.05], [-0.18, 1.85], [-0.78, 0.35]], 0.42, 0.24, P);
+      const crys = CM.add(g, new THREE.ConeGeometry(0.5, 1.4, 4), CM.std(0xbae6fd, 0.05, 0.5, { transparent: true, opacity: 0.7 }), 0, 0.78, -0.1, Math.PI / 2, 0, 0);
+      crys.scale.set(1, 1, 0.55);
+      for (let i = 0; i < 3; i++) [-1, 1].forEach(s => CM.cone(g, 0.07, 0.6 - i * 0.1, 5, P, s * (0.3 + i * 0.12), 0.78, -0.85 - i * 0.12, -1.19, 0, s * 0.2));
+      [-1, 1].forEach(s => {
+        CM.seg(g, [s * 0.78, 0.67, 0.35], [s * 0.18, 0.67, 1.85], 0.04, edge);
+        CM.seg(g, [s * 0.83, 0.45, -1.1], [s * 0.8, 0.45, 0.35], 0.04, edge);
+      });
+      CM.box(g, 1.1, 0.07, 0.05, G(0x7dd3fc), 0, 0.45, -1.22);
+      CM.wheels(g, { x: 0.95, rimMat: G(0xbae6fd) });
+    }, { smoke: 0xe0f2fe, marks: 0xf8fafc, driveFx: { kind: 'ice', color: 0xe0f2fe } });
+
+    defCar('lava_core', '熔岩核心', 'epic', 24, 22, 21, 21, '黑曜石般的車身，表面發光的橘紅裂紋會像呼吸一樣明暗，甩尾噴出火星。', (g, G) => {
+      const crack = CM.canvasTex(256, 256, (x) => {
+        x.fillStyle = '#000'; x.fillRect(0, 0, 256, 256);
+        x.strokeStyle = '#ff7a1a'; x.lineCap = 'round'; x.shadowColor = '#ff3d00'; x.shadowBlur = 8;
+        for (let n = 0; n < 9; n++) {
+          let px = Math.random() * 256, py = Math.random() * 256;
+          x.lineWidth = 2 + Math.random() * 3; x.beginPath(); x.moveTo(px, py);
+          for (let k = 0; k < 6; k++) { px += (Math.random() - 0.5) * 70; py += (Math.random() - 0.5) * 70; x.lineTo(px, py); }
+          x.stroke();
+        }
+      }, true);
+      crack.repeat.set(0.8, 0.8);
+      const P = CM.paint('epic', 0x111111, { emissive: 0xff5a1f, emissiveMap: crack, emissiveIntensity: 1.0 });
+      CM.side(g, [[-1.3, 0.22], [1.38, 0.22], [1.48, 0.42], [1.1, 0.55], [0.75, 0.7], [0.2, 0.83], [-0.35, 0.86], [-0.9, 0.82], [-1.3, 0.7]], 1.75, P);
+      CM.box(g, 1.77, 0.18, 0.7, CM.glass(0x1a0500), 0, 0.74, -0.2);
+      const rock = new THREE.DodecahedronGeometry(0.2, 0);
+      [[0.7, 0.62, 0.9], [-0.7, 0.62, 0.9], [0.72, 0.8, -0.9], [-0.72, 0.8, -0.9]].forEach(p => CM.add(g, rock, P, p[0], p[1], p[2], Math.random(), Math.random(), 0));
+      const ex = G(0xff6a00);
+      [-1, 1].forEach(s => CM.cyl(g, 0.1, 0.13, 0.3, 10, ex, s * 0.4, 0.45, -1.4, Math.PI / 2, 0, 0));
+      CM.wheels(g, { x: 0.98, rimMat: G(0xff5a1f) });
+      return (t) => { P.emissiveIntensity = 0.55 + 0.45 * Math.sin(t * 2.0); };
+    }, { smoke: 0x57534e, nitro: 0xb91c1c, marks: 0xff4500, driftFx: { kind: 'spark', color: 0xffa94d } });
+
+    defCar('jade_gale', '翡翠疾風', 'epic', 21, 23, 22, 22, '翡翠綠金屬流線車身，尾翼是兩片葉子，甩尾捲起綠葉。', (g, G) => {
+      const P = CM.paint('epic', 0x059669), vein = G(0x6ee7b7);
+      CM.side(g, [[-1.35, 0.25], [1.25, 0.25], ['q', 1.7, 0.3, 1.25, 0.58], ['q', 0.35, 1.02, -0.55, 0.86], ['q', -1.25, 0.78, -1.35, 0.25]], 1.55, P);
+      CM.ball(g, 0.5, CM.glass(0x052e16), 0, 0.84, -0.05, 1.1, 0.42, 1.2);
+      const leafShape = CM.shape([[0, 0], ['q', 0.38, 0.5, 0, 1.25], ['q', -0.38, 0.5, 0, 0]]);
+      const leafGeo = new THREE.ExtrudeGeometry(leafShape, { depth: 0.03, bevelEnabled: false, curveSegments: 10 });
+      [-1, 1].forEach(s => {
+        const lg = new THREE.Group();
+        const leaf = new THREE.Mesh(leafGeo, P); leaf.castShadow = true; lg.add(leaf);
+        CM.box(lg, 0.03, 1.05, 0.04, vein, 0, 0.58, 0.03);
+        lg.position.set(s * 0.35, 0.78, -1.05);
+        lg.rotation.set(-0.7, 0, -s * 0.38);
+        g.add(lg);
+      });
+      [-1, 1].forEach(s => CM.seg(g, [s * 0.79, 0.45, 1.15], [s * 0.79, 0.52, -1.2], 0.04, vein));
+      CM.box(g, 1.0, 0.07, 0.05, G(0x34d399), 0, 0.5, -1.33);
+      CM.wheels(g, { x: 0.92, rimMat: G(0x34d399) });
+    }, { smoke: 0x86efac, marks: 0x34d399, driftFx: { kind: 'leaf', color: 0x22c55e } });
+
+    defCar('shadow', '暗影', 'epic', 22, 22, 22, 22, '消光黑車身，只有紅色車燈和紅色輪框在發光。四項全 22，最平均的史詩。', (g, G) => {
+      const P = CM.std(0x0a0a0a, 0.7, 0.3), red = G(0xef4444);
+      CM.side(g, [[-1.35, 0.2], [1.5, 0.2], [1.58, 0.33], [0.95, 0.5], [0.3, 0.8], [-0.5, 0.82], [-1.35, 0.56]], 1.72, P);
+      CM.box(g, 1.74, 0.2, 0.8, CM.std(0x000000, 0.1, 0.8), 0, 0.72, -0.15);
+      [-1, 1].forEach(s => {
+        CM.box(g, 0.42, 0.05, 0.05, red, s * 0.45, 0.29, 1.57, 0, -s * 0.2, 0);
+        CM.seg(g, [s * 0.87, 0.3, 1.3], [s * 0.87, 0.42, -1.25], 0.025, G(0x991b1b));
+      });
+      CM.box(g, 1.3, 0.05, 0.05, red, 0, 0.5, -1.37);
+      for (let i = -2; i <= 2; i++) CM.box(g, 0.04, 0.16, 0.3, P, i * 0.3, 0.22, -1.3);
+      CM.wheels(g, { x: 0.98, rimMat: G(0xef4444) });
+    }, { smoke: 0x0a0a0a, nitro: 0x7f1d1d, marks: 0x991b1b, driftFx: { kind: 'spark', color: 0xdc2626, rate: 0.4 } });
+
+    // ----- 神話（大面積發光件＋底盤光暈＋彩帶尾跡＋專屬氮氣） -----
+    defCar('flame_dragon', '赤焰龍', 'mythic', 25, 23, 22, 22, '紅黑配色，車身覆滿龍鱗，車鼻是龍頭輪廓，車頂兩根往後的角。氮氣啟動時噴出龍息。', (g, G) => {
+      const P = CM.paint('mythic', 0xb91c1c), K = CM.paint('mythic', 0x18181b), scaleMat = CM.paint('mythic', 0x7f1d1d);
+      const prof = [[-1.4, 0.22], [1.2, 0.22], [1.7, 0.3], [1.88, 0.4], [1.55, 0.47], [1.85, 0.56], [1.4, 0.72], [0.95, 0.7], [0.35, 0.9], [-0.7, 0.92], [-1.4, 0.7]];
+      CM.side(g, prof, 1.6, P);
+      CM.box(g, 1.64, 0.14, 2.6, K, 0, 0.27, -0.05);
+      CM.box(g, 1.62, 0.2, 0.85, CM.glass(0x1c0a0a), 0, 0.78, -0.2);
+      CM.box(g, 1.2, 0.08, 0.3, G(0xff7a1a), 0, 0.47, 1.62);
+      [-1, 1].forEach(s => CM.box(g, 0.05, 0.08, 0.2, G(0xfde047, 'steady'), s * 0.81, 0.62, 1.32, 0, 0, s * 0.3));
+      [-1, 1].forEach(s => CM.cone(g, 0.09, 0.9, 6, K, s * 0.32, 1.2, -0.45, -1.1, 0, s * 0.2));
+      // 龍鱗：多片小三角形合成一個網格（一次 draw call）
+      const tri = [];
+      for (const s of [-1, 1]) for (let row = 0; row < 3; row++) for (let i = 0; i < 9; i++) {
+        const z = -1.25 + i * 0.3 + (row % 2) * 0.15, y = 0.36 + row * 0.13, x = s * 0.815;
+        tri.push(x, y + 0.07, z, x, y - 0.07, z, x + s * 0.02, y, z - 0.2);
+      }
+      const sg = new THREE.BufferGeometry();
+      sg.setAttribute('position', new THREE.Float32BufferAttribute(tri, 3));
+      sg.computeVertexNormals();
+      const sm = new THREE.Mesh(sg, new THREE.MeshStandardMaterial({ color: 0x7f1d1d, roughness: 0.3, metalness: 0.7, side: THREE.DoubleSide, envMap: getCarEnvMap() }));
+      g.add(sm);
+      for (let i = 0; i < 6; i++) CM.cone(g, 0.08, 0.22, 3, scaleMat, 0, 0.98 - Math.abs(i - 2.5) * 0.015, 0.25 - i * 0.22, -0.6, 0, 0);
+      [-1, 1].forEach(s => CM.seg(g, [s * 0.83, 0.28, 1.3], [s * 0.83, 0.28, -1.3], 0.06, G(0xff3b1f)));
+      CM.box(g, 1.4, 0.08, 0.05, G(0xff3b1f), 0, 0.55, -1.42);
+      CM.wheels(g, { x: 0.95, rimMat: G(0xff5a1f) });
+    }, {
+      smoke: 0x7c2d12, nitro: 0xffb020, glow: 0xff2200, marks: 0xff4500,
+      trail: { colors: [0xffd166, 0xff3b1f], minSpeed: 20, life: 0.45, width: 0.55 },
+      driftFx: { kind: 'fire' }, nitroBurst: 'breath'
+    });
+
+    defCar('abyss_shark', '深淵鯊', 'mythic', 23, 22, 23, 24, '深藍金屬車身＋青色發光線條，車頂高高的鯊魚背鰭，車頭一排發光的齒。', (g, G) => {
+      const P = CM.paint('mythic', 0x1e3a8a), cyan = G(0x22d3ee);
+      CM.side(g, [[-1.4, 0.25], [1.3, 0.22], [1.72, 0.4], [1.3, 0.66], [0.4, 0.83], [-0.8, 0.8], [-1.4, 0.56]], 1.6, P);
+      CM.box(g, 1.62, 0.18, 0.9, CM.glass(0x0c1a3a), 0, 0.72, -0.15);
+      CM.side(g, [[-0.75, 0.78], [0.15, 0.8], [-0.55, 1.85], [-0.85, 1.78]], 0.1, P, 0, 0.02);
+      CM.side(g, [[-1.15, 0.6], [-0.95, 0.62], [-1.5, 1.05], [-1.6, 1.0]], 0.08, P, 0, 0.02);
+      const tooth = G(0xe0ffff, 'steady');
+      for (let i = 0; i < 7; i++) CM.cone(g, 0.05, 0.15, 4, tooth, -0.45 + i * 0.15, 0.38, 1.58, Math.PI, 0, 0);
+      [-1, 1].forEach(s => {
+        CM.seg(g, [s * 0.81, 0.5, 1.2], [s * 0.81, 0.55, -1.3], 0.045, cyan);
+        for (let i = 0; i < 3; i++) CM.seg(g, [s * 0.81, 0.6, 0.65 + i * 0.13], [s * 0.81, 0.42, 0.72 + i * 0.13], 0.03, cyan);
+        CM.box(g, 0.04, 0.07, 0.12, G(0x67e8f9, 'steady'), s * 0.81, 0.58, 1.25);
+        CM.box(g, 0.5, 0.04, 0.3, P, s * 0.95, 0.35, 0.3, 0, 0, -s * 0.5);
+      });
+      CM.box(g, 1.3, 0.08, 0.05, cyan, 0, 0.5, -1.42);
+      CM.wheels(g, { x: 0.95, rimMat: G(0x06b6d4) });
+    }, {
+      smoke: 0x67e8f9, nitro: 0x3b82f6, glow: 0x06b6d4, marks: 0x22d3ee,
+      trail: { colors: [0x67e8f9, 0x1d4ed8], minSpeed: 20, life: 0.5, width: 0.55, wave: true },
+      driftFx: { kind: 'splash' }, nitroBurst: 'swirl'
+    });
+
+    defCar('stardust', '星塵', 'mythic', 22, 23, 24, 23, '星空材質的流線水滴車身，行駛時灑落星星，氮氣啟動時車尾噴出一顆流星。', (g, G) => {
+      const tex = getStarTex();
+      const P = CM.std(0xffffff, 0.3, 0.4, { map: tex, emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: 0.4 });
+      CM.lathe(g, [[0, -1.55], [0.3, -1.42], [0.55, -0.95], [0.7, -0.25], [0.68, 0.5], [0.5, 1.1], [0.25, 1.5], [0, 1.66]], P, 1.15, 0.55, 0.6);
+      CM.ball(g, 0.45, CM.std(0xc4b5fd, 0.05, 0.5, { transparent: true, opacity: 0.55 }), 0, 0.9, 0.05, 1, 0.55, 1.6);
+      CM.side(g, [[-1.05, 0.8], [-0.7, 0.85], [-1.4, 1.35], [-1.55, 1.3]], 0.06, P, 0, 0.02);
+      [-1, 1].forEach(s => CM.side(g, [[-1.2, 0.45], [-0.6, 0.5], [-1.35, 0.75]], 0.05, P, s * 0.82, 0.02));
+      [-1, 1].forEach(s => CM.seg(g, [s * 0.8, 0.6, 1.0], [s * 0.8, 0.6, -1.1], 0.04, G(0xe9d5ff)));
+      CM.box(g, 0.8, 0.07, 0.05, G(0xc084fc), 0, 0.62, -1.5);
+      CM.wheels(g, { x: 0.95, rimMat: G(0xa855f7) });
+    }, {
+      smoke: 0xc4b5fd, nitro: 0xc084fc, glow: 0xa855f7, marks: 0x8b5cf6,
+      trail: { colors: [0xc084fc, 0x3b82f6], minSpeed: 20, life: 0.55, width: 0.55, sparkle: true },
+      driveFx: { kind: 'star' }, driftFx: { kind: 'star' }, nitroBurst: 'meteor'
+    });
+
+    // ----- 傳說（專屬造型、動態材質、常駐尾跡、發光軌跡、氮氣衝擊波） -----
+    defCar('solar_flare', '烈陽', 'legendary', 26, 24, 23, 23, '全金屬金色，箭頭般的長低車身，車尾一對展開的金色羽翼。', (g, G) => {
+      const P = CM.paint('legendary', 0xe8b923, { emissive: 0x8a5a00, emissiveIntensity: 0.3 });
+      CM.plan(g, [[-0.72, -1.65], [0.72, -1.65], [0.8, 0.2], [0.42, 1.05], [0, 2.15], [-0.42, 1.05], [-0.8, 0.2]], 0.36, 0.22, P);
+      CM.plan(g, [[-0.5, -1.45], [0.5, -1.45], [0.55, 0.1], [0.25, 0.8], [-0.25, 0.8], [-0.55, 0.1]], 0.12, 0.57, P);
+      CM.ball(g, 0.5, CM.std(0x3b2600, 0.08, 0.9), 0, 0.72, -0.55, 0.82, 0.42, 1.05);
+      const line = G(0xfff3c4);
+      CM.box(g, 0.08, 0.04, 2.0, line, 0, 0.6, 1.0);
+      CM.box(g, 0.08, 0.04, 0.9, line, 0, 0.7, -0.75);
+      [-1, 1].forEach(s => CM.seg(g, [s * 0.8, 0.45, 0.2], [s * 0.05, 0.45, 2.1], 0.04, line));
+      const wings = [];
+      [-1, 1].forEach(s => {
+        const wg = new THREE.Group();
+        for (let i = 0; i < 5; i++) {
+          // 每根羽毛從翼根往後、往外展開
+          const len = 0.65 + i * 0.12;
+          const fg = new THREE.Group();
+          fg.position.set(s * (0.05 + i * 0.07), i * 0.06, 0.15);
+          fg.rotation.set(0.12 + 0.06 * i, -s * (0.12 + i * 0.12), 0);
+          CM.box(fg, 0.12, 0.04, len, P, 0, 0, -len / 2);
+          CM.box(fg, 0.1, 0.03, 0.16, line, 0, 0.03, -len + 0.08);
+          wg.add(fg);
+        }
+        wg.position.set(s * 0.42, 0.62, -1.35);
+        g.add(wg); wings.push([wg, s]);
+      });
+      CM.wheels(g, { r: 0.33, x: 0.92, zf: 1.0, zr: -1.05, rimMat: G(0xfbbf24) });
+      return (t, k, st) => {
+        P.emissiveIntensity = 0.3 + 0.22 * Math.sin(t * 1.6) + st.pulse * 2.5 + (k.nitroTimer > 0 ? 0.9 : 0);
+        for (const [wg, s] of wings) wg.rotation.z = s * 0.12 * Math.sin(t * 2.2);
+      };
+    }, {
+      legend: true, tagIcon: '🌞', smoke: 0xfde68a, nitro: 0xfff1b8, glow: 0xfbbf24, marks: 0xfbbf24, shock: 0xfbbf24,
+      trail: { colors: [0xfff7cc, 0xf59e0b], minSpeed: 2, life: 0.6, width: 0.6, bySpeed: true },
+      driftFx: { kind: 'gold' }
+    });
+
+    defCar('aurora', '極光', 'legendary', 22, 22, 25, 27, '白色珍珠漆車身，兩側光帶沿著車身流動變色，車尾兩片透明光翼。', (g, G) => {
+      const P = CM.std(0xf8fafc, 0.2, 0.35, { emissive: 0xffffff, emissiveIntensity: 0.05 });
+      const prof = [[0, -1.5], [0.35, -1.45], [0.6, -1.2], [0.72, -0.6], [0.72, 0.4], [0.62, 1.05], [0.38, 1.45], [0, 1.58]];
+      CM.lathe(g, prof, P, 1.12, 0.5, 0.58);
+      CM.ball(g, 0.45, CM.std(0x93c5fd, 0.05, 0.5, { transparent: true, opacity: 0.6 }), 0, 0.86, -0.1, 1, 0.55, 1.5);
+      const rAt = z => {
+        for (let i = 0; i < prof.length - 1; i++) {
+          const a = prof[i], b = prof[i + 1];
+          if (z >= a[1] && z <= b[1]) return a[0] + (b[0] - a[0]) * (z - a[1]) / (b[1] - a[1]);
+        }
+        return 0;
+      };
+      // 兩側流動光帶：逐段改顏色
+      const N = 16, bands = [];
+      for (let i = 0; i < N; i++) {
+        const z = 1.2 - i * (2.45 / (N - 1));
+        const m = new THREE.MeshBasicMaterial({ color: 0x3b82f6 });
+        [-1, 1].forEach(s => CM.box(g, 0.06, 0.13, 2.45 / (N - 1) * 1.05, m, s * (rAt(z) * 1.12 + 0.01), 0.58, z));
+        bands.push(m);
+      }
+      // 透明光翼
+      const wingTex = CM.canvasTex(128, 64, (x) => {
+        const gr = x.createLinearGradient(0, 0, 128, 0);
+        gr.addColorStop(0, 'rgba(255,255,255,0.95)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+        x.fillStyle = gr; x.beginPath(); x.moveTo(0, 20); x.quadraticCurveTo(70, 0, 128, 8); x.quadraticCurveTo(70, 50, 0, 44); x.fill();
+      });
+      const wingMats = [];
+      [-1, 1].forEach(s => {
+        const geo = new THREE.PlaneGeometry(1.4, 0.7); geo.translate(0.7, 0, 0); geo.rotateX(-Math.PI / 2 + 0.45);
+        const m = new THREE.MeshBasicMaterial({ map: wingTex, color: 0x7dd3fc, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+        const w = new THREE.Mesh(geo, m);
+        w.scale.x = s; w.position.set(s * 0.4, 0.78, -1.2); w.rotation.y = s * 0.6;
+        g.add(w); wingMats.push(m);
+      });
+      CM.wheels(g, { r: 0.33, x: 0.9, zf: 0.95, zr: -0.95, rim: 0xf8fafc });
+      return (t, k, st) => {
+        bands.forEach((m, i) => auroraColor(t * 0.15 + i / N * 0.8, m.color));
+        wingMats.forEach((m, i) => { auroraColor(t * 0.15 + 0.3 + i * 0.1, m.color); m.opacity = 0.6 + 0.35 * Math.abs(Math.sin(t * 3 + i)); });
+        P.emissiveIntensity = 0.05 + 0.08 * (0.5 + 0.5 * Math.sin(t * 1.5)) + st.pulse * 1.5 + (k.nitroTimer > 0 ? 0.85 : 0);
+        if (st.glow) auroraColor(t * 0.15, st.glow.material.color);
+      };
+    }, {
+      legend: true, tagIcon: '🌌', smoke: 0xc7d2fe, nitro: 0xffffff, glow: 0x7dd3fc, marks: 'aurora', shock: 'aurora',
+      trail: { aurora: true, minSpeed: 2, life: 0.6, width: 0.6, bySpeed: true },
+      driftFx: { kind: 'aurora' }
+    });
+
+    // 建出新車款的模型（發光材質的呼吸／閃爍在 userData.anim 裡）
+    function buildCatalogCar(cat) {
+      const g = new THREE.Group();
+      const glows = [];
+      const G = (color, mode = 'breath') => {
+        const m = new THREE.MeshBasicMaterial({ color });
+        if (mode !== 'steady') glows.push({ mat: m, base: new THREE.Color(color), mode, ph: Math.random() * 6 });
+        return m;
+      };
+      const extra = cat.build(g, G);
+      g.userData.carId = cat.id;
+      g.userData.fx = cat.fx;
+      g.userData.anim = (t, k, st) => {
+        for (const gl of glows) {
+          let m = 1;
+          if (gl.mode === 'breath') m = 0.6 + 0.4 * Math.sin(t * 2.2 + gl.ph);
+          else if (gl.mode === 'flicker') m = Math.random() < 0.15 ? 0.1 + Math.random() * 0.3 : 0.85 + Math.random() * 0.15;
+          gl.mat.color.copy(gl.base).multiplyScalar(m + st.pulse * 1.5);
+        }
+        if (extra) extra(t, k, st);
+      };
+      if (cat.id === 'stardust') starSky.used = true;
+      scene.add(g);
+      return g;
+    }
+    function carFxOf(k) { return (k.mesh && k.mesh.userData.fx) || null; }
+
+    // ---------- 每台車的特效狀態與每幀更新 ----------
+    const CarFX = {
+      time: 0, states: new Map(), ready: false, tagTimer: 0, starTimer: 0,
+      init() {
+        if (this.ready) return;
+        this.ready = true;
+        this.add = new FxPoints(1800, true);
+        this.norm = new FxPoints(700, false);
+        this.arcs = new ArcFx(48);
+        this.marks = new GroundMarks(900);
+        this.shocks = new ShockFx(8);
+      },
+      state(k) {
+        let st = this.states.get(k);
+        if (!st || st.mesh !== k.mesh) {
+          if (st && st.trail) st.trail.dispose();
+          const fx = carFxOf(k);
+          st = { mesh: k.mesh, fx, prevNitro: false, pulse: 0, startPulsed: st ? st.startPulsed : false, wl: {}, trail: null, glow: null, breath: 0, meteor: null };
+          if (fx && fx.glow) {
+            const m = new THREE.Mesh(new THREE.PlaneGeometry(2.7, 4.0), new THREE.MeshBasicMaterial({ map: getUnderglowTex(), color: fx.glow, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
+            m.rotation.x = -Math.PI / 2; m.position.y = 0.06; m.renderOrder = 2;
+            k.mesh.add(m); st.glow = m;
+          }
+          if (fx && fx.trail) st.trail = new RibbonTrail();
+          this.states.set(k, st);
+        }
+        return st;
+      },
+      // 氮氣剛啟動
+      onNitro(k, st, fx) {
+        const p = k.renderPos;
+        if (fx.shock) this.shocks.trigger(p.x, p.y, p.z, fx.shock, 13, 0.75);
+        if (fx.nitroBurst === 'breath') st.breath = 0.6;
+        if (fx.nitroBurst === 'meteor') {
+          const s = Math.sin(k.renderYaw), c = Math.cos(k.renderYaw);
+          st.meteor = { x: p.x - s * 1.6, y: p.y + 0.9, z: p.z - c * 1.6, vx: -s * 16 + k.velocity.x * 0.3, vy: 7, vz: -c * 16 + k.velocity.z * 0.3, life: 1.3 };
+        }
+      },
+      update(dt) {
+        this.init();
+        this.time += dt;
+        const t = this.time, low = fxLow();
+        let leader = null;
+        if ((raceState === 'RACING' || raceState === 'FINISHED') && karts.length > 1) leader = karts.reduce((a, b) => (b.progress > a.progress ? b : a));
+        for (const k of karts) {
+          if (!k.mesh) continue;
+          const st = this.state(k);
+          const fx = st.fx;
+          if (!fx) continue;
+          const visible = k.mesh.visible && !k.disconnected;
+          if (st.trail) st.trail.mesh.visible = visible && !low;
+          if (!visible) continue;
+          if (raceState === 'GARAGE') st.startPulsed = false;
+          const nitroOn = k.nitroTimer > 0;
+          if (nitroOn && !st.prevNitro) this.onNitro(k, st, fx);
+          st.prevNitro = nitroOn;
+          // 傳說：起跑倒數時一次強光脈衝
+          if (fx.legend && raceState === 'COUNTDOWN' && countdownTimer < 1.3 && !st.startPulsed) {
+            st.startPulsed = true; st.pulse = 1;
+            this.shocks.trigger(k.renderPos.x, k.renderPos.y, k.renderPos.z, fx.shock, 9, 0.9);
+          }
+          st.pulse = Math.max(0, st.pulse - dt * 1.1);
+          if (k.mesh.userData.anim) k.mesh.userData.anim(t, k, st);
+          if (st.glow) st.glow.material.opacity = 0.65 + 0.2 * Math.sin(t * 3) + st.pulse * 0.5 + (nitroOn ? 0.3 : 0);
+
+          const s = Math.sin(k.renderYaw), c = Math.cos(k.renderYaw), p = k.renderPos;
+          // 彩帶尾跡
+          if (st.trail) {
+            const tr = fx.trail, isLeader = leader === k;
+            let life = tr.life * (isLeader ? 1.7 : 1);
+            if (tr.bySpeed) life *= Math.min(1.5, Math.max(0.35, k.speed / 28));
+            const colorFn = tr.aurora ? (u, pt, out) => auroraColor(t * 0.15 + u * 0.7, out)
+              : (u, pt, out) => {
+                out.setHex(tr.colors[0]).lerp(_trailB.setHex(tr.colors[1]), u);
+                if (tr.wave) out.multiplyScalar(0.7 + 0.3 * Math.sin(u * 14 - t * 9));
+                if (tr.sparkle) out.multiplyScalar(0.7 + 0.6 * Math.abs(Math.sin(t * 6 + pt.r * 30)));
+                return out;
+              };
+            if (!low) st.trail.update(dt, p.x - s * 1.45, p.y + 0.38, p.z - c * 1.45, k.speed >= tr.minSpeed, life, tr.width * (isLeader ? 1.25 : 1), colorFn, isLeader ? 1.45 : 1);
+          }
+          // 甩尾地面光軌（後輪）
+          if (fx.marks && !low && k.isDrifting && k.speed > 6) {
+            for (const side of [-1, 1]) {
+              const wx = p.x + side * c * 0.9 - s * 0.85, wz = p.z - side * s * 0.9 - c * 0.85, wy = p.y + 0.04;
+              const last = st.wl[side];
+              if (last && Math.hypot(wx - last[0], wz - last[2]) > 0.22) {
+                if (Math.hypot(wx - last[0], wz - last[2]) < 3) this.marks.add(last[0], last[1], last[2], wx, wy, wz, 0.34, fx.marks, fx.legend ? 3.0 : 2.2);
+                st.wl[side] = [wx, wy, wz];
+              } else if (!last) st.wl[side] = [wx, wy, wz];
+            }
+          } else st.wl = {};
+          // 龍息
+          if (st.breath > 0) {
+            st.breath -= dt;
+            const n = low ? 1 : 4;
+            for (let i = 0; i < n; i++) this.add.emit({
+              x: p.x + s * 1.9, y: p.y + 0.5, z: p.z + c * 1.9,
+              vx: s * (16 + Math.random() * 8) + k.velocity.x + (Math.random() - 0.5) * 3, vy: (Math.random() - 0.3) * 2, vz: c * (16 + Math.random() * 8) + k.velocity.z + (Math.random() - 0.5) * 3,
+              color: [0xfff1a8, 0xffb020, 0xff5a1f][i % 3], size: 0.7, grow: 2.2, life: 0.38, shape: 1, drag: 2
+            });
+          }
+          // 流星
+          if (st.meteor) {
+            const m = st.meteor;
+            m.life -= dt; m.vy -= 6 * dt;
+            m.x += m.vx * dt; m.y += m.vy * dt; m.z += m.vz * dt;
+            this.add.emit({ x: m.x, y: m.y, z: m.z, color: 0xffffff, size: 1.6, life: 0.06, shape: 2, rot: t * 4 });
+            this.add.emit({ x: m.x, y: m.y, z: m.z, vx: (Math.random() - 0.5), vy: (Math.random() - 0.5), vz: (Math.random() - 0.5), color: Math.random() < 0.5 ? 0xc084fc : 0x93c5fd, size: 0.55, life: 0.6, shape: 0 });
+            if (m.life <= 0) st.meteor = null;
+          }
+        }
+        for (const [k, st] of this.states) {
+          if (!karts.includes(k)) { if (st.trail) st.trail.dispose(); this.states.delete(k); }
+        }
+        // 名牌流光（神話、傳說）
+        this.tagTimer += dt;
+        if (this.tagTimer > 0.08) {
+          this.tagTimer = 0;
+          karts.forEach(k => { if (k.nameTag && k.nameTag.userData.redraw) k.nameTag.userData.redraw(t); });
+        }
+        if (starSky.used) { this.starTimer += dt; if (this.starTimer > 0.12) { this.starTimer = 0; drawStarSky(t); } }
+        this.add.update(dt); this.norm.update(dt); this.arcs.update(dt); this.marks.update(dt); this.shocks.update(dt);
+      },
+      // 跟著物理固定頻率呼叫（Kart.emitParticles）：甩尾、行駛的專屬粒子
+      emit(k, fx) {
+        if (!this.ready || !k.mesh || !k.mesh.visible) return;
+        const q = fxLow() ? 0.3 : 1;
+        const s = Math.sin(k.yaw), c = Math.cos(k.yaw), y = k.pos.y;
+        const vx = k.velocity.x, vz = k.velocity.z;
+        const rnd = (a) => (Math.random() - 0.5) * a;
+        const wheel = side => [k.pos.x + side * c * 0.9 - s * 0.85, k.pos.z - side * s * 0.9 - c * 0.85];
+        const drifting = k.isDrifting && k.speed > 8;
+        const df = fx.driftFx;
+        if (drifting && df) {
+          const rate = (df.rate || 1) * q;
+          for (const side of [-1, 1]) {
+            if (Math.random() > rate) continue;
+            const [wx, wz] = wheel(side);
+            switch (df.kind) {
+              case 'petal':
+                this.norm.emit({ x: wx, y: y + 0.4, z: wz, vx: -vx * 0.15 + rnd(3), vy: 1.5 + Math.random() * 2, vz: -vz * 0.15 + rnd(3), color: Math.random() < 0.5 ? 0xf9a8d4 : 0xfbcfe8, size: 0.42, life: 1.5, shape: 3, spin: rnd(10), grav: 2.2, drag: 1.4 });
+                break;
+              case 'arc':
+                if (Math.random() < 0.55) this.arcs.emit(wx, y + 0.2, wz, df.color, 0.9 + Math.random() * 0.6);
+                this.add.emit({ x: wx, y: y + 0.3, z: wz, vx: rnd(4), vy: 2 + Math.random() * 2, vz: rnd(4), color: 0xe9d5ff, size: 0.22, life: 0.25, shape: 5 });
+                break;
+              case 'spark':
+                this.add.emit({ x: wx, y: y + 0.25, z: wz, vx: -vx * 0.2 + rnd(5), vy: 3 + Math.random() * 4, vz: -vz * 0.2 + rnd(5), color: Math.random() < 0.5 ? df.color : 0xffd166, size: 0.22, life: 0.5, shape: 5, grav: 12, rot: Math.random() * 6 });
+                break;
+              case 'leaf':
+                this.norm.emit({ x: wx, y: y + 0.35, z: wz, vx: -vx * 0.12 + rnd(4), vy: 2 + Math.random() * 2, vz: -vz * 0.12 + rnd(4), color: [0x22c55e, 0x16a34a, 0x86efac][Math.floor(Math.random() * 3)], size: 0.48, life: 1.6, shape: 4, spin: rnd(9), grav: 1.6, drag: 1.5 });
+                break;
+              case 'fire':
+                this.add.emit({ x: wx, y: y + 0.3, z: wz, vx: -vx * 0.2 + rnd(2), vy: 1.5 + Math.random() * 2, vz: -vz * 0.2 + rnd(2), color: [0xffd166, 0xff8c1a, 0xff3b1f][Math.floor(Math.random() * 3)], size: 0.7, grow: 1.3, life: 0.4, shape: 1 });
+                break;
+              case 'splash':
+                this.add.emit({ x: wx, y: y + 0.2, z: wz, vx: rnd(5) - vx * 0.1, vy: 3 + Math.random() * 3, vz: rnd(5) - vz * 0.1, color: 0x67e8f9, size: 0.22, life: 0.55, shape: 0, grav: 10 });
+                if (Math.random() < 0.5) this.norm.emit({ x: wx + rnd(0.6), y: y + 0.3, z: wz + rnd(0.6), vx: rnd(1), vy: 1 + Math.random(), vz: rnd(1), color: 0xa5f3fc, size: 0.3, life: 1.0, shape: 7, grav: -0.8, alpha: 0.85 });
+                break;
+              case 'aurora':
+                this.add.emit({ x: wx, y: y + 0.35, z: wz, vx: -vx * 0.15 + rnd(3), vy: 1 + Math.random() * 2, vz: -vz * 0.15 + rnd(3), color: auroraColor(Math.random(), new THREE.Color()), size: 0.45, life: 0.9, shape: Math.random() < 0.5 ? 2 : 0, spin: rnd(4), grav: -0.4 });
+                break;
+              case 'gold':
+                this.add.emit({ x: wx, y: y + 0.3, z: wz, vx: -vx * 0.2 + rnd(5), vy: 3 + Math.random() * 3, vz: -vz * 0.2 + rnd(5), color: Math.random() < 0.6 ? 0xffd54a : 0xfff7cc, size: 0.3, life: 0.6, shape: Math.random() < 0.6 ? 5 : 2, grav: 8 });
+                break;
+              case 'star':
+                this.add.emit({ x: wx, y: y + 0.4, z: wz, vx: -vx * 0.15 + rnd(3), vy: 1.5 + Math.random() * 2, vz: -vz * 0.15 + rnd(3), color: Math.random() < 0.5 ? 0xffffff : 0xe9d5ff, size: 0.45, life: 0.9, shape: 2, spin: rnd(5), grav: 1 });
+                break;
+            }
+          }
+        }
+        const dv = fx.driveFx;
+        if (dv && k.speed > 6 && Math.random() < 0.55 * q) {
+          const bx = k.pos.x - s * (0.5 + Math.random() * 1.2) + rnd(1.2), bz = k.pos.z - c * (0.5 + Math.random() * 1.2) + rnd(1.2);
+          if (dv.kind === 'ice') this.add.emit({ x: bx, y: y + 0.5 + Math.random() * 0.6, z: bz, vx: vx * 0.25 + rnd(1), vy: rnd(1), vz: vz * 0.25 + rnd(1), color: dv.color, size: 0.26, life: 1.1, shape: 6, spin: rnd(3), drag: 1 });
+          if (dv.kind === 'star') this.add.emit({ x: bx, y: y + 0.9 + Math.random() * 0.4, z: bz, vx: vx * 0.2 + rnd(1), vy: 0.5, vz: vz * 0.2 + rnd(1), color: [0xffffff, 0xfef9c3, 0xe9d5ff][Math.floor(Math.random() * 3)], size: 0.35, life: 1.2, shape: 2, spin: rnd(3), grav: 2.2 });
+        }
+        // 深淵鯊：氮氣時排氣口的藍色漩渦
+        if (fx.nitroBurst === 'swirl' && k.nitroTimer > 0) {
+          const ex = k.pos.x - s * 1.45, ez = k.pos.z - c * 1.45;
+          const n = fxLow() ? 1 : 2;
+          for (let i = 0; i < n; i++) {
+            const a = this.time * 22 + i * Math.PI;
+            const ox = c * Math.cos(a) * 0.45, oz = -s * Math.cos(a) * 0.45, oy = Math.sin(a) * 0.45;
+            this.add.emit({ x: ex + ox, y: y + 0.5 + oy, z: ez + oz, vx: -s * 12 + vx * 0.5 + ox * 3, vy: oy * 3, vz: -c * 12 + vz * 0.5 + oz * 3, color: i ? 0x22d3ee : 0x60a5fa, size: 0.4, life: 0.32, shape: 0 });
+          }
+        }
+      }
+    };
+    const _trailB = new THREE.Color();
+
+    // ---------- 名牌（依稀有度加框，神話／傳說是流光框） ----------
+    function makeNameTagSprite(name, carId, bg = 'rgba(15,23,42,0.65)') {
+      const cat = CAR_CATALOG[carId];
+      const rar = cat && !cat.starter ? cat.rarity : 'common';
+      const icon = cat && cat.fx && cat.fx.tagIcon ? cat.fx.tagIcon + ' ' : '';
+      const text = icon + name, fontPx = 36, framed = rar !== 'common';
+      const pad = framed ? 18 : 12, extraH = framed ? 28 : 20;
+      const c = document.createElement('canvas');
+      const ctx = c.getContext('2d');
+      ctx.font = `bold ${fontPx}px sans-serif`;
+      c.width = Math.ceil(ctx.measureText(text).width) + pad * 2;
+      c.height = fontPx + extraH;
+      const tex = new THREE.CanvasTexture(c);
+      const draw = (t) => {
+        ctx.clearRect(0, 0, c.width, c.height);
+        const bw = framed ? 5 : 0, r = 12, x0 = bw / 2, y0 = bw / 2, w = c.width - bw, h = c.height - bw;
+        ctx.beginPath();
+        ctx.moveTo(x0 + r, y0); ctx.arcTo(x0 + w, y0, x0 + w, y0 + h, r); ctx.arcTo(x0 + w, y0 + h, x0, y0 + h, r);
+        ctx.arcTo(x0, y0 + h, x0, y0, r); ctx.arcTo(x0, y0, x0 + w, y0, r); ctx.closePath();
+        if (bg) { ctx.fillStyle = bg; ctx.fill(); }
+        if (framed) {
+          let stroke = rar === 'rare' ? '#3b82f6' : '#a855f7';
+          if (rar === 'mythic' || rar === 'legendary') {
+            const gr = ctx.createLinearGradient(0, 0, c.width, 0);
+            if (carId === 'aurora') {
+              for (let i = 0; i <= 4; i++) gr.addColorStop(i / 4, '#' + auroraColor(t * 0.25 + i / 4, _fxCol).getHexString());
+            } else {
+              const cols = rar === 'mythic' ? ['#7f1d1d', '#ef4444', '#fee2e2'] : ['#92400e', '#fbbf24', '#fffbeb'];
+              const p = 0.15 + 0.7 * ((t * 0.5) % 1);
+              gr.addColorStop(0, cols[0]); gr.addColorStop(p - 0.15, cols[1]); gr.addColorStop(p, cols[2]);
+              gr.addColorStop(p + 0.15, cols[1]); gr.addColorStop(1, cols[0]);
+            }
+            stroke = gr;
+          }
+          ctx.lineWidth = bw; ctx.strokeStyle = stroke; ctx.stroke();
+        }
+        ctx.font = `bold ${fontPx}px sans-serif`;
+        ctx.fillStyle = '#ffffff'; ctx.textBaseline = 'middle';
+        ctx.fillText(text, pad, c.height / 2 + 1);
+        tex.needsUpdate = true;
+      };
+      draw(0);
+      const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, depthTest: false, transparent: true }));
+      const hScale = 0.9 * c.height / (fontPx + 20);
+      sp.scale.set(c.width / c.height * hScale, hScale, 1);
+      sp.renderOrder = 10;
+      if (rar === 'mythic' || rar === 'legendary') sp.userData.redraw = draw;
+      return sp;
+    }
+
     // 6. 規格 1：各車種專屬 3D 外型生成函式
     function createKartMesh(typeId = 'balanced', mainColor = 0x2563eb) {
+      const cat = CAR_CATALOG[typeId];
+      if (cat && !cat.starter) return buildCatalogCar(cat); // 抽箱車款：固定配色，不吃車漆顏色
       const group = new THREE.Group();
 
       const bodyMat = new THREE.MeshStandardMaterial({ color: mainColor, metalness: 0.45, roughness: 0.35 });
@@ -2856,6 +4409,9 @@
 
       emitParticles() {
         const baseY = this.pos.y;
+        const fx = carFxOf(this); // 新車款的特效設定（起始車是 null，維持原本外觀）
+        const smokeCol = fx && fx.smoke !== undefined ? fx.smoke : null;
+        const fireCol = fx && fx.nitro !== undefined && this.nitroTimer > 0 ? fx.nitro : null;
         if (this.isDrifting && this.speed > 8) {
           const sinY = Math.sin(this.yaw);
           const cosY = Math.cos(this.yaw);
@@ -2868,8 +4424,8 @@
           const pVel = this.velocity.clone().multiplyScalar(-0.25);
           pVel.y = 0.5 + Math.random() * 0.4;
 
-          particleSystem.emit(rlX, baseY + 0.2, rlZ, pVel.x + (Math.random()-0.5)*2, pVel.y, pVel.z + (Math.random()-0.5)*2, false, 0.35);
-          particleSystem.emit(rrX, baseY + 0.2, rrZ, pVel.x + (Math.random()-0.5)*2, pVel.y, pVel.z + (Math.random()-0.5)*2, false, 0.35);
+          particleSystem.emit(rlX, baseY + 0.2, rlZ, pVel.x + (Math.random()-0.5)*2, pVel.y, pVel.z + (Math.random()-0.5)*2, false, 0.35, smokeCol);
+          particleSystem.emit(rrX, baseY + 0.2, rrZ, pVel.x + (Math.random()-0.5)*2, pVel.y, pVel.z + (Math.random()-0.5)*2, false, 0.35, smokeCol);
         }
 
         if (this.nitroTimer > 0 || this.miniBoostTimer > 0 || this.padBoostTimer > 0 || this.draftBoostTimer > 0) {
@@ -2882,8 +4438,8 @@
           const bVelX = -sinY * (22 + Math.random() * 10);
           const bVelZ = -cosY * (22 + Math.random() * 10);
 
-          particleSystem.emit(exX, baseY + 0.4, exZ, bVelX, (Math.random() - 0.5) * 2, bVelZ, true, 0.25);
-          particleSystem.emit(exX + (Math.random() - 0.5) * 0.4, baseY + 0.4, exZ + (Math.random() - 0.5) * 0.4, bVelX, (Math.random() - 0.5) * 2, bVelZ, true, 0.22);
+          particleSystem.emit(exX, baseY + 0.4, exZ, bVelX, (Math.random() - 0.5) * 2, bVelZ, true, 0.25, fireCol);
+          particleSystem.emit(exX + (Math.random() - 0.5) * 0.4, baseY + 0.4, exZ + (Math.random() - 0.5) * 0.4, bVelX, (Math.random() - 0.5) * 2, bVelZ, true, 0.22, fireCol);
         }
 
         if (this.isPlayer && this.inDraft && this.draftBoostTimer <= 0 && Math.random() < 0.6) {
@@ -2893,6 +4449,7 @@
             this.pos.x + cosY * sideOff + sinY * 1.5, baseY + 0.6 + Math.random() * 0.6, this.pos.z - sinY * sideOff + cosY * 1.5,
             -sinY * 25, 0, -cosY * 25, false, 0.18);
         }
+        if (fx) CarFX.emit(this, fx);
       }
     }
 
@@ -2992,8 +4549,9 @@
 
     // 依模式決定單人模式要放哪些車進場
     function setupSoloKarts() {
-      raceMode = gameData.raceMode === 'team' ? 'team' : 'solo';
-      const want = raceMode === 'team' ? soloPool : soloPool.slice(0, SOLO_RACERS);
+      raceMode = gameData.raceMode === 'team' ? 'team' : (gameData.raceMode === 'practice' ? 'practice' : 'solo');
+      // 練習賽：只有自己一台，沒有 AI
+      const want = raceMode === 'team' ? soloPool : (raceMode === 'practice' ? soloPool.slice(0, 1) : soloPool.slice(0, SOLO_RACERS));
       karts.forEach(k => scene.remove(k.mesh));
       karts.length = 0;
       want.forEach((k, i) => {
@@ -3262,16 +4820,18 @@
     initCamera(playerKart);
 
     function updateCamera(frameDt, kart) {
+      if (carlab.active && carlab.updateCamera()) return;
       if (raceState === 'GARAGE') {
         // 車庫展示旋轉鏡頭
         const t = performance.now() * 0.0006;
         const radius = 6.8;
+        const tgt = showroom.built ? showroom.center : kart.pos;
         camera.position.set(
-          kart.pos.x + Math.sin(t) * radius,
-          kart.pos.y + 2.2,
-          kart.pos.z + Math.cos(t) * radius
+          tgt.x + Math.sin(t) * radius,
+          tgt.y + 2.2,
+          tgt.z + Math.cos(t) * radius
         );
-        camera.lookAt(kart.pos.x, kart.pos.y + 0.6, kart.pos.z);
+        camera.lookAt(tgt.x, tgt.y + 0.6, tgt.z);
         return;
       }
 
@@ -3390,6 +4950,7 @@
       updateGarageUI();
       karts.forEach(k => k.reset());
       initCamera(playerKart);
+      garageOnOpen();
     }
 
     function resetRace() {
@@ -3409,17 +4970,70 @@
 
       karts.forEach(k => k.reset());
       initCamera(playerKart);
+      renderHudTargets();
     }
 
     // 自己衝線：先顯示暫定排名，等整場比賽結束（finalizeRace）才確定名次並發金幣
     function finishRace() {
       raceState = 'FINISHED';
+      document.getElementById('modalRecord').innerHTML = '';
       document.getElementById('modalRewardBadge').textContent = '⏳ 等待其他車手衝線，比賽結束後結算金幣';
       document.getElementById('modalTotalTime').textContent = formatTime(playerKart.finishTime || playerKart.totalTime);
       setModalButtonsEnabled(false);
       renderLeaderboard();
       document.getElementById('settlement-modal').classList.add('active');
     }
+
+    // ---------- 賽道紀錄：練習賽（只有自己）和比賽（有 AI 或連線）分開記 ----------
+    function trackRecordCat() { return raceMode === 'practice' && !net.inRace ? 'practice' : 'race'; }
+    function trackRecords(trackId) {
+      if (!gameData.records || typeof gameData.records !== 'object') gameData.records = {};
+      const all = gameData.records[trackId] || (gameData.records[trackId] = {});
+      // 舊存檔只有比賽的最佳單圈（bestLaps）：搬進比賽紀錄
+      if (!all.race && gameData.bestLaps && gameData.bestLaps[trackId]) all.race = { lap: gameData.bestLaps[trackId] };
+      return all;
+    }
+    function updateTrackRecords() {
+      const cat = trackRecordCat();
+      const all = trackRecords(SELECTED_TRACK_ID);
+      const r = all[cat] || (all[cat] = {});
+      const lap = playerKart.lapTimes.length ? Math.min(...playerKart.lapTimes) : Infinity;
+      const total = playerKart.isFinished && playerKart.totalLaps === 3 ? playerKart.finishTime : Infinity; // 總時間只算完整的 3 圈
+      const out = { cat, lapNew: false, totalNew: false };
+      const today = taipeiDate();
+      if (isFinite(lap) && (!r.lap || lap < r.lap)) { out.lapNew = true; out.lapOld = r.lap; r.lap = lap; r.lapCar = gameData.selectedCar; r.lapDate = today; }
+      if (isFinite(total) && (!r.total || total < r.total)) { out.totalNew = true; out.totalOld = r.total; r.total = total; r.totalCar = gameData.selectedCar; r.totalDate = today; }
+      out.lap = r.lap; out.total = r.total;
+      return out;
+    }
+    function recordNoteHtml(rec) {
+      const name = rec.cat === 'practice' ? '練習賽' : '比賽';
+      const part = (label, val, isNew) => val ? `${label} ${formatTime(val)}${isNew ? ' 🎉新紀錄' : ''}` : `${label} --`;
+      return `🏆 ${name}紀錄：${part('單圈', rec.lap, rec.lapNew)}　${part('總時間', rec.total, rec.totalNew)}`;
+    }
+    function renderHudTargets() {
+      const r = (trackRecords(SELECTED_TRACK_ID))[trackRecordCat()] || {};
+      const parts = [];
+      if (ghostLapTime) parts.push(`🧠 AI 最佳線: ${formatTime(ghostLapTime)}`);
+      if (r.lap) parts.push(`🏆 ${trackRecordCat() === 'practice' ? '練習' : '比賽'}紀錄: ${formatTime(r.lap)}`);
+      document.getElementById('hudTargetLap').textContent = parts.join('　');
+    }
+    function renderRecordsPanel() {
+      const cell = (r, key) => {
+        if (!r || !r[key]) return '<td class="none">--</td>';
+        const car = r[key + 'Car'] && CAR_CATALOG[r[key + 'Car']] ? CAR_CATALOG[r[key + 'Car']].name : '';
+        return `<td><span class="rt">${formatTime(r[key])}</span>${car ? `<span class="rc">${escapeHtml(car)}${r[key + 'Date'] ? '・' + r[key + 'Date'] : ''}</span>` : ''}</td>`;
+      };
+      let html = '<tr><th style="text-align:left">賽道</th><th>練習賽・單圈</th><th>練習賽・總時間</th><th>比賽・單圈</th><th>比賽・總時間</th></tr>';
+      for (const [id, t] of Object.entries(TRACKS)) {
+        const all = trackRecords(id);
+        html += `<tr class="${id === SELECTED_TRACK_ID ? 'cur' : ''}"><td class="tn">${escapeHtml(t.name)}${id === SELECTED_TRACK_ID ? '（目前）' : ''}</td>${cell(all.practice, 'lap')}${cell(all.practice, 'total')}${cell(all.race, 'lap')}${cell(all.race, 'total')}</tr>`;
+      }
+      document.getElementById('recTable').innerHTML = html;
+      document.getElementById('records-panel').classList.remove('hidden');
+    }
+    document.getElementById('btnOpenRecords').addEventListener('click', renderRecordsPanel);
+    document.getElementById('recClose').addEventListener('click', () => document.getElementById('records-panel').classList.add('hidden'));
 
     // 整場比賽結束：orderIds 是最終名次（連線時由房主決定並廣播）
     function finalizeRace(orderIds) {
@@ -3433,6 +5047,18 @@
       closeRaceChat();
 
       const playerRank = order.indexOf(playerKart) + 1;
+      const rec = updateTrackRecords();
+      document.getElementById('modalRecord').innerHTML = recordNoteHtml(rec);
+
+      if (raceMode === 'practice') {
+        saveGameData();
+        document.getElementById('modalRewardBadge').textContent = '🏁 練習賽沒有金幣獎勵';
+        document.getElementById('modalTotalTime').textContent = playerKart.isFinished ? formatTime(playerKart.finishTime) : '未完賽';
+        setModalButtonsEnabled(true);
+        renderLeaderboard();
+        document.getElementById('settlement-modal').classList.add('active');
+        return;
+      }
 
       // 金幣：名次獎勵 × 難度 × 連線加成，再加上破紀錄、贏過 AI 最佳線、團體賽勝利
       const rewardTiers = [200, 140, 100, 70, 50, 30, 20, 10];
@@ -3499,7 +5125,7 @@
           : '<div style="color:#94a3b8; font-weight:800;">比賽進行中，分數依目前名次估算</div>') +
           `<div class="modal-team-score"><span style="color:${TEAM_CSS.red}">紅隊 ${score.red}</span> : <span style="color:${TEAM_CSS.blue}">${score.blue} 藍隊</span></div>`;
       } else {
-        titleEl.textContent = '🏆 GRAND PRIX FINISH!';
+        titleEl.textContent = raceMode === 'practice' ? '🏁 練習賽結束' : '🏆 GRAND PRIX FINISH!';
         teamEl.innerHTML = '';
       }
     }
@@ -3573,6 +5199,7 @@
         const btn = document.createElement('button');
         btn.className = 'track-card' + (id === SELECTED_TRACK_ID ? ' active' : '');
         btn.innerHTML = `<div class="t-name">${t.name}</div><div class="t-desc">${t.desc}</div>`;
+        btn.title = t.desc;
         btn.addEventListener('click', () => {
           if (id === SELECTED_TRACK_ID) return;
           if (net.role === 'client') { showToast('🗺️ 地圖由房主決定'); return; }
@@ -3587,100 +5214,18 @@
     buildTrackPicker();
 
     // 13. 車庫 UI 互動與升級邏輯
+    var garageReady = false; // 抽箱系統（第 16 節）初始化完才畫車庫
     function updateGarageUI() {
+      if (!garageReady) return;
       if (typeof sendProfile === 'function' && net && net.role) sendProfile();
       document.getElementById('garageCoinAmount').textContent = gameData.coins;
       document.getElementById('hudCoinsTop').textContent = gameData.coins;
-
-      // 1. 車種卡片
-      const carContainer = document.getElementById('carCardsContainer');
-      carContainer.innerHTML = '';
-      Object.keys(KART_TYPES).forEach(kId => {
-        const car = KART_TYPES[kId];
-        const card = document.createElement('div');
-        card.className = `car-card ${gameData.selectedCar === kId ? 'active' : ''}`;
-        card.onclick = () => {
-          gameData.selectedCar = kId;
-          saveGameData();
-          const stats = getKartEffectiveStats(kId);
-          playerKart.reconfigure(kId, gameData.selectedColor, stats);
-        };
-
-        card.innerHTML = `
-          <div class="car-card-name">${car.icon} ${car.name}</div>
-          <div class="car-card-desc">${car.desc}</div>
-        `;
-        carContainer.appendChild(card);
-      });
-
-      // 2. 顏色選擇
-      const colorContainer = document.getElementById('colorSwatchesContainer');
-      colorContainer.innerHTML = '';
-      KART_COLORS.forEach(c => {
-        const sw = document.createElement('div');
-        sw.className = `color-swatch ${gameData.selectedColor === c.hex ? 'active' : ''}`;
-        sw.style.backgroundColor = c.css;
-        sw.title = c.name;
-        sw.onclick = () => {
-          gameData.selectedColor = c.hex;
-          saveGameData();
-          playerKart.reconfigure(gameData.selectedCar, c.hex, getKartEffectiveStats(gameData.selectedCar));
-        };
-        colorContainer.appendChild(sw);
-      });
-
-      // 3. 當前車種強化升級列表
-      const upContainer = document.getElementById('upgradeItemsContainer');
-      upContainer.innerHTML = '';
-
-      const currentUp = gameData.upgrades[gameData.selectedCar] || { engine: 0, tire: 0, nitro: 0, drift: 0 };
-      const categories = [
-        { id: 'engine', name: '🚀 引擎輸出', desc: '提升極限最高時速 (+1.5%/級)', lvl: currentUp.engine },
-        { id: 'tire',   name: '🛞 競技輪胎', desc: '提升動態過彎敏捷度 (+3%/級)', lvl: currentUp.tire },
-        { id: 'nitro',  name: '🔥 氮氣噴射', desc: '延長大噴燃燒時長 (+0.3s/級)', lvl: currentUp.nitro },
-        { id: 'drift',  name: '🌀 甩尾集氣', desc: '增強側滑充能轉化率 (+6%/級)', lvl: currentUp.drift }
-      ];
-
-      categories.forEach(cat => {
-        const item = document.createElement('div');
-        item.className = 'upgrade-item';
-
-        let dotsHtml = '';
-        for (let i = 0; i < 5; i++) {
-          dotsHtml += `<div class="upgrade-dot ${i < cat.lvl ? 'filled' : ''}"></div>`;
-        }
-
-        const cost = 50 * (cat.lvl + 1);
-        const isMax = cat.lvl >= 5;
-        const canAfford = gameData.coins >= cost;
-
-        const btnText = isMax ? '已達上限 MAX' : `升級 (${cost} 🪙)`;
-        const btnDisabled = isMax || !canAfford;
-
-        item.innerHTML = `
-          <div class="upgrade-info">
-            <div class="upgrade-name">${cat.name} <span style="font-size:12px; color:#38bdf8;">Lv.${cat.lvl}/5</span></div>
-            <div class="upgrade-desc">${cat.desc}</div>
-            <div class="upgrade-dots">${dotsHtml}</div>
-          </div>
-          <button class="btn-upgrade" id="btnUp_${cat.id}" ${btnDisabled ? 'disabled' : ''}>${btnText}</button>
-        `;
-
-        upContainer.appendChild(item);
-
-        const upBtn = item.querySelector(`#btnUp_${cat.id}`);
-        if (!isMax) {
-          upBtn.onclick = () => {
-            if (gameData.coins >= cost) {
-              gameData.coins -= cost;
-              gameData.upgrades[gameData.selectedCar][cat.id]++;
-              saveGameData();
-              const stats = getKartEffectiveStats(gameData.selectedCar);
-              playerKart.reconfigure(gameData.selectedCar, gameData.selectedColor, stats);
-            }
-          };
-        }
-      });
+      if (!garageSel || !CAR_CATALOG[garageSel]) garageSel = gameData.selectedCar;
+      renderGarageHeader();
+      renderDex();
+      renderCarInfo();
+      renderStageLabel();
+      if (!gacha.panel.classList.contains('hidden') && !gacha.busy) gachaRefresh();
     }
 
     document.getElementById('btnStartRaceFromGarage').addEventListener('click', startRaceFromGarage);
@@ -3927,6 +5472,11 @@
         return;
       }
 
+      if (carlab.active) carlab.update(frameTime);
+      else if (raceState === 'GARAGE') showroom.update(frameTime);
+      const inGarage = raceState === 'GARAGE' && !carlab.active;
+      if (document.body.classList.contains('in-garage') !== inGarage) document.body.classList.toggle('in-garage', inGarage);
+
       // 渲染插值
       const alpha = accumulator / FIXED_DT;
       karts.forEach(k => {
@@ -3945,6 +5495,7 @@
         k.mesh.rotation.x = -k.renderPitch;
       });
 
+      CarFX.update(frameTime);
       particleSystem.update(frameTime);
       padTexture.offset.y -= frameTime * 2.0; // 加速帶箭頭流動
       netTick(frameTime);
@@ -4008,7 +5559,7 @@
     // 遊戲放上網之後，把網址填在這裡（例如 'https://你的帳號.github.io/kart/kart.html'），
     // 這樣就算你是從自己電腦的檔案開遊戲，產生的邀請連結也會指向網路上的版本
     const GAME_URL = '';
-    const NET_PREFIX = 'mofish-kart-v2-'; // v2：協定加了隊伍／準備／聊天，跟舊版不互通
+    const NET_PREFIX = 'mofish-kart-v3-'; // v3：車款改用圖鑑 id（抽箱車），跟舊版不互通
     const NET_SEND_INTERVAL = 0.05;
     const NET_INTERP_DELAY = 100;
     const MAX_RACERS = 8;
@@ -4095,7 +5646,7 @@
     // 房主收到的個人資料只取需要的欄位
     function cleanProfile(pf) {
       pf = pf || {};
-      return { name: String(pf.name || '車手').slice(0, 10), car: KART_TYPES[pf.car] ? pf.car : 'balanced',
+      return { name: String(pf.name || '車手').slice(0, 10), car: CAR_CATALOG[pf.car] ? pf.car : 'balanced',
                color: Number(pf.color) || 0x2563eb, stats: pf.stats };
     }
     function netSend(conn, msg) { try { if (conn && conn.open) conn.send(msg); } catch (e) { /* 忽略單次失敗 */ } }
@@ -4482,7 +6033,7 @@
       mpEls.trackSel.value = SELECTED_TRACK_ID;
       mpEls.trackText.textContent = isHost ? '' : TRACK_DEF.name;
 
-      const carName = id => (KART_TYPES[id] && KART_TYPES[id].name) || id;
+      const carName = id => (CAR_CATALOG[id] && CAR_CATALOG[id].name) || id;
       const playerRow = p => {
         const host = p.id === 'host';
         const badge = host ? '<span class="mp-badge host">房主</span>'
@@ -4687,6 +6238,7 @@
       karts.forEach(k => k.reset());
       applyAiLevel(net.raceAiLevel); // AI 只在房主電腦上模擬；別人那邊的 AI 是遠端車，不受影響
       initCamera(playerKart);
+      renderHudTargets();
     }
 
     // ---------- 狀態同步 ----------
@@ -4779,7 +6331,8 @@
       return sp;
     }
     function attachNameTag(k, name, bg = 'rgba(15,23,42,0.65)') {
-      const sp = makeTextSprite(name, 36, '#ffffff', bg);
+      if (k.nameTag && k.nameTag.parent) k.nameTag.parent.remove(k.nameTag);
+      const sp = makeNameTagSprite(name, k.typeId, bg);
       sp.position.set(0, 2.6, 0);
       k.mesh.add(sp);
       k.nameTag = sp;
@@ -4868,14 +6421,17 @@
       const own = AI_LEVELS[gameData.aiLevel] || AI_LEVELS[1]; // 按鈕永遠顯示自己車庫的設定
       btn.innerHTML = `<div class="t-name">🤖 AI：${own.name}</div><div class="t-desc">點一下切換難度</div>`;
     }
+    const RACE_MODE_LABEL = { solo: '個人賽', team: '團體賽 4v4', practice: '練習賽（無 AI）' };
     function renderRaceModeBtn() {
-      const team = gameData.raceMode === 'team';
+      const m = RACE_MODE_LABEL[gameData.raceMode] ? gameData.raceMode : 'solo';
       document.getElementById('btnRaceMode').innerHTML =
-        `<div class="t-name">🏁 ${team ? '團體賽 4v4' : '個人賽'}</div><div class="t-desc">點一下切換模式</div>`;
+        `<div class="t-name">🏁 ${RACE_MODE_LABEL[m]}</div><div class="t-desc">點一下切換模式</div>`;
+      document.getElementById('btnAiLevel').style.opacity = m === 'practice' ? '0.45' : '';
     }
     document.getElementById('btnRaceMode').addEventListener('click', () => {
       if (net.role) { showToast('🏁 連線時由房主在房間裡選模式'); return; }
-      gameData.raceMode = gameData.raceMode === 'team' ? 'solo' : 'team';
+      // 個人賽 → 團體賽 → 練習賽 → 個人賽
+      gameData.raceMode = { solo: 'team', team: 'practice', practice: 'solo' }[gameData.raceMode] || 'team';
       saveGameData();
       setupSoloKarts();
       applyAiLevel();
@@ -4915,6 +6471,966 @@
     computeGhostLap();
 
     // ==========================================================
+    // 16. 抽箱系統（C1 第 1 階段：GACHA_MODE = 'local'）
+    //   抽箱、合成、背包、登入紀錄都存在存檔（localStorage）的 gacha 欄位
+    //   之後改成 'server'：這一層改呼叫伺服器 API，畫面不用動；遊戲端不能自己決定結果
+    // ==========================================================
+    const BOX_PRICE = 10000;
+    const MERGE_RULES = {
+      common: { to: 'rare', rate: 1 },
+      rare:   { to: 'epic', rate: 1 },
+      epic:   { to: 'mythic', rate: 0.5 },
+      mythic: { to: 'legendary', rate: 0.2 }
+    };
+    const MERGE_TROLL_RATE = 0.05; // 每次合成（所有稀有度）有 5% 會先亮出高一階的車再炸掉，5 台全部不返還
+    const gachaCars = rar => Object.values(CAR_CATALOG).filter(c => !c.starter && c.rarity === rar).map(c => c.id);
+    function secureRandom() { const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] / 4294967296; }
+    function pickOne(arr) { return arr[Math.floor(secureRandom() * arr.length)]; }
+    function rollRarity(r = secureRandom()) {
+      let acc = 0;
+      for (const k of RARITY_ORDER) { acc += RARITIES[k].rate; if (r < acc) return k; }
+      return 'common';
+    }
+    function carCount(id) {
+      const c = CAR_CATALOG[id];
+      if (!c) return 0;
+      if (c.starter) return Infinity;
+      return (gameData.gacha && gameData.gacha.inventory[id]) || 0;
+    }
+    function ownsCar(id) { return carCount(id) > 0; }
+    // 存檔只「新增」gacha 欄位；舊存檔自動補上
+    function ensureGacha() {
+      const g = gameData.gacha && typeof gameData.gacha === 'object' ? gameData.gacha : {};
+      if (!g.inventory || typeof g.inventory !== 'object') g.inventory = {};
+      for (const id of Object.keys(g.inventory)) {
+        const c = CAR_CATALOG[id], n = Math.floor(Number(g.inventory[id]) || 0);
+        if (!c || c.starter || n <= 0) delete g.inventory[id]; else g.inventory[id] = n;
+      }
+      g.boxes = Math.max(0, Math.floor(Number(g.boxes) || 0));
+      g.streak = Math.max(0, Math.min(7, Math.floor(Number(g.streak) || 0)));
+      if (typeof g.lastDate !== 'string') g.lastDate = null;
+      gameData.gacha = g;
+      if (typeof gameData.gachaSound !== 'boolean') gameData.gachaSound = true;
+      if (!ownsCar(gameData.selectedCar)) gameData.selectedCar = 'balanced';
+      return g;
+    }
+    ensureGacha();
+
+    // 台灣時間的日期（YYYY-MM-DD）
+    function taipeiDate(offsetDays = 0) {
+      return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Taipei', year: 'numeric', month: '2-digit', day: '2-digit' })
+        .format(new Date(Date.now() + offsetDays * 86400000));
+    }
+    function dayDiff(a, b) { return Math.round((Date.parse(b + 'T00:00:00Z') - Date.parse(a + 'T00:00:00Z')) / 86400000); }
+    // 管理員測試用：「模擬隔天」的天數偏移（只存在這個分頁）
+    function debugDayOffset() { try { return Number(sessionStorage.getItem('kart_day_offset')) || 0; } catch (e) { return 0; } }
+
+    const gachaApi = {
+      local() {
+        if (GACHA_MODE !== 'local') throw new Error('伺服器版的抽箱還沒開放');
+        return ensureGacha();
+      },
+      async inventory() {
+        const g = this.local();
+        return { inventory: Object.assign({}, g.inventory), boxes: g.boxes, streak: g.streak, lastDate: g.lastDate };
+      },
+      // 每日報到：同一天重複呼叫不會重複計算
+      async daily() {
+        const g = this.local();
+        const today = taipeiDate(debugDayOffset());
+        if (g.lastDate === today) return { already: true, streak: g.streak, gotBox: false, broke: false };
+        const gap = g.lastDate ? dayDiff(g.lastDate, today) : null;
+        let streak = (gap === 1 && g.streak < 7) ? g.streak + 1 : 1; // 中斷、第一次、或第 7 天領完 → 從 1 開始
+        let gotBox = false;
+        if (streak >= 7) { streak = 7; g.boxes += 1; gotBox = true; }
+        const broke = gap !== null && gap !== 1 && g.streak > 0 && g.streak < 7;
+        g.streak = streak; g.lastDate = today;
+        saveGameData();
+        return { already: false, streak, gotBox, broke };
+      },
+      async buyBox() {
+        const g = this.local();
+        if (gameData.coins < BOX_PRICE) throw new Error('金幣不足（需要 10,000）');
+        gameData.coins -= BOX_PRICE;
+        g.boxes += 1;
+        saveGameData();
+        return { boxes: g.boxes, coins: gameData.coins };
+      },
+      async openBox() {
+        const g = this.local();
+        if (g.boxes <= 0) throw new Error('沒有箱子了');
+        const rarity = rollRarity();
+        const carId = pickOne(gachaCars(rarity));
+        const isNew = !g.inventory[carId];
+        g.boxes -= 1;
+        g.inventory[carId] = (g.inventory[carId] || 0) + 1;
+        saveGameData();
+        return { carId, rarity, isNew, boxes: g.boxes };
+      },
+      async merge(cars) {
+        const g = this.local();
+        if (!Array.isArray(cars) || cars.length !== 5) throw new Error('需要 5 台車');
+        if (cars.some(id => !CAR_CATALOG[id] || CAR_CATALOG[id].starter)) throw new Error('起始車不能合成');
+        const rarity = CAR_CATALOG[cars[0]] && CAR_CATALOG[cars[0]].rarity;
+        const rule = MERGE_RULES[rarity];
+        if (!rule) throw new Error('這個稀有度不能合成');
+        const need = {};
+        for (const id of cars) {
+          const c = CAR_CATALOG[id];
+          if (!c || c.starter) throw new Error('起始車不能合成');
+          if (c.rarity !== rarity) throw new Error('5 台車必須是同一個稀有度');
+          need[id] = (need[id] || 0) + 1;
+        }
+        for (const id of Object.keys(need)) if ((g.inventory[id] || 0) < need[id]) throw new Error('擁有的數量不夠');
+        for (const id of Object.keys(need)) { g.inventory[id] -= need[id]; if (g.inventory[id] <= 0) delete g.inventory[id]; }
+        if (secureRandom() < MERGE_TROLL_RATE) {
+          // 神奇機率：什麼都不給，只拿一台高一階的車出來「展示」一下
+          const teaseId = pickOne(gachaCars(rule.to));
+          let unequipped = false;
+          if (!ownsCar(gameData.selectedCar)) { gameData.selectedCar = 'balanced'; unequipped = true; }
+          saveGameData();
+          return { troll: true, success: false, carId: null, teaseId, rarity: rule.to, isNew: false, rate: rule.rate, unequipped };
+        }
+        const success = secureRandom() < rule.rate;
+        const outRarity = success ? rule.to : rarity;
+        const carId = pickOne(gachaCars(outRarity));
+        const isNew = !g.inventory[carId];
+        g.inventory[carId] = (g.inventory[carId] || 0) + 1;
+        let unequipped = false;
+        if (!ownsCar(gameData.selectedCar)) { gameData.selectedCar = 'balanced'; unequipped = true; }
+        saveGameData();
+        return { success, carId, rarity: outRarity, isNew, rate: rule.rate, unequipped };
+      },
+      async equip(carId) {
+        this.local();
+        if (!ownsCar(carId)) throw new Error('還沒有這台車');
+        gameData.selectedCar = carId;
+        saveGameData();
+        return { selectedCar: carId };
+      }
+    };
+
+    // ---------- 車款縮圖（用主渲染器畫到 render target，再轉成圖片） ----------
+    const carThumbs = {};
+    let thumbKit = null;
+    function carThumb(id) {
+      if (carThumbs[id]) return carThumbs[id];
+      if (!thumbKit) {
+        const sc = new THREE.Scene();
+        sc.add(new THREE.AmbientLight(0xffffff, 0.75));
+        const dl = new THREE.DirectionalLight(0xffffff, 0.9); dl.position.set(4, 8, 6); sc.add(dl);
+        const cam = new THREE.PerspectiveCamera(30, 4 / 3, 0.1, 100);
+        cam.position.set(5.6, 3.2, 6.6); cam.lookAt(0, 0.55, 0);
+        const cv = document.createElement('canvas'); cv.width = 256; cv.height = 192;
+        thumbKit = { sc, cam, rt: new THREE.WebGLRenderTarget(256, 192), cv, ctx: cv.getContext('2d'), buf: new Uint8Array(256 * 192 * 4) };
+      }
+      const K = thumbKit;
+      const mesh = createKartMesh(id, 0x2563eb);
+      scene.remove(mesh);
+      K.sc.add(mesh);
+      if (mesh.userData.anim) mesh.userData.anim(1.2, { nitroTimer: 0 }, { pulse: 0 });
+      const prevColor = renderer.getClearColor(new THREE.Color()), prevAlpha = renderer.getClearAlpha();
+      renderer.setRenderTarget(K.rt);
+      renderer.setClearColor(0x000000, 0);
+      renderer.clear();
+      renderer.render(K.sc, K.cam);
+      renderer.readRenderTargetPixels(K.rt, 0, 0, 256, 192, K.buf);
+      renderer.setRenderTarget(null);
+      renderer.setClearColor(prevColor, prevAlpha);
+      K.sc.remove(mesh);
+      const img = K.ctx.createImageData(256, 192);
+      for (let y = 0; y < 192; y++) img.data.set(K.buf.subarray((191 - y) * 1024, (192 - y) * 1024), y * 1024);
+      K.ctx.putImageData(img, 0, 0);
+      return (carThumbs[id] = K.cv.toDataURL('image/png'));
+    }
+    const rarityCss = id => { const c = CAR_CATALOG[id]; return c.starter ? '#64748b' : RARITIES[c.rarity].css; };
+    const rarityName = id => { const c = CAR_CATALOG[id]; return c.starter ? '起始車' : RARITIES[c.rarity].name; };
+    const carLabel = id => { const c = CAR_CATALOG[id]; return ((c.fx && c.fx.tagIcon) ? c.fx.tagIcon + ' ' : '') + c.name; };
+
+    // ---------- 車庫展示台（選中的車放在旋轉台上；傳說車有聚光燈與粒子） ----------
+    const showroom = {
+      center: new THREE.Vector3(trackMid.x, 0, trackBounds.max.z + 130),
+      built: false, id: null, silhouette: false, legend: false, spin: 0, rise: 1, riseDur: 2.4,
+      build() {
+        if (this.built) return;
+        this.built = true;
+        CarFX.init();
+        const g = new THREE.Group();
+        const disc = new THREE.Mesh(new THREE.CylinderGeometry(5.2, 5.6, 0.3, 64), new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.4, metalness: 0.5, envMap: getCarEnvMap() }));
+        disc.position.y = -0.15; disc.receiveShadow = true; g.add(disc);
+        const ringMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide });
+        const ring = new THREE.Mesh(new THREE.RingGeometry(5.0, 5.18, 96), ringMat);
+        ring.rotation.x = -Math.PI / 2; ring.position.y = 0.01; g.add(ring);
+        this.ringMat = ringMat;
+        // 聚光燈光束（假的：半透明圓錐，不用真的燈光，免得全部材質重新編譯）
+        const beamTex = CM.canvasTex(4, 128, (x) => {
+          const gr = x.createLinearGradient(0, 0, 0, 128);
+          gr.addColorStop(0, 'rgba(255,255,255,0)'); gr.addColorStop(1, 'rgba(255,255,255,0.55)');
+          x.fillStyle = gr; x.fillRect(0, 0, 4, 128);
+        });
+        this.beamMat = new THREE.MeshBasicMaterial({ map: beamTex, color: 0xfbbf24, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+        this.beam = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 3.6, 16, 40, 1, true), this.beamMat);
+        this.beam.position.y = 8; this.beam.visible = false; g.add(this.beam);
+        this.padMat = new THREE.MeshBasicMaterial({ map: getUnderglowTex(), color: 0xfbbf24, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false });
+        this.pad = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), this.padMat);
+        this.pad.rotation.x = -Math.PI / 2; this.pad.position.y = 0.03; this.pad.visible = false; g.add(this.pad);
+        g.position.copy(this.center);
+        scene.add(g);
+        this.group = g;
+      },
+      // opts.silhouette：沒擁有的車顯示黑色剪影；opts.rise：從光裡升起（開箱揭曉用）
+      show(id, opts = {}) {
+        if (!CAR_CATALOG[id]) id = 'balanced';
+        this.build();
+        this.id = id;
+        this.silhouette = !!opts.silhouette;
+        playerKart.reconfigure(id, gameData.selectedColor, getKartEffectiveStats(id));
+        playerKart.mesh.rotation.order = 'YXZ';
+        if (this.silhouette) {
+          const black = new THREE.MeshBasicMaterial({ color: 0x05070d });
+          playerKart.mesh.traverse(o => { if (o.isMesh) o.material = black; });
+          playerKart.mesh.userData.fx = null;
+          playerKart.mesh.userData.anim = null;
+        }
+        const cat = CAR_CATALOG[id];
+        this.legend = !this.silhouette && cat.rarity === 'legendary';
+        this.rise = opts.rise ? 0 : 1;
+        if (opts.rise) this.spin = 0;
+        this.ringMat.color.set(this.silhouette ? '#334155' : rarityCss(id));
+      },
+      update(dt) {
+        if (!this.built) return;
+        const k = playerKart, c = this.center;
+        this.spin += dt * 0.45;
+        if (this.rise < 1) this.rise = Math.min(1, this.rise + dt / this.riseDur);
+        const e = 1 - Math.pow(1 - this.rise, 3);
+        k.pos.set(c.x, -1.7 * (1 - e), c.z);
+        k.prevPos.copy(k.pos); k.renderPos.copy(k.pos);
+        k.yaw = k.prevYaw = k.renderYaw = this.spin + (1 - e) * 5;
+        k.velocity.set(0, 0, 0); k.speed = 0; k.isDrifting = false; k.nitroTimer = 0; k.slopeAlong = 0;
+        const rising = this.rise < 1;
+        const showBeam = this.legend || rising;
+        this.beam.visible = this.pad.visible = showBeam;
+        if (showBeam) {
+          const t = CarFX.time;
+          if (this.id === 'aurora') { auroraColor(t * 0.2, this.beamMat.color); this.padMat.color.copy(this.beamMat.color); }
+          else { const col = this.silhouette ? '#94a3b8' : rarityCss(this.id); this.beamMat.color.set(col); this.padMat.color.set(col); }
+          this.beamMat.opacity = (rising ? 1 : 0.55) + 0.2 * Math.sin(t * 2.5);
+          this.padMat.opacity = rising ? 1 : 0.7;
+          const n = rising ? 4 : 1;
+          for (let i = 0; i < n; i++) {
+            if (!rising && Math.random() > 0.5) continue;
+            const a = Math.random() * Math.PI * 2, r = 1 + Math.random() * 2.6;
+            CarFX.add.emit({
+              x: c.x + Math.cos(a) * r, y: 0.1, z: c.z + Math.sin(a) * r, vy: 1.5 + Math.random() * 2.5, vx: -Math.cos(a) * 0.3, vz: -Math.sin(a) * 0.3,
+              color: this.id === 'aurora' ? auroraColor(Math.random(), new THREE.Color()) : (Math.random() < 0.5 ? 0xfff3c4 : this.beamMat.color.getHex()),
+              size: 0.35, life: 1.6, shape: 2, spin: 2
+            });
+          }
+        }
+      }
+    };
+
+    // ---------- 車庫：圖鑑、屬性、裝備 ----------
+    let garageSel = null;
+    function dexOrder() {
+      const starters = Object.values(CAR_CATALOG).filter(c => c.starter).map(c => c.id);
+      return [['starter', starters]].concat(RARITY_ORDER.map(r => [r, gachaCars(r)]));
+    }
+    function statRows(id) {
+      const c = CAR_CATALOG[id];
+      if (!c.starter) return [['極速', c.stats.speed], ['加速', c.stats.accel], ['操控', c.stats.handling], ['甩尾', c.stats.drift]]
+        .map(([n, v]) => ({ n, v, pct: v - 20, text: `${v}（${v >= 20 ? '+' : ''}${v - 20}%）` }));
+      const t = c.kartType;
+      return [['極速', t.topSpeed], ['加速', t.accel], ['操控', t.steer], ['甩尾', t.driftTurn]].map(([n, m]) => {
+        const pct = Math.round((m - 1) * 100);
+        return { n, v: 20 + pct, pct, text: `${pct >= 0 ? '+' : ''}${pct}%` };
+      });
+    }
+    function selectGarageCar(id) {
+      garageSel = id;
+      if (gameData.garagePanels && gameData.garagePanels.info) { gameData.garagePanels.info = false; applyGaragePanels(); }
+      showroom.show(id, { silhouette: !ownsCar(id) });
+      updateGarageUI();
+    }
+    function renderDex() {
+      const grid = document.getElementById('dexGrid');
+      let html = '', owned = 0, total = 0;
+      for (const [rar, ids] of dexOrder()) {
+        const css = rar === 'starter' ? '#94a3b8' : RARITIES[rar].css;
+        html += `<div class="dex-sec" style="color:${css}">${rar === 'starter' ? '起始車（永久擁有）' : RARITIES[rar].name}</div><div class="dex-row">`;
+        for (const id of ids) {
+          const cnt = carCount(id), have = cnt > 0, c = CAR_CATALOG[id];
+          if (!c.starter) { total++; if (have) owned++; }
+          const cls = ['dex-card', 'r-' + c.rarity, have ? '' : 'locked', id === garageSel ? 'sel' : ''].join(' ');
+          html += `<div class="${cls}" data-car="${id}" style="--rc:${rarityCss(id)}">
+            <img src="${carThumb(id)}" alt="">
+            <div class="dn">${have ? escapeHtml(c.name) : '???'}</div>
+            ${!c.starter && have ? `<div class="dc">×${cnt}</div>` : ''}
+            ${id === gameData.selectedCar ? '<div class="de">✔</div>' : ''}
+          </div>`;
+        }
+        html += '</div>';
+      }
+      const st = grid.scrollTop;
+      grid.innerHTML = html;
+      grid.scrollTop = st;
+      document.getElementById('dexCount').textContent = `已收集 ${owned} / ${total}`;
+    }
+    function renderCarInfo() {
+      const id = garageSel, c = CAR_CATALOG[id], have = ownsCar(id), css = rarityCss(id);
+      const equipped = id === gameData.selectedCar;
+      let html = `<div class="ci-name" style="color:${have ? '#fff' : '#64748b'}">${have ? escapeHtml(carLabel(id)) : '???'}</div>
+        <div class="ci-rar"><span style="color:${css}">${rarityName(id)}</span>
+          <span class="ci-own">${c.starter ? '永久擁有' : (have ? `擁有 ×${carCount(id)}` : '尚未擁有（開箱或合成取得）')}</span></div>
+        <div class="ci-desc">${have ? escapeHtml(c.desc || '') : '還沒擁有這台車，外型與名稱保密中。'}</div>`;
+      for (const s of statRows(id)) {
+        const w = Math.max(4, Math.min(100, (s.v - 5) / 25 * 100));
+        html += `<div class="ci-stat"><b>${s.n}</b><div class="bar"><i style="width:${w}%;background:${c.starter ? '#38bdf8' : css}"></i></div><span>${s.text}</span></div>`;
+      }
+      if (c.starter) html += `<div class="ci-desc" style="margin-top:4px">起始車沿用原本的數值${c.kartType.weight !== 1 ? `，重量 ×${c.kartType.weight}` : ''}。</div>`;
+      html += `<div class="ci-actions"><button class="btn-equip" id="btnEquip" ${(!have || equipped) ? 'disabled' : ''}>${equipped ? '✔ 已裝備' : (have ? '裝備這台車' : '🔒 尚未擁有')}</button></div>`;
+      document.getElementById('carInfo').innerHTML = html;
+      const eq = document.getElementById('btnEquip');
+      if (have && !equipped) eq.onclick = async () => {
+        try { await gachaApi.equip(id); showToast('✔ 已裝備：' + carLabel(id)); showroom.show(id); updateGarageUI(); }
+        catch (e) { showToast('❌ ' + e.message); }
+      };
+
+      // 車漆：只有起始車可以換色
+      const colorContainer = document.getElementById('colorSwatchesContainer');
+      colorContainer.innerHTML = '';
+      if (c.starter) {
+        KART_COLORS.forEach(col => {
+          const sw = document.createElement('div');
+          sw.className = `color-swatch ${gameData.selectedColor === col.hex ? 'active' : ''}`;
+          sw.style.backgroundColor = col.css;
+          sw.title = col.name;
+          sw.onclick = () => { gameData.selectedColor = col.hex; saveGameData(); showroom.show(garageSel); };
+          colorContainer.appendChild(sw);
+        });
+      }
+
+      // 強化：以車款為單位
+      const upContainer = document.getElementById('upgradeItemsContainer');
+      upContainer.innerHTML = '';
+      if (!have) { upContainer.innerHTML = '<div class="up-locked">擁有這台車之後才能強化。</div>'; return; }
+      const currentUp = gameData.upgrades[id] || { engine: 0, tire: 0, nitro: 0, drift: 0 };
+      const categories = [
+        { id: 'engine', name: '🚀 引擎輸出', desc: '最高時速 +1.5%/級', lvl: currentUp.engine },
+        { id: 'tire',   name: '🛞 競技輪胎', desc: '過彎敏捷度 +3%/級', lvl: currentUp.tire },
+        { id: 'nitro',  name: '🔥 氮氣噴射', desc: '大噴時長 +0.3 秒/級', lvl: currentUp.nitro },
+        { id: 'drift',  name: '🌀 甩尾集氣', desc: '集氣速度 +6%/級', lvl: currentUp.drift }
+      ];
+      categories.forEach(cat => {
+        const item = document.createElement('div');
+        item.className = 'upgrade-item';
+        let dotsHtml = '';
+        for (let i = 0; i < 5; i++) dotsHtml += `<div class="upgrade-dot ${i < cat.lvl ? 'filled' : ''}"></div>`;
+        const cost = 50 * (cat.lvl + 1), isMax = cat.lvl >= 5;
+        item.innerHTML = `
+          <div class="upgrade-info">
+            <div class="upgrade-name">${cat.name} <span style="font-size:12px; color:#38bdf8;">Lv.${cat.lvl}/5</span></div>
+            <div class="upgrade-desc">${cat.desc}</div>
+            <div class="upgrade-dots">${dotsHtml}</div>
+          </div>
+          <button class="btn-upgrade" ${isMax || gameData.coins < cost ? 'disabled' : ''}>${isMax ? '已達上限 MAX' : `升級 (${cost} 🪙)`}</button>`;
+        upContainer.appendChild(item);
+        if (!isMax) item.querySelector('button').onclick = () => {
+          if (gameData.coins < cost) return;
+          gameData.coins -= cost;
+          if (!gameData.upgrades[id]) gameData.upgrades[id] = { engine: 0, tire: 0, nitro: 0, drift: 0 };
+          gameData.upgrades[id][cat.id]++;
+          saveGameData();
+        };
+      });
+    }
+    function renderStageLabel() {
+      const id = garageSel, have = ownsCar(id);
+      document.getElementById('stageLabel').innerHTML = `<div class="sl-rar" style="color:${rarityCss(id)}">${rarityName(id)}</div>
+        <div class="sl-name">${have ? escapeHtml(carLabel(id)) : '???'}</div>`;
+    }
+    function applyGaragePanels() {
+      const st = gameData.garagePanels || { dex: true, info: true }; // true = 收起來
+      document.querySelector('.dex-panel').classList.toggle('collapsed', !!st.dex);
+      document.querySelector('.info-panel').classList.toggle('collapsed', !!st.info);
+      document.querySelector('[data-pc="dex"]').textContent = st.dex ? '▶' : '◀';
+      document.querySelector('[data-pc="info"]').textContent = st.info ? '◀' : '▶';
+    }
+    function toggleGaragePanel(which) {
+      const st = Object.assign({ dex: true, info: true }, gameData.garagePanels || {});
+      st[which] = !st[which];
+      gameData.garagePanels = st;
+      applyGaragePanels();
+      saveGameData();
+    }
+    document.querySelectorAll('[data-pc]').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); toggleGaragePanel(b.dataset.pc); }));
+    // 收起來時點整個標籤也可以展開
+    document.querySelector('.dex-panel').addEventListener('click', e => { if (e.currentTarget.classList.contains('collapsed')) toggleGaragePanel('dex'); });
+    document.querySelector('.info-panel').addEventListener('click', e => { if (e.currentTarget.classList.contains('collapsed')) toggleGaragePanel('info'); });
+    applyGaragePanels();
+
+    function garageOnOpen() {
+      if (urlParams.has('carlab')) return;
+      garageSel = gameData.selectedCar;
+      showroom.show(garageSel);
+      updateGarageUI();
+      if (garageReady) runDailyCheck(false);
+    }
+    document.getElementById('dexGrid').addEventListener('click', e => {
+      const card = e.target.closest('.dex-card');
+      if (card) selectGarageCar(card.dataset.car);
+    });
+    document.getElementById('btnFxQuality').addEventListener('click', () => {
+      gameData.fxQuality = gameData.fxQuality === 'low' ? 'high' : 'low';
+      saveGameData();
+    });
+
+    // ---------- 確認視窗 ----------
+    function uiConfirm(title, html, okText = '確定') {
+      const box = document.getElementById('uiConfirm');
+      document.getElementById('ucT').textContent = title;
+      document.getElementById('ucC').innerHTML = html;
+      document.getElementById('ucYes').textContent = okText;
+      box.classList.remove('hidden');
+      return new Promise(res => {
+        const done = v => { box.classList.add('hidden'); document.getElementById('ucYes').onclick = document.getElementById('ucNo').onclick = null; res(v); };
+        document.getElementById('ucYes').onclick = () => done(true);
+        document.getElementById('ucNo').onclick = () => done(false);
+      });
+    }
+
+    // ---------- 音效（WebAudio 合成，可關閉） ----------
+    const sfx = {
+      ctx: null,
+      ac() {
+        if (!gameData.gachaSound) return null;
+        try {
+          if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+          if (this.ctx.state === 'suspended') this.ctx.resume();
+        } catch (e) { return null; }
+        return this.ctx;
+      },
+      tone(freq, dur, type = 'sine', vol = 0.15, when = 0, slideTo = null) {
+        const ac = this.ac(); if (!ac) return;
+        const t0 = ac.currentTime + when;
+        const o = ac.createOscillator(), g = ac.createGain();
+        o.type = type; o.frequency.setValueAtTime(freq, t0);
+        if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t0 + dur);
+        g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(vol, t0 + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+        o.connect(g); g.connect(ac.destination); o.start(t0); o.stop(t0 + dur + 0.02);
+      },
+      boom(vol = 0.5, when = 0) {
+        const ac = this.ac(); if (!ac) return;
+        const t0 = ac.currentTime + when, len = Math.floor(ac.sampleRate * 0.8);
+        const buf = ac.createBuffer(1, len, ac.sampleRate), d = buf.getChannelData(0);
+        for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.5);
+        const s = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain();
+        s.buffer = buf; f.type = 'lowpass'; f.frequency.value = 380; g.gain.value = vol;
+        s.connect(f); f.connect(g); g.connect(ac.destination); s.start(t0);
+      },
+      tick(rate) { this.tone(900 + rate * 900, 0.035, 'square', 0.04); },
+      reveal(r) {
+        if (r === 'common') { this.tone(660, 0.25, 'triangle', 0.15); }
+        else if (r === 'rare') { this.tone(660, 0.18, 'triangle', 0.15); this.tone(990, 0.35, 'triangle', 0.15, 0.12); }
+        else if (r === 'epic') { [523, 659, 784, 1047].forEach((f, i) => this.tone(f, 0.4, 'sawtooth', 0.07, i * 0.08)); }
+        else if (r === 'mythic') { this.boom(0.6); [392, 523, 659, 784].forEach((f, i) => this.tone(f, 0.6, 'sawtooth', 0.08, 0.1 + i * 0.09)); }
+        else {
+          this.boom(0.8);
+          [523, 659, 784, 1047, 1319].forEach((f, i) => this.tone(f, 1.6, 'triangle', 0.1, 0.05 + i * 0.06));
+          for (let i = 0; i < 10; i++) this.tone(1800 + Math.random() * 1400, 0.25, 'sine', 0.04, 0.4 + i * 0.09);
+        }
+      },
+      fail() { this.tone(300, 0.5, 'sawtooth', 0.1, 0, 120); this.boom(0.3, 0.1); },
+      // 鞭炮：很短的爆裂聲
+      pop() {
+        const ac = this.ac(); if (!ac) return;
+        const len = Math.floor(ac.sampleRate * 0.06);
+        const buf = ac.createBuffer(1, len, ac.sampleRate), d = buf.getChannelData(0);
+        for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 4);
+        const src = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain();
+        src.buffer = buf; f.type = 'highpass'; f.frequency.value = 900 + Math.random() * 1500; g.gain.value = 0.5;
+        src.connect(f); f.connect(g); g.connect(ac.destination); src.start();
+      },
+      // 罐頭恭喜：俗氣的小號「登登登～」＋稀稀落落的罐頭掌聲
+      cannedCongrats() {
+        const ac = this.ac(); if (!ac) return;
+        [[523, 0], [523, 0.16], [523, 0.32], [659, 0.5]].forEach(([f, t]) => this.tone(f, t === 0.5 ? 0.9 : 0.13, 'square', 0.07, t));
+        this.tone(392, 0.7, 'square', 0.05, 1.5, 196); // 最後垮下來的「哇～」
+        for (let i = 0; i < 60; i++) {
+          const when = 0.3 + Math.random() * 2.6;
+          const len = Math.floor(ac.sampleRate * 0.03);
+          const buf = ac.createBuffer(1, len, ac.sampleRate), d = buf.getChannelData(0);
+          for (let k = 0; k < len; k++) d[k] = (Math.random() * 2 - 1) * Math.pow(1 - k / len, 3);
+          const src = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain();
+          src.buffer = buf; f.type = 'bandpass'; f.frequency.value = 1200 + Math.random() * 1200; f.Q.value = 1.2;
+          g.gain.value = 0.25 * (1 - when / 3.2);
+          src.connect(f); f.connect(g); g.connect(ac.destination); src.start(ac.currentTime + when);
+        }
+      }
+    };
+
+    // ---------- 2D 粒子（開箱、合成的光爆） ----------
+    const fx2d = {
+      cv: document.getElementById('gFx'), parts: [], running: false,
+      burst(x, y, colors, n = 80, speed = 9, opts = {}) {
+        this.cv.width = window.innerWidth; this.cv.height = window.innerHeight;
+        for (let i = 0; i < n; i++) {
+          const a = Math.random() * Math.PI * 2, v = speed * (0.3 + Math.random());
+          this.parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - (opts.up || 0), life: 1, decay: 0.008 + Math.random() * 0.014,
+            r: 2 + Math.random() * (opts.size || 4), c: colors[i % colors.length], star: Math.random() < 0.35, g: opts.grav !== undefined ? opts.grav : 0.12 });
+        }
+        if (!this.running) { this.running = true; requestAnimationFrame(() => this.step()); }
+      },
+      step() {
+        const x = this.cv.getContext('2d');
+        x.clearRect(0, 0, this.cv.width, this.cv.height);
+        x.globalCompositeOperation = 'lighter';
+        this.parts = this.parts.filter(p => p.life > 0);
+        for (const p of this.parts) {
+          p.x += p.vx; p.y += p.vy; p.vy += p.g; p.vx *= 0.985; p.life -= p.decay;
+          x.globalAlpha = Math.max(0, p.life);
+          x.fillStyle = p.c;
+          if (p.star) {
+            x.beginPath();
+            for (let k = 0; k < 8; k++) { const a = k * Math.PI / 4, r = k % 2 ? p.r * 0.4 : p.r * 2; x.lineTo(p.x + Math.cos(a) * r, p.y + Math.sin(a) * r); }
+            x.fill();
+          } else { x.beginPath(); x.arc(p.x, p.y, p.r, 0, Math.PI * 2); x.fill(); }
+        }
+        x.globalAlpha = 1;
+        if (this.parts.length) requestAnimationFrame(() => this.step());
+        else { this.running = false; x.clearRect(0, 0, this.cv.width, this.cv.height); }
+      }
+    };
+    const RARITY_FX = {
+      common: ['#e5e7eb', '#9ca3af'], rare: ['#93c5fd', '#3b82f6', '#ffffff'], epic: ['#d8b4fe', '#a855f7', '#ffffff'],
+      mythic: ['#fca5a5', '#ef4444', '#fde68a'], legendary: ['#fde68a', '#fbbf24', '#ffffff', '#f59e0b']
+    };
+    const AURORA_FX = ['#60a5fa', '#34d399', '#c084fc', '#ffffff'];
+
+    // ---------- 共用：開啟／關閉全螢幕面板 ----------
+    function openOverlay(id) {
+      document.getElementById(id).classList.remove('hidden');
+      document.getElementById('garage-screen').classList.add('hidden');
+    }
+    function closeOverlay(id) {
+      document.getElementById(id).classList.add('hidden');
+      if (raceState === 'GARAGE') document.getElementById('garage-screen').classList.remove('hidden');
+      showroom.show(garageSel || gameData.selectedCar, { silhouette: !ownsCar(garageSel || gameData.selectedCar) });
+      updateGarageUI();
+    }
+
+    // ---------- 開箱 ----------
+    const gacha = { busy: false, panel: document.getElementById('gacha-panel'), reel: document.getElementById('gReel') };
+    const CARD_W = 150; // 卡片寬 140 + 間距 10
+    function gachaCardHtml(id, extra = '') {
+      const c = CAR_CATALOG[id];
+      return `<div class="g-card ${extra}" style="--rc:${RARITIES[c.rarity].css}"><img src="${carThumb(id)}" alt=""><div class="gn">${escapeHtml(carLabel(id))}</div><div class="gr">${RARITIES[c.rarity].name}</div></div>`;
+    }
+    function gachaRefresh() {
+      document.getElementById('gBoxes').textContent = gameData.gacha.boxes;
+      document.getElementById('gCoins').textContent = gameData.coins.toLocaleString();
+      document.getElementById('gOpen').disabled = gacha.busy || gameData.gacha.boxes <= 0;
+      document.getElementById('gOpen').textContent = gameData.gacha.boxes > 0 ? '開 1 箱' : '沒有箱子';
+      document.getElementById('gBuy').disabled = gacha.busy || gameData.coins < BOX_PRICE;
+      document.getElementById('gSound').textContent = gameData.gachaSound ? '🔊 音效：開' : '🔇 音效：關';
+      document.getElementById('gClose').disabled = gacha.busy;
+    }
+    function gachaRates() {
+      let html = '';
+      for (const r of RARITY_ORDER) {
+        const ids = gachaCars(r), R = RARITIES[r];
+        const each = (R.rate / ids.length * 100);
+        html += `<div style="--rc:${R.css}"><b>${R.name} ${+(R.rate * 100).toFixed(1)}%</b>
+          <div class="gl">每台 ${each < 0.1 ? each.toFixed(2) : each.toFixed(each < 1 ? 3 : 2)}%<br>${ids.map(id => escapeHtml(CAR_CATALOG[id].name)).join('、')}</div></div>`;
+      }
+      document.getElementById('gRates').innerHTML = html;
+    }
+    function gachaIdleReel() {
+      let html = '';
+      for (let i = 0; i < 12; i++) html += gachaCardHtml(pickOne(gachaCars(rollRarity(Math.random()))));
+      gacha.reel.innerHTML = html;
+      const w = document.getElementById('gReelWrap').clientWidth;
+      gacha.reel.style.transform = `translateX(${w / 2 - (5 * CARD_W + 70)}px)`;
+    }
+    function openGachaPanel() {
+      gacha.panel.classList.remove('result');
+      openOverlay('gacha-panel');
+      gachaIdleReel();
+      gachaRefresh();
+    }
+    async function gachaBuy() {
+      if (gacha.busy) return;
+      if (!await uiConfirm('購買箱子', `花 <b>10,000 金幣</b>買 1 個箱子？<br>目前金幣：${gameData.coins.toLocaleString()}`, '購買')) return;
+      try { await gachaApi.buyBox(); showToast('🎁 買到 1 個箱子'); sfx.tone(880, 0.15, 'triangle', 0.12); }
+      catch (e) { showToast('❌ ' + e.message); }
+      gachaRefresh();
+    }
+    async function gachaOpen() {
+      if (gacha.busy) return;
+      gacha.panel.classList.remove('result');
+      let res;
+      try { res = await gachaApi.openBox(); } catch (e) { showToast('❌ ' + e.message); return; }
+      gacha.busy = true;
+      gachaRefresh();
+      // 卡片帶：結果放在第 WIN 張，其他是照機率隨機的展示卡（不影響結果）
+      const N = 62, WIN = 52;
+      let html = '';
+      for (let i = 0; i < N; i++) html += gachaCardHtml(i === WIN ? res.carId : pickOne(gachaCars(rollRarity(Math.random()))));
+      gacha.reel.innerHTML = html;
+      const w = document.getElementById('gReelWrap').clientWidth;
+      const x0 = w / 2 - (3 * CARD_W + 70);
+      const x1 = w / 2 - (WIN * CARD_W + 70 + (Math.random() - 0.5) * 100);
+      const T = 6000, legend = res.rarity === 'legendary';
+      const darken = document.getElementById('gDarken');
+      let start = null, lastIdx = -1, darkened = false;
+      await new Promise(done => {
+        const frame = now => {
+          if (start === null) start = now;
+          const u = Math.min(1, (now - start) / T);
+          const x = x0 + (x1 - x0) * (1 - Math.pow(1 - u, 4)); // 越來越慢：最後 3 張大約花掉一半時間
+          gacha.reel.style.transform = `translateX(${x}px)`;
+          const idx = Math.floor((w / 2 - x) / CARD_W);
+          if (idx !== lastIdx) { lastIdx = idx; sfx.tick(1 - u); }
+          if (legend && !darkened && T * (1 - u) < 500) { darkened = true; darken.style.opacity = '0.85'; }
+          if (u < 1) requestAnimationFrame(frame); else done();
+        };
+        requestAnimationFrame(frame);
+      });
+      await gachaReveal(res);
+    }
+    function gachaReveal(res) {
+      return new Promise(done => {
+        const r = res.rarity, cards = gacha.reel.children, win = cards[52];
+        win.classList.add('win');
+        sfx.reveal(r);
+        const rect = win.getBoundingClientRect(), cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
+        const flash = document.getElementById('gFlash');
+        const colors = res.carId === 'aurora' ? AURORA_FX : RARITY_FX[r];
+        let delay = 900;
+        if (r === 'epic') {
+          flash.style.background = 'radial-gradient(circle at 50% 40%, rgba(168,85,247,0.75), rgba(168,85,247,0) 60%)';
+          flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go');
+          fx2d.burst(cx, cy, colors, 90, 9);
+          delay = 1300;
+        } else if (r === 'mythic') {
+          flash.style.background = 'radial-gradient(circle at 50% 40%, rgba(239,68,68,0.85), rgba(239,68,68,0) 65%)';
+          flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go');
+          gacha.panel.classList.remove('shake'); void gacha.panel.offsetWidth; gacha.panel.classList.add('shake');
+          fx2d.burst(cx, cy, colors, 150, 12);
+          delay = 1500;
+        } else if (r === 'legendary') {
+          flash.style.background = res.carId === 'aurora'
+            ? 'linear-gradient(120deg, #60a5fa, #34d399, #c084fc, #ffffff)'
+            : 'radial-gradient(circle at 50% 40%, #fffbeb, #fbbf24 45%, #b45309)';
+          flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go');
+          for (let i = 0; i < 3; i++) setTimeout(() => fx2d.burst(window.innerWidth / 2, window.innerHeight * 0.45, colors, 160, 14 - i * 3, { size: 6 }), i * 220);
+          delay = 700;
+        }
+        setTimeout(() => {
+          document.getElementById('gDarken').style.opacity = '0';
+          gachaShowResult(res);
+          done();
+        }, delay);
+      });
+    }
+    function gachaShowResult(res) {
+      const R = RARITIES[res.rarity], css = res.carId === 'aurora' ? '#7dd3fc' : R.css;
+      const box = document.getElementById('gRes');
+      box.style.setProperty('--rc', css);
+      box.innerHTML = `<div class="rr">${R.name}</div>
+        <div class="rn">${escapeHtml(carLabel(res.carId))}${res.isNew ? '<span class="rnew">NEW</span>' : ''}</div>
+        <div class="rbtns">
+          <button class="g-btn green" id="gEquip">裝備這台車</button>
+          <button class="g-btn gold" id="gAgain" ${gameData.gacha.boxes > 0 ? '' : 'disabled'}>再開一箱（剩 ${gameData.gacha.boxes} 箱）</button>
+          <button class="g-btn gray" id="gBack">返回</button>
+        </div>`;
+      gacha.panel.classList.add('result');
+      garageSel = res.carId;
+      showroom.show(res.carId, { rise: res.rarity === 'legendary' });
+      if (res.rarity === 'legendary' || res.rarity === 'mythic') setTimeout(() => fx2d.burst(window.innerWidth / 2, window.innerHeight * 0.55, res.carId === 'aurora' ? AURORA_FX : RARITY_FX[res.rarity], 120, 8, { up: 4 }), 300);
+      gacha.busy = false;
+      gachaRefresh();
+      document.getElementById('gEquip').onclick = async () => {
+        try { await gachaApi.equip(res.carId); showToast('✔ 已裝備：' + carLabel(res.carId)); document.getElementById('gEquip').disabled = true; } catch (e) { showToast('❌ ' + e.message); }
+      };
+      document.getElementById('gAgain').onclick = () => { gacha.panel.classList.remove('result'); gachaOpen(); };
+      document.getElementById('gBack').onclick = () => { gacha.panel.classList.remove('result'); gachaIdleReel(); gachaRefresh(); };
+    }
+    document.getElementById('btnOpenGacha').addEventListener('click', openGachaPanel);
+    document.getElementById('gOpen').addEventListener('click', gachaOpen);
+    document.getElementById('gBuy').addEventListener('click', gachaBuy);
+    document.getElementById('gSound').addEventListener('click', () => { gameData.gachaSound = !gameData.gachaSound; saveGameData(); gachaRefresh(); });
+    document.getElementById('gClose').addEventListener('click', () => { if (!gacha.busy) closeOverlay('gacha-panel'); });
+
+    // ---------- 合成 ----------
+    const merge = { tier: 'common', slots: [], busy: false };
+    // 合成動畫進行中／顯示結果時，蓋掉格子與說明
+    function mergeStage(on) {
+      document.getElementById('mStage').classList.toggle('on', on);
+      document.querySelector('.m-main').classList.toggle('staging', on);
+    }
+    function mergeAvail(id) { return carCount(id) - merge.slots.filter(x => x === id).length; }
+    function renderMerge() {
+      const tabs = Object.keys(MERGE_RULES).map(r => {
+        const R = RARITIES[r], n = gachaCars(r).reduce((a, id) => a + carCount(id), 0);
+        return `<button class="m-tab ${r === merge.tier ? 'on' : ''}" data-tier="${r}" style="--rc:${R.css}">${R.name} → ${RARITIES[MERGE_RULES[r].to].name}（有 ${n} 台）</button>`;
+      }).join('');
+      document.getElementById('mTabs').innerHTML = tabs;
+      const ids = gachaCars(merge.tier);
+      let inv = `<div class="dex-sec" style="color:${RARITIES[merge.tier].css}">點車子放進格子（${RARITIES[merge.tier].name}）</div><div class="dex-row">`;
+      for (const id of ids) {
+        const left = mergeAvail(id), have = carCount(id) > 0;
+        inv += `<div class="dex-card ${left > 0 ? '' : 'locked'}" data-car="${id}" style="--rc:${RARITIES[merge.tier].css}">
+          <img src="${carThumb(id)}" alt=""><div class="dn">${have ? escapeHtml(CAR_CATALOG[id].name) : '???'}</div>${have ? `<div class="dc">×${left}</div>` : ''}</div>`;
+      }
+      inv += '</div>';
+      document.getElementById('mInv').innerHTML = inv;
+      let slots = '';
+      for (let i = 0; i < 5; i++) {
+        const id = merge.slots[i];
+        slots += id ? `<div class="m-slot full" data-i="${i}" style="--rc:${RARITIES[merge.tier].css}"><img src="${carThumb(id)}" alt="">${escapeHtml(CAR_CATALOG[id].name)}</div>`
+          : `<div class="m-slot" data-i="${i}">＋</div>`;
+      }
+      document.getElementById('mSlots').innerHTML = slots;
+      const rule = MERGE_RULES[merge.tier];
+      const to = RARITIES[rule.to];
+      document.getElementById('mInfo').innerHTML =
+        `已放入 <b>${merge.slots.length}</b> / 5 台　→　合成 1 台隨機的 <b style="color:${to.css}">${to.name}</b>
+         ${rule.rate < 1 ? `<br><span class="bad">有可能失敗：失敗時 5 台車消失，退回 1 台隨機的${RARITIES[merge.tier].name}車款</span>` : ''}`;
+      document.getElementById('mGo').disabled = merge.busy || merge.slots.length !== 5;
+      document.getElementById('mAuto').disabled = document.getElementById('mClear').disabled = merge.busy;
+      document.getElementById('mClose').disabled = merge.busy;
+    }
+    function openMergePanel() {
+      merge.slots = []; merge.busy = false;
+      mergeStage(false);
+      document.getElementById('mSlots').style.visibility = '';
+      openOverlay('merge-panel');
+      renderMerge();
+    }
+    document.getElementById('mTabs').addEventListener('click', e => {
+      const b = e.target.closest('[data-tier]');
+      if (!b || merge.busy) return;
+      merge.tier = b.dataset.tier; merge.slots = [];
+      mergeStage(false);
+      renderMerge();
+    });
+    document.getElementById('mInv').addEventListener('click', e => {
+      const card = e.target.closest('.dex-card');
+      if (!card || merge.busy || merge.slots.length >= 5) return;
+      if (mergeAvail(card.dataset.car) <= 0) return;
+      mergeStage(false);
+      merge.slots.push(card.dataset.car);
+      renderMerge();
+    });
+    document.getElementById('mSlots').addEventListener('click', e => {
+      const s = e.target.closest('.m-slot.full');
+      if (!s || merge.busy) return;
+      merge.slots.splice(Number(s.dataset.i), 1);
+      renderMerge();
+    });
+    document.getElementById('mAuto').addEventListener('click', () => {
+      // 從數量最多的車開始放
+      mergeStage(false);
+      const ids = gachaCars(merge.tier).sort((a, b) => mergeAvail(b) - mergeAvail(a));
+      for (const id of ids) while (merge.slots.length < 5 && mergeAvail(id) > 0) merge.slots.push(id);
+      if (merge.slots.length < 5) showToast('這個稀有度的車不夠 5 台');
+      renderMerge();
+    });
+    document.getElementById('mClear').addEventListener('click', () => { merge.slots = []; renderMerge(); });
+    document.getElementById('mClose').addEventListener('click', () => { if (!merge.busy) closeOverlay('merge-panel'); });
+    document.getElementById('mGo').addEventListener('click', async () => {
+      if (merge.busy || merge.slots.length !== 5) return;
+      const rule = MERGE_RULES[merge.tier], from = RARITIES[merge.tier], to = RARITIES[rule.to];
+      const lastEquipped = merge.slots.includes(gameData.selectedCar) && mergeAvail(gameData.selectedCar) <= 0;
+      const ok = await uiConfirm('確定合成？',
+        `放入 5 台<b style="color:${from.css}">${from.name}</b>，合成 1 台<b style="color:${to.css}">${to.name}</b>。<br>
+         ${rule.rate < 1 ? `<span style="color:#f87171">有可能失敗：失敗時這 5 台車會消失，只退回 1 台隨機的${from.name}車款。</span><br>` : ''}
+         ${lastEquipped ? '<span style="color:#fbbf24">這會用掉你目前裝備的車，合成後會改裝備平衡型。</span>' : ''}`, '合成');
+      if (!ok) return;
+      let res;
+      try { res = await gachaApi.merge(merge.slots.slice()); } catch (e) { showToast('❌ ' + e.message); return; }
+      merge.busy = true;
+      renderMerge();
+      await mergeAnimate(res, rule);
+      merge.busy = false;
+      merge.slots = [];
+      renderMerge();
+      mergeStage(true);
+      document.getElementById('mSlots').style.visibility = '';
+      document.querySelectorAll('#mSlots .m-slot').forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+    });
+    async function mergeAnimate(res, rule) {
+      const sleep = ms => new Promise(r => setTimeout(r, ms));
+      const slotsEl = document.getElementById('mSlots'), stage = document.getElementById('mStage');
+      const orb = document.getElementById('mOrb'), prog = document.getElementById('mProg'), out = document.getElementById('mResult');
+      // 1. 五張卡飛到中央融合
+      const mainRect = document.querySelector('.m-main').getBoundingClientRect();
+      const cx = mainRect.left + mainRect.width / 2, cy = mainRect.top + mainRect.height / 2 - 60;
+      slotsEl.querySelectorAll('.m-slot').forEach(s => {
+        const r = s.getBoundingClientRect();
+        s.style.transform = `translate(${cx - (r.left + r.width / 2)}px, ${cy - (r.top + r.height / 2)}px) scale(0.4) rotate(${(Math.random() - 0.5) * 60}deg)`;
+        s.style.opacity = '0';
+      });
+      sfx.tone(300, 0.7, 'sine', 0.1, 0, 900);
+      await sleep(650);
+      slotsEl.style.visibility = 'hidden';
+      // 2. 光球＋進度條 3 秒
+      out.innerHTML = '';
+      orb.className = 'm-orb';
+      orb.style.setProperty('--rc', '#e2e8f0'); // 揭曉前不透露結果
+      prog.style.transition = 'none'; prog.style.width = '0';
+      mergeStage(true);
+      void prog.offsetWidth;
+      prog.style.transition = 'width 3s linear'; prog.style.width = '100%';
+      for (let i = 0; i < 6; i++) sfx.tone(400 + i * 90, 0.3, 'triangle', 0.05, i * 0.45);
+      await sleep(3000);
+      // 3. 揭曉
+      const r = orb.getBoundingClientRect(), ox = r.left + r.width / 2, oy = r.top + r.height / 2;
+      if (res.troll) {
+        await mergeTroll(res, ox, oy, mainRect, out);
+      } else if (res.success) {
+        orb.style.setProperty('--rc', RARITIES[res.rarity].css);
+        orb.classList.add('burst');
+        sfx.reveal(res.rarity);
+        fx2d.burst(ox, oy, res.carId === 'aurora' ? AURORA_FX : RARITY_FX[res.rarity], res.rarity === 'legendary' ? 220 : 120, res.rarity === 'legendary' ? 13 : 10);
+        out.innerHTML = `<div class="m-msg" style="color:${RARITIES[res.rarity].css}">✨ 合成成功！</div>${gachaCardHtml(res.carId)}${res.isNew ? '<div class="rnew" style="background:#ef4444;padding:2px 8px;border-radius:8px;font-weight:900">NEW</div>' : ''}`;
+      } else {
+        orb.classList.add('crack');
+        sfx.fail();
+        // 碎片
+        for (let i = 0; i < 14; i++) {
+          const sh = document.createElement('div');
+          sh.className = 'm-shard';
+          sh.style.setProperty('--rc', RARITIES[merge.tier].css);
+          sh.style.left = (ox - mainRect.left - 9) + 'px'; sh.style.top = (oy - mainRect.top - 9) + 'px';
+          document.querySelector('.m-main').appendChild(sh);
+          requestAnimationFrame(() => {
+            const a = Math.random() * Math.PI * 2, d = 80 + Math.random() * 140;
+            sh.style.transform = `translate(${Math.cos(a) * d}px, ${Math.sin(a) * d + 60}px) rotate(${Math.random() * 720}deg)`;
+            sh.style.opacity = '0';
+          });
+          setTimeout(() => sh.remove(), 1000);
+        }
+        await sleep(800);
+        out.innerHTML = `<div class="m-msg" style="color:#f87171">💔 合成失敗…掉出一台${RARITIES[res.rarity].name}</div>${gachaCardHtml(res.carId, 'drop')}`;
+        sfx.tone(520, 0.25, 'triangle', 0.12, 0.3);
+      }
+      if (res.unequipped) showToast('目前裝備的車已用掉，改裝備平衡型');
+      if (res.troll) {
+        out.innerHTML += `<div style="display:flex;gap:10px;margin-top:6px"><button class="g-btn gray" id="mMore">繼續合成</button></div>`;
+        document.getElementById('mMore').onclick = () => { mergeStage(false); renderMerge(); };
+        return;
+      }
+      out.innerHTML += `<div style="display:flex;gap:10px;margin-top:6px"><button class="g-btn" id="mView">在車庫查看</button><button class="g-btn gray" id="mMore">繼續合成</button></div>`;
+      document.getElementById('mView').onclick = () => { closeOverlay('merge-panel'); selectGarageCar(res.carId); };
+      document.getElementById('mMore').onclick = () => { mergeStage(false); renderMerge(); };
+    }
+    // 神奇機率演出：光球爆開、亮出高一階的車（不說成功）→ 越抖越厲害、等很久 → 在面前爆炸 → 罐頭恭喜＋鞭炮
+    async function mergeTroll(res, ox, oy, mainRect, out) {
+      const sleep = ms => new Promise(r => setTimeout(r, ms));
+      const orb = document.getElementById('mOrb');
+      const css = RARITIES[res.rarity].css;
+      orb.style.setProperty('--rc', css);
+      orb.classList.add('burst');
+      sfx.reveal(res.rarity);
+      fx2d.burst(ox, oy, res.teaseId === 'aurora' ? AURORA_FX : RARITY_FX[res.rarity], 110, 10);
+      out.innerHTML = `<div class="m-msg" style="color:#e2e8f0">……</div>${gachaCardHtml(res.teaseId, 'tease1')}`;
+      const card = out.querySelector('.g-card');
+      // 吊胃口：心跳越來越快、卡片越抖越厲害
+      const beats = [900, 800, 700, 600, 500, 420, 350, 290, 240, 200, 170, 150, 130, 120, 110];
+      for (let i = 0; i < beats.length; i++) {
+        if (i === 6) card.className = 'g-card tease2';
+        if (i === 11) { card.className = 'g-card tease3'; out.querySelector('.m-msg').textContent = '……？'; }
+        sfx.tone(i < 6 ? 110 : 140, 0.12, 'sine', 0.25);
+        await sleep(beats[i]);
+      }
+      // 爆炸
+      const cr = card.getBoundingClientRect(), cx = cr.left + cr.width / 2, cy = cr.top + cr.height / 2;
+      card.className = 'g-card boom';
+      sfx.boom(1.0); sfx.boom(0.7, 0.15);
+      fx2d.burst(cx, cy, ['#fde68a', '#fb923c', '#ef4444', '#78716c', '#ffffff'], 260, 16, { size: 7 });
+      fx2d.burst(cx, cy, ['#57534e', '#a8a29e'], 90, 6, { size: 9, grav: -0.05 });
+      const panel = document.getElementById('merge-panel');
+      panel.classList.remove('shake'); void panel.offsetWidth; panel.classList.add('shake');
+      const flash = document.createElement('div');
+      flash.className = 'm-boomflash';
+      panel.appendChild(flash);
+      setTimeout(() => flash.remove(), 900);
+      await sleep(1100);
+      out.innerHTML = `<div class="m-troll">💥 這種神奇機率你也遇到，可憐</div>
+        <div class="m-congrats">🎉 恭喜恭喜 🎉</div>
+        <div style="color:#94a3b8;font-weight:800">5 台車全部炸掉了，什麼都沒有留下</div>`;
+      sfx.cannedCongrats();
+      // 旁邊放鞭炮
+      for (let i = 0; i < 26; i++) {
+        setTimeout(() => {
+          const left = i % 2 === 0;
+          const x = left ? 40 + Math.random() * 140 : window.innerWidth - 40 - Math.random() * 140;
+          const y = window.innerHeight * (0.35 + Math.random() * 0.5);
+          fx2d.burst(x, y, ['#ef4444', '#fde047', '#ffffff', '#f97316'], 26, 6, { size: 3 });
+          sfx.pop();
+        }, 150 + i * 120 + Math.random() * 60);
+      }
+    }
+    document.getElementById('btnOpenMerge').addEventListener('click', openMergePanel);
+
+    // ---------- 連續登入日曆 ----------
+    let dailyChecking = false;
+    async function runDailyCheck(showAlways) {
+      if (dailyChecking) return;
+      dailyChecking = true;
+      try {
+        const r = await gachaApi.daily();
+        if (!r.already || showAlways) showDaily(r);
+      } catch (e) { console.warn(e); }
+      dailyChecking = false;
+      updateGarageUI();
+    }
+    function showDaily(r) {
+      const g = gameData.gacha, streak = g.streak;
+      let html = '';
+      for (let i = 1; i <= 7; i++) {
+        const done = i <= streak, today = i === streak && !r.already;
+        html += `<div class="d-day ${done ? 'done' : ''} ${today ? 'today' : ''} ${i === 7 ? 'box' : ''}">
+          <div class="dl">第 ${i} 天</div><div class="di">${i === 7 ? '🎁' : (done ? '✅' : '⬜')}</div>
+          <div class="dl">${i === 7 ? '箱子 ×1' : (done ? '已登入' : '')}</div></div>`;
+      }
+      document.getElementById('dDays').innerHTML = html;
+      let msg;
+      if (r.gotBox) msg = '🎉 連續登入 7 天！獲得 <b style="color:#fbbf24">1 個箱子</b>，明天從第 1 天重新累積';
+      else if (streak >= 7) msg = '這一輪 7 天已經領完，明天從第 1 天重新累積';
+      else msg = `連續登入第 <b style="color:#fbbf24">${streak}</b> 天，再 ${7 - streak} 天可以拿到 1 個箱子`;
+      if (r.broke) msg += '<br><span style="color:#f87171;font-size:14px">（中間斷了一天，從第 1 天重新計算）</span>';
+      document.getElementById('dMsg').innerHTML = msg;
+      document.getElementById('daily-panel').classList.remove('hidden');
+      if (r.gotBox) { sfx.reveal('epic'); setTimeout(() => fx2d.burst(window.innerWidth / 2, window.innerHeight / 2, RARITY_FX.legendary, 120, 10), 200); }
+      else if (!r.already) sfx.tone(784, 0.2, 'triangle', 0.1);
+    }
+    document.getElementById('dClose').addEventListener('click', () => { document.getElementById('daily-panel').classList.add('hidden'); updateGarageUI(); });
+    document.getElementById('btnOpenDaily').addEventListener('click', () => showDaily({ already: true, gotBox: false, broke: false }));
+
+    // Esc 關閉面板
+    window.addEventListener('keydown', e => {
+      if (e.key !== 'Escape') return;
+      if (!document.getElementById('uiConfirm').classList.contains('hidden')) { document.getElementById('ucNo').click(); return; }
+      if (!document.getElementById('daily-panel').classList.contains('hidden')) { document.getElementById('dClose').click(); return; }
+      if (!document.getElementById('records-panel').classList.contains('hidden')) { document.getElementById('recClose').click(); return; }
+      if (!gacha.panel.classList.contains('hidden') && !gacha.busy) { closeOverlay('gacha-panel'); return; }
+      if (!document.getElementById('merge-panel').classList.contains('hidden') && !merge.busy) closeOverlay('merge-panel');
+    });
+
+    // 車庫上方按鈕的數字
+    function renderGarageHeader() {
+      document.getElementById('ghBoxes').textContent = gameData.gacha.boxes;
+      document.getElementById('btnOpenGacha').classList.toggle('hot', gameData.gacha.boxes > 0);
+      document.getElementById('ghStreak').textContent = `${gameData.gacha.streak}/7`;
+      document.getElementById('btnFxQuality').textContent = '✨ 特效：' + (gameData.fxQuality === 'low' ? '低' : '高');
+    }
+    garageReady = true;
+
+    // ==========================================================
     // 管理員面板：車庫畫面按 Ctrl+Shift+A，輸入密碼後開啟
     //   密碼只存「雜湊值」，原始碼裡看不到明文（但這不是真正的資安保護，只是防朋友亂按）
     //   要換密碼：開啟面板後在瀏覽器主控台輸入 adminHash('新密碼')，把結果貼到 ADMIN_HASH
@@ -4944,7 +7460,18 @@
       const act = btn.dataset.admin;
       if (act === 'coins10k') gameData.coins += 10000;
       if (act === 'coins100k') gameData.coins += 100000;
-      if (act === 'maxall') Object.keys(KART_TYPES).forEach(t => { gameData.upgrades[t] = { engine: 5, tire: 5, nitro: 5, drift: 5 }; });
+      if (act === 'maxall') Object.keys(CAR_CATALOG).forEach(t => { gameData.upgrades[t] = { engine: 5, tire: 5, nitro: 5, drift: 5 }; });
+      if (act === 'boxes10') gameData.gacha.boxes += 10;
+      if (act === 'allcars') gachaCars('common').concat(gachaCars('rare'), gachaCars('epic'), gachaCars('mythic'), gachaCars('legendary'))
+        .forEach(id => { gameData.gacha.inventory[id] = (gameData.gacha.inventory[id] || 0) + 1; });
+      if (act === 'clearinv') { gameData.gacha.inventory = {}; ensureGacha(); }
+      if (act === 'nextday' || act === 'skipday') {
+        // 只影響這個分頁的「今天」，用來測試連續登入
+        try { sessionStorage.setItem('kart_day_offset', String(debugDayOffset() + (act === 'nextday' ? 1 : 2))); } catch (e) {}
+        adminPanel.classList.add('hidden');
+        runDailyCheck(true);
+        return;
+      }
       if (act === 'reset') {
         if (!confirm('確定要重置卡丁車存檔？金幣和強化都會歸零')) return;
         try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
@@ -4952,8 +7479,7 @@
         return;
       }
       saveGameData();
-      const stats = getKartEffectiveStats(gameData.selectedCar);
-      playerKart.reconfigure(gameData.selectedCar, gameData.selectedColor, stats);
+      garageOnOpen();
       showToast('✅ 已套用');
     }));
 
@@ -4961,6 +7487,232 @@
     openGarage();
 
     // 啟動主迴圈
+    // ==========================================================
+    // 車款檢視測試頁：kart.html?carlab=1（不會寫入存檔）
+    // ==========================================================
+    const carlab = {
+      active: urlParams.has('carlab'),
+      mode: 'turntable',       // turntable 旋轉台 / circle 繞圈 / drive 試駕
+      car: 'solar_flare', drift: false, speed: 24, nitro: 0, spin: 0, ang: 0, acc: 0,
+      camAng: 0, camDist: 7, dragging: false, lastX: 0, autoCam: true,
+      center: null, fpsFrames: 0, fpsTime: 0, fps: 0, autopilot: true
+    };
+    if (carlab.active && !urlParams.get('track')) {
+      // 測試頁預設用光線最好的陽光立交
+      carlab.active = false;
+      location.replace(location.pathname + '?track=figure8&' + location.search.slice(1));
+    } else if (carlab.active) (function initCarLab() {
+      saveGameData = function () { updateGarageUI(); }; // 測試頁：不寫入存檔
+      const qCar = urlParams.get('car');
+      if (CAR_CATALOG[qCar]) carlab.car = qCar;
+      document.getElementById('garage-screen').classList.add('hidden');
+      document.getElementById('racing-hud').style.display = 'none';
+      carlab.center = new THREE.Vector3(trackMid.x, 0, trackBounds.max.z + 130);
+
+      // 展示台
+      const stage = new THREE.Group();
+      const disc = new THREE.Mesh(new THREE.CylinderGeometry(19, 19, 0.06, 64), new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.6, metalness: 0.2 }));
+      disc.position.y = -0.03; disc.receiveShadow = true; stage.add(disc);
+      [5, 10.5, 15].forEach(r => {
+        const ring = new THREE.Mesh(new THREE.RingGeometry(r - 0.06, r + 0.06, 96), new THREE.MeshBasicMaterial({ color: 0x334155, side: THREE.DoubleSide }));
+        ring.rotation.x = -Math.PI / 2; ring.position.y = 0.01; stage.add(ring);
+      });
+      stage.position.copy(carlab.center);
+      scene.add(stage);
+
+      const css = document.createElement('style');
+      css.textContent = `
+        #carlab-list { position: fixed; left: 12px; top: 12px; bottom: 12px; width: 250px; overflow-y: auto; z-index: 200;
+          background: rgba(15,23,42,0.88); border: 1px solid rgba(148,163,184,0.3); border-radius: 12px; padding: 10px; color: #e2e8f0; font-size: 13px; }
+        #carlab-list h3 { margin: 6px 0 8px; font-size: 15px; }
+        #carlab-list .cl-r { font-weight: 900; margin: 10px 0 4px; font-size: 12px; letter-spacing: 1px; }
+        #carlab-list button { display: flex; justify-content: space-between; width: 100%; margin: 3px 0; padding: 6px 8px; cursor: pointer;
+          background: rgba(30,41,59,0.9); color: #e2e8f0; border: 2px solid transparent; border-left-width: 6px; border-radius: 8px; font-size: 13px; text-align: left; }
+        #carlab-list button.on { background: rgba(56,189,248,0.25); }
+        #carlab-list .bad { color: #f87171; font-weight: 900; }
+        #carlab-ctl { position: fixed; right: 12px; top: 12px; width: 280px; z-index: 200; background: rgba(15,23,42,0.88);
+          border: 1px solid rgba(148,163,184,0.3); border-radius: 12px; padding: 12px; color: #e2e8f0; font-size: 13px; }
+        #carlab-ctl .nm { font-size: 20px; font-weight: 900; }
+        #carlab-ctl .row { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0; align-items: center; }
+        #carlab-ctl button { flex: 1; padding: 7px 6px; border-radius: 8px; border: 1px solid #475569; background: #1e293b; color: #e2e8f0; cursor: pointer; font-weight: 700; }
+        #carlab-ctl button.on { background: #0ea5e9; border-color: #38bdf8; color: #fff; }
+        #carlab-ctl .bar { height: 8px; background: #334155; border-radius: 4px; flex: 1; overflow: hidden; }
+        #carlab-ctl .bar i { display: block; height: 100%; background: #38bdf8; }
+        #carlab-ctl .st { display: flex; align-items: center; gap: 6px; margin: 3px 0; }
+        #carlab-ctl .st b { width: 34px; } #carlab-ctl .st span { width: 24px; text-align: right; }
+        #carlab-ctl .perf { font-family: monospace; font-size: 12px; color: #a5f3fc; margin-top: 8px; white-space: pre; }
+        #carlab-ctl input[type=range] { flex: 1; }
+      `;
+      document.head.appendChild(css);
+
+      const list = document.createElement('div'); list.id = 'carlab-list';
+      let html = '<h3>🚗 車款檢視（測試頁）</h3><div style="color:#94a3b8;font-size:11px">不會寫入存檔。屬性總和不符會標紅。</div>';
+      RARITY_ORDER.forEach(r => {
+        const R = RARITIES[r];
+        const cars = Object.values(CAR_CATALOG).filter(c => c.rarity === r);
+        html += `<div class="cl-r" style="color:${R.css}">${R.name}（${cars.length} 台）</div>`;
+        cars.forEach(c => {
+          const sum = c.stats.speed + c.stats.accel + c.stats.handling + c.stats.drift;
+          html += `<button data-car="${c.id}" style="border-left-color:${R.css}"><span>${(c.fx && c.fx.tagIcon) ? c.fx.tagIcon + ' ' : ''}${escapeHtml(c.name)}</span><span class="${sum === R.sum ? '' : 'bad'}">${sum}</span></button>`;
+        });
+      });
+      html += '<div class="cl-r" style="color:#94a3b8">起始車（沿用原數值）</div>';
+      Object.values(CAR_CATALOG).filter(c => c.starter).forEach(c => { html += `<button data-car="${c.id}" style="border-left-color:#64748b"><span>${escapeHtml(c.name)}</span><span>—</span></button>`; });
+      list.innerHTML = html;
+      document.body.appendChild(list);
+
+      const ctl = document.createElement('div'); ctl.id = 'carlab-ctl';
+      ctl.innerHTML = `
+        <div class="nm" id="clName"></div><div id="clRar" style="font-weight:800"></div>
+        <div id="clDesc" style="color:#94a3b8;font-size:12px;margin:4px 0"></div>
+        <div id="clStats"></div>
+        <div class="row"><button data-m="turntable">旋轉台</button><button data-m="circle">繞圈行駛</button></div>
+        <div class="row"><button id="clDrift">甩尾：關</button><button id="clNitro">🔥 氮氣</button></div>
+        <div class="row">速度 <input type="range" id="clSpeed" min="0" max="40" value="24"><span id="clSpeedV">24</span></div>
+        <div class="row">特效 <button data-q="high">高</button><button data-q="low">低</button></div>
+        <div class="row"><button id="clDrive">🏁 試駕</button><button id="clStress">🚦 8 台壓力測試</button></div>
+        <div class="row"><button id="clAuto">自動駕駛：開</button><button id="clBack">回展示台</button></div>
+        <div style="color:#94a3b8;font-size:11px">拖曳畫面可轉視角、滾輪縮放。試駕時方向鍵可自己開（先關自動駕駛）。</div>
+        <div class="perf" id="clPerf"></div>`;
+      document.body.appendChild(ctl);
+
+      list.addEventListener('click', e => { const b = e.target.closest('button[data-car]'); if (b) selectCar(b.dataset.car); });
+      ctl.querySelectorAll('[data-m]').forEach(b => b.addEventListener('click', () => setMode(b.dataset.m)));
+      ctl.querySelectorAll('[data-q]').forEach(b => b.addEventListener('click', () => { gameData.fxQuality = b.dataset.q; refreshUi(); }));
+      document.getElementById('clDrift').addEventListener('click', () => { carlab.drift = !carlab.drift; refreshUi(); });
+      document.getElementById('clNitro').addEventListener('click', () => {
+        if (carlab.mode === 'drive') { playerKart.nitroCount = 2; showToast('已補 2 瓶氮氣（按 Space）'); return; }
+        carlab.nitro = 2.0;
+      });
+      document.getElementById('clSpeed').addEventListener('input', e => { carlab.speed = Number(e.target.value); refreshUi(); });
+      document.getElementById('clDrive').addEventListener('click', () => startDrive(false));
+      document.getElementById('clStress').addEventListener('click', () => startDrive(true));
+      document.getElementById('clAuto').addEventListener('click', () => { carlab.autopilot = !carlab.autopilot; refreshUi(); });
+      document.getElementById('clBack').addEventListener('click', () => { location.href = location.pathname + '?track=' + SELECTED_TRACK_ID + '&carlab=1&car=' + carlab.car + (gameData.fxQuality === 'low' ? '&fx=low' : ''); });
+      if (urlParams.get('fx') === 'low') gameData.fxQuality = 'low';
+
+      const cv = renderer.domElement;
+      cv.addEventListener('pointerdown', e => { carlab.dragging = true; carlab.lastX = e.clientX; carlab.autoCam = false; });
+      window.addEventListener('pointerup', () => { carlab.dragging = false; });
+      window.addEventListener('pointermove', e => { if (carlab.dragging) { carlab.camAng -= (e.clientX - carlab.lastX) * 0.008; carlab.lastX = e.clientX; } });
+      cv.addEventListener('wheel', e => { carlab.camDist = Math.max(4, Math.min(40, carlab.camDist * (e.deltaY > 0 ? 1.1 : 0.9))); e.preventDefault(); }, { passive: false });
+
+      function refreshUi() {
+        const c = CAR_CATALOG[carlab.car];
+        const R = RARITIES[c.rarity];
+        document.getElementById('clName').textContent = ((c.fx && c.fx.tagIcon) ? c.fx.tagIcon + ' ' : '') + c.name;
+        const rar = document.getElementById('clRar');
+        rar.textContent = c.starter ? '起始車' : R.name + '　id: ' + c.id;
+        rar.style.color = c.starter ? '#94a3b8' : R.css;
+        document.getElementById('clDesc').textContent = c.desc || (c.kartType && c.kartType.desc) || '';
+        let st = '';
+        if (!c.starter) {
+          [['極速', 'speed'], ['加速', 'accel'], ['操控', 'handling'], ['甩尾', 'drift']].forEach(([n, key]) => {
+            const v = c.stats[key];
+            st += `<div class="st"><b>${n}</b><div class="bar"><i style="width:${(v - 15) / 13 * 100}%;background:${R.css}"></i></div><span>${v}</span></div>`;
+          });
+          const e = getKartEffectiveStats(c.id, { engine: 0, tire: 0, nitro: 0, drift: 0 });
+          st += `<div style="font-size:11px;color:#94a3b8">倍率：極速 ×${e.topSpeedMult.toFixed(2)}　加速 ×${e.accelMult.toFixed(2)}　操控 ×${e.steerMult.toFixed(2)}　甩尾 ×${e.driftTurnMult.toFixed(2)}　集氣 ×${e.nitroChargeMult.toFixed(2)}</div>`;
+        }
+        document.getElementById('clStats').innerHTML = st;
+        list.querySelectorAll('button[data-car]').forEach(b => b.classList.toggle('on', b.dataset.car === carlab.car));
+        ctl.querySelectorAll('[data-m]').forEach(b => b.classList.toggle('on', b.dataset.m === carlab.mode));
+        ctl.querySelectorAll('[data-q]').forEach(b => b.classList.toggle('on', b.dataset.q === (gameData.fxQuality === 'low' ? 'low' : 'high')));
+        document.getElementById('clDrift').textContent = '甩尾：' + (carlab.drift ? '開' : '關');
+        document.getElementById('clDrift').classList.toggle('on', carlab.drift);
+        document.getElementById('clAuto').textContent = '自動駕駛：' + (carlab.autopilot ? '開' : '關');
+        document.getElementById('clSpeedV').textContent = carlab.speed;
+      }
+      function selectCar(id) {
+        carlab.car = id;
+        if (carlab.mode === 'drive') { location.href = location.pathname + '?track=' + SELECTED_TRACK_ID + '&carlab=1&car=' + id; return; }
+        playerKart.reconfigure(id, gameData.selectedColor, getKartEffectiveStats(id));
+        playerKart.mesh.rotation.order = 'YXZ';
+        attachNameTag(playerKart, CAR_CATALOG[id].name);
+        refreshUi();
+      }
+      function setMode(m) {
+        if (carlab.mode === 'drive') { location.href = location.pathname + '?track=' + SELECTED_TRACK_ID + '&carlab=1&car=' + carlab.car; return; }
+        carlab.mode = m;
+        carlab.camDist = m === 'circle' ? 30 : 7;
+        refreshUi();
+      }
+      function startDrive(stress) {
+        carlab.mode = 'drive';
+        list.style.display = 'none';
+        document.getElementById('racing-hud').style.display = '';
+        gameData.selectedCar = carlab.car;
+        gameData.raceMode = stress ? 'team' : 'solo';
+        karts.forEach(k => { k.mesh.visible = true; });
+        startRaceFromGarage();
+        // 對手換成各種新車款（只在測試頁）
+        const pool = stress
+          ? ['aurora', 'flame_dragon', 'abyss_shark', 'stardust', 'violet_bolt', 'lava_core', 'jade_gale', 'frost_blade', 'solar_flare'].filter(id => id !== carlab.car)
+          : Object.keys(CAR_CATALOG).filter(id => !CAR_CATALOG[id].starter && id !== carlab.car).sort(() => Math.random() - 0.5);
+        let i = 0;
+        karts.forEach(k => {
+          k.totalLaps = 99;
+          if (k.isPlayer) return;
+          const id = pool[i++ % pool.length];
+          k.reconfigure(id, k.color, getKartEffectiveStats(id));
+          k.mesh.rotation.order = 'YXZ';
+          if (stress) attachNameTag(k, CAR_CATALOG[id].name);
+        });
+        if (stress) attachNameTag(playerKart, CAR_CATALOG[carlab.car].name);
+        const orig = readKeyboardInput;
+        readKeyboardInput = dt => (carlab.autopilot ? getAIInput(playerKart, dt) : orig(dt));
+        refreshUi();
+      }
+      carlab.refreshUi = refreshUi;
+      karts.forEach(k => { if (k !== playerKart) k.mesh.visible = false; });
+      selectCar(carlab.car);
+    })();
+
+    // 每幀：展示台上的車由這裡擺位置（不跑物理）
+    carlab.update = function (dt) {
+      this.fpsFrames++; this.fpsTime += dt;
+      if (this.fpsTime >= 0.5) {
+        this.fps = this.fpsFrames / this.fpsTime; this.fpsFrames = 0; this.fpsTime = 0;
+        const info = renderer.info.render;
+        document.getElementById('clPerf').textContent =
+          `FPS ${this.fps.toFixed(0)}　draw calls ${info.calls}\n三角形 ${info.triangles}　車 ${karts.filter(k => k.mesh.visible).length} 台`;
+      }
+      if (this.mode === 'drive') return;
+      const k = playerKart, c = this.center;
+      this.nitro = Math.max(0, this.nitro - dt);
+      let x = c.x, z = c.z, yaw, dirX = 0, dirZ = 0, v = 0;
+      if (this.mode === 'turntable') {
+        this.spin += dt * 0.5;
+        yaw = this.spin;
+        v = this.drift ? this.speed : 0;
+      } else {
+        const R = 10.5;
+        v = Math.max(this.speed, 1);
+        this.ang += v / R * dt;
+        x = c.x + Math.sin(this.ang) * R; z = c.z + Math.cos(this.ang) * R;
+        dirX = Math.cos(this.ang); dirZ = -Math.sin(this.ang);   // 逆時針前進方向
+        yaw = Math.atan2(dirX, dirZ) + (this.drift ? 0.5 : 0); // 甩尾：車頭往圓心偏
+      }
+      k.pos.set(x, 0, z); k.prevPos.copy(k.pos);
+      k.yaw = yaw; k.prevYaw = yaw;
+      k.velocity.set(dirX * v, 0, dirZ * v);
+      k.speed = v;
+      k.isDrifting = this.drift && v > 8;
+      k.driftDir = 1;
+      k.nitroTimer = this.nitro;
+      this.acc += dt;
+      while (this.acc >= FIXED_DT) { this.acc -= FIXED_DT; k.emitParticles(); }
+    };
+    carlab.updateCamera = function () {
+      if (this.mode === 'drive') return false;
+      if (this.autoCam) this.camAng += 0.003;
+      const c = this.mode === 'turntable' ? playerKart.renderPos : this.center;
+      const d = this.camDist;
+      camera.position.set(c.x + Math.sin(this.camAng) * d, c.y + (this.mode === 'turntable' ? 2.4 : d * 0.55), c.z + Math.cos(this.camAng) * d);
+      camera.lookAt(c.x, c.y + 0.6, c.z);
+      return true;
+    };
+
     requestAnimationFrame(animate);
   </script>
 </body>
