@@ -616,7 +616,12 @@
       display: flex; align-items: center; justify-content: center;
       background: rgba(2, 6, 23, 0.6);
     }
-    #mp-panel.hidden { display: none; }
+    #mp-panel.hidden, #admin-panel.hidden { display: none; }
+    #admin-panel {
+      position: absolute; inset: 0; z-index: 75;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(2, 6, 23, 0.6);
+    }
     .mp-card {
       width: 440px; background: rgba(15, 23, 42, 0.97); border: 2px solid rgba(56, 189, 248, 0.4);
       border-radius: 18px; padding: 22px 26px; color: #e2e8f0; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
@@ -1002,6 +1007,11 @@
       </div>
       <div id="mpLobby" style="display:none">
         <div class="mp-code">房間碼<b id="mpCodeShow"></b></div>
+        <div class="mp-row" id="mpInviteRow">
+          <input id="mpInvite" readonly onclick="this.select()">
+          <button id="btnMpCopy">📋 複製</button>
+        </div>
+        <div class="mp-fill" id="mpInviteHint"></div>
         <div id="mpPlayers"></div>
       </div>
       <div class="mp-status" id="mpStatus"></div>
@@ -1013,6 +1023,20 @@
     </div>
   </div>
   <div id="mpToast"></div>
+
+  <!-- 管理員面板（車庫按 Ctrl+Shift+A，輸入密碼） -->
+  <div id="admin-panel" class="hidden">
+    <div class="mp-card">
+      <div class="mp-title" style="color:#fbbf24">🛠️ 管理員面板</div>
+      <div class="mp-actions" style="flex-wrap:wrap; justify-content:flex-start">
+        <button data-admin="coins10k">🪙 +10,000 金幣</button>
+        <button data-admin="coins100k">🪙 +100,000 金幣</button>
+        <button data-admin="maxall" style="background:#d97706">⚡ 全部車輛強化滿級</button>
+        <button data-admin="reset" style="background:#b91c1c">🗑️ 重置存檔</button>
+      </div>
+      <div class="mp-actions"><button id="btnAdminClose">關閉</button></div>
+    </div>
+  </div>
 
   <!-- 結算畫面 (Finish Settlement Modal) -->
   <div id="settlement-modal">
@@ -3201,8 +3225,20 @@
       const sortedKarts = [...karts].sort((a, b) => b.progress - a.progress);
       const playerRank = sortedKarts.findIndex(k => k.isPlayer) + 1;
 
-      const rewardTiers = [100, 70, 50, 35, 25, 15];
-      const earnedCoins = rewardTiers[playerRank - 1] || 15;
+      // 金幣：名次獎勵 × 難度 × 連線加成，再加上破紀錄獎勵
+      const rewardTiers = [200, 140, 100, 70, 50, 30];
+      const diffMult = [0.7, 1.0, 1.5][gameData.aiLevel ?? 1] || 1.0;
+      const netMult = net.role ? 1.5 : 1.0;
+      let earnedCoins = Math.round((rewardTiers[playerRank - 1] || 30) * diffMult * netMult);
+      const bonusNotes = [];
+      const myBestLap = playerKart.lapTimes.length ? Math.min(...playerKart.lapTimes) : Infinity;
+      if (!gameData.bestLaps) gameData.bestLaps = {};
+      const oldBest = gameData.bestLaps[SELECTED_TRACK_ID];
+      if (isFinite(myBestLap) && (!oldBest || myBestLap < oldBest)) {
+        gameData.bestLaps[SELECTED_TRACK_ID] = myBestLap;
+        if (oldBest) { earnedCoins += 60; bonusNotes.push('破個人紀錄 +60'); }
+      }
+      if (ghostLapTime && myBestLap < ghostLapTime) { earnedCoins += 150; bonusNotes.push('贏過 AI 最佳線 +150'); }
 
       gameData.coins += earnedCoins;
       saveGameData();
@@ -3213,7 +3249,8 @@
       const leadEl = document.getElementById('modalLeaderboard');
       const rewardEl = document.getElementById('modalRewardBadge');
 
-      rewardEl.textContent = `🪙 +${earnedCoins} 金幣獎勵 (第 ${playerRank} 名)`;
+      const multNote = [diffMult !== 1 ? `難度 ×${diffMult}` : '', netMult !== 1 ? `連線 ×${netMult}` : ''].filter(Boolean).join('・');
+      rewardEl.textContent = `🪙 +${earnedCoins} 金幣（第 ${playerRank} 名${multNote ? '・' + multNote : ''}${bonusNotes.length ? '・' + bonusNotes.join('・') : ''}）`;
       totalTimeEl.textContent = formatTime(playerKart.finishTime || playerKart.totalTime);
 
       renderLeaderboard();
@@ -3311,9 +3348,10 @@
         btn.innerHTML = `<div class="t-name">${t.name}</div><div class="t-desc">${t.desc}</div>`;
         btn.addEventListener('click', () => {
           if (id === SELECTED_TRACK_ID) return;
-          if (typeof net !== 'undefined' && net.role) return; // 連線中不能換（由房主決定）
+          if (net.role === 'client') { showToast('🗺️ 地圖由房主決定'); return; }
           gameData.selectedTrack = id;
           saveGameData();
+          if (net.role === 'host') { hostChangeTrack(id); return; } // 房主換圖：全房一起換
           location.href = location.pathname; // 去掉網址參數重新載入
         });
         box.appendChild(btn);
@@ -3680,6 +3718,9 @@
     //   每台電腦只模擬自己的車，每秒傳 20 次狀態；別人的車延遲 100ms 用插值顯示
     //   AI 由房主模擬並廣播；倒數依房主時鐘同步
     // ==========================================================
+    // 遊戲放上網之後，把網址填在這裡（例如 'https://你的帳號.github.io/kart/kart.html'），
+    // 這樣就算你是從自己電腦的檔案開遊戲，產生的邀請連結也會指向網路上的版本
+    const GAME_URL = '';
     const NET_PREFIX = 'mofish-kart-v1-';
     const NET_SEND_INTERVAL = 0.05;
     const NET_INTERP_DELAY = 100;
@@ -3743,11 +3784,13 @@
     }
 
     // ---------- 開房 ----------
-    function hostRoom() {
+    // fixedCode：換地圖後用同一個房間碼重開房（舊的連線可能還沒釋放，所以會重試）
+    function hostRoom(fixedCode = null, attempt = 0) {
       if (typeof Peer === 'undefined') { mpStatus('連線元件載入失敗，請確認有網路', true); return; }
       leaveRoom(true);
-      net.code = Array.from({ length: 4 }, () => ROOM_CHARS[Math.floor(Math.random() * ROOM_CHARS.length)]).join('');
-      mpStatus('建立房間中...');
+      net.code = (typeof fixedCode === 'string' && fixedCode.length === 4) ? fixedCode
+        : Array.from({ length: 4 }, () => ROOM_CHARS[Math.floor(Math.random() * ROOM_CHARS.length)]).join('');
+      mpStatus(fixedCode ? '換地圖中，重新開房...' : '建立房間中...');
       const peer = new Peer(NET_PREFIX + net.code, peerOptions());
       net.peer = peer;
       peer.on('open', () => {
@@ -3764,7 +3807,10 @@
         conn.on('error', () => hostRemove(conn.kartId));
       });
       peer.on('error', err => {
-        if (err.type === 'unavailable-id') { hostRoom(); return; } // 房間碼撞到，換一個
+        if (err.type === 'unavailable-id') {
+          if (typeof fixedCode === 'string' && attempt < 12) { setTimeout(() => hostRoom(fixedCode, attempt + 1), 1000); return; }
+          hostRoom(); return; // 房間碼撞到，換一個
+        }
         mpStatus('連線錯誤：' + err.type, true);
       });
     }
@@ -3813,7 +3859,8 @@
     }
 
     // ---------- 加入 ----------
-    function joinRoom(code) {
+    // retries：換地圖時房主正在重開房，找不到房間就多試幾次
+    function joinRoom(code, retries = 0) {
       if (typeof Peer === 'undefined') { mpStatus('連線元件載入失敗，請確認有網路', true); return; }
       code = (code || '').trim().toUpperCase();
       if (code.length !== 4) { mpStatus('房間碼是 4 個字', true); return; }
@@ -3833,7 +3880,10 @@
         conn.on('error', () => hostLost());
       });
       peer.on('error', err => {
-        if (err.type === 'peer-unavailable') mpStatus('找不到房間 ' + code, true);
+        if (err.type === 'peer-unavailable' && retries > 0) {
+          mpStatus('等待房主開房中...');
+          setTimeout(() => joinRoom(code, retries - 1), 1500);
+        } else if (err.type === 'peer-unavailable') mpStatus('找不到房間 ' + code, true);
         else mpStatus('連線錯誤：' + err.type, true);
       });
     }
@@ -3871,6 +3921,12 @@
         receiveStates(d.s);
       } else if (d.t === 'left') {
         removeKart(d.id);
+      } else if (d.t === 'retrack') {
+        // 房主換地圖：等房主重開房後，帶著房間碼重新加入
+        net.switchingTrack = true;
+        mpStatus('房主換地圖中...');
+        showToast('🗺️ 房主換地圖：' + (TRACKS[d.track] ? TRACKS[d.track].name : d.track));
+        setTimeout(() => { location.href = location.pathname + '?track=' + d.track + '&join=' + d.code; }, 1200);
       } else if (d.t === 'emo') {
         showEmote(d.id, d.e);
       }
@@ -3885,7 +3941,7 @@
     }
 
     function hostLost() {
-      if (net.role !== 'client') return;
+      if (net.role !== 'client' || net.switchingTrack) return;
       mpStatus('房主已離線', true);
       showToast('⚠️ 房主已離線，3 秒後回到單人模式');
       setTimeout(() => { location.href = location.pathname; }, 3000);
@@ -3916,18 +3972,50 @@
       mpEls.btnStart.style.display = net.role === 'host' ? 'inline-block' : 'none';
       mpEls.btnLeave.style.display = inRoom ? 'inline-block' : 'none';
       mpEls.codeShow.textContent = net.code;
+      renderInvite();
       const carName = id => (KART_TYPES[id] && KART_TYPES[id].name) || id;
       mpEls.players.innerHTML = net.players.map(p =>
         `<div class="mp-player"><span class="mp-dot" style="background:#${Number(p.color).toString(16).padStart(6, '0')}"></span>` +
         `${escapeHtml(p.name)}${p.id === 'host' ? ' 👑' : ''}${p.id === net.myId ? '（你）' : ''}<span class="mp-car">${carName(p.car)}</span></div>`
-      ).join('') + (inRoom ? `<div class="mp-fill">空位由 AI 補滿到 ${MAX_RACERS} 台・賽道：${TRACK_DEF.name}</div>` : '');
+      ).join('') + (inRoom ? `<div class="mp-fill">空位由 AI 補滿到 ${MAX_RACERS} 台・賽道：${TRACK_DEF.name}` +
+        (net.role === 'host' ? '（關掉這個視窗，在車庫下方點別的地圖就能換，大家會一起換）' : '（由房主選擇）') + `</div>` : '');
       mpEls.btnOpen.textContent = inRoom ? `🌐 房間 ${net.code}（${net.players.length} 人）` : '🌐 多人連線';
       const startBtn = document.getElementById('btnStartRaceFromGarage');
       startBtn.textContent = net.role === 'client' ? '⏳ 等待房主開始' : (net.role === 'host' ? '🏁 開始連線比賽' : '🏁 開始比賽 (START RACE)');
     }
+    // 邀請連結：朋友點開就會自動切到同一張賽道並加入房間
+    function inviteLink() {
+      let base = GAME_URL;
+      if (!base && location.protocol.startsWith('http')) base = location.origin + location.pathname;
+      if (!base) return '';
+      return base + '?track=' + SELECTED_TRACK_ID + '&join=' + net.code;
+    }
+    function renderInvite() {
+      const link = net.role === 'host' ? inviteLink() : '';
+      document.getElementById('mpInviteRow').style.display = link ? 'flex' : 'none';
+      document.getElementById('mpInvite').value = link;
+      document.getElementById('mpInviteHint').textContent = (net.role === 'host' && !link)
+        ? '你現在是用電腦裡的檔案開遊戲，沒辦法產生邀請連結。請朋友打開遊戲後輸入房間碼；把遊戲放上網後就會有連結。'
+        : (link ? '把連結傳給朋友，點開就會自動加入' : '');
+    }
+    document.getElementById('btnMpCopy').addEventListener('click', async () => {
+      const el = document.getElementById('mpInvite');
+      try { await navigator.clipboard.writeText(el.value); }
+      catch (e) { el.select(); document.execCommand('copy'); }
+      showToast('📋 邀請連結已複製');
+    });
     function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 
     // ---------- 開賽 ----------
+    function hostChangeTrack(id) {
+      netBroadcast({ t: 'retrack', track: id, code: net.code });
+      mpStatus('換地圖中...');
+      setTimeout(() => {
+        try { net.peer.destroy(); } catch (e) {}
+        location.href = location.pathname + '?track=' + id + '&rehost=' + net.code;
+      }, 400);
+    }
+
     function netStartRace() {
       if (net.role !== 'host') return;
       sendProfile();
@@ -4136,7 +4224,12 @@
     // 網址帶 ?join=XXXX：自動加入（換地圖後重新加入用）
     if (urlParams.get('join')) {
       mpEls.panel.classList.remove('hidden');
-      setTimeout(() => joinRoom(urlParams.get('join')), 300);
+      setTimeout(() => joinRoom(urlParams.get('join'), 8), 300);
+    }
+    // 網址帶 ?rehost=XXXX：房主換地圖後，用同一個房間碼重開房
+    if (urlParams.get('rehost')) {
+      mpEls.panel.classList.remove('hidden');
+      setTimeout(() => hostRoom(urlParams.get('rehost')), 300);
     }
 
 
@@ -4186,6 +4279,49 @@
       return getKartEffectiveStats('balanced', { engine: 0, tire: 0, nitro: 0, drift: 0 });
     }
     computeGhostLap();
+
+    // ==========================================================
+    // 管理員面板：車庫畫面按 Ctrl+Shift+A，輸入密碼後開啟
+    //   密碼只存「雜湊值」，原始碼裡看不到明文（但這不是真正的資安保護，只是防朋友亂按）
+    //   要換密碼：開啟面板後在瀏覽器主控台輸入 adminHash('新密碼')，把結果貼到 ADMIN_HASH
+    // ==========================================================
+    const ADMIN_HASH = '107c246886cfd836';
+    function adminHash(s) {
+      let h1 = 0x811c9dc5, h2 = 0x01000193;
+      for (const ch of String(s)) {
+        const c = ch.codePointAt(0);
+        h1 = Math.imul(h1 ^ c, 16777619) >>> 0;
+        h2 = Math.imul(h2 + c, 2246822507) >>> 0;
+      }
+      return h1.toString(16).padStart(8, '0') + h2.toString(16).padStart(8, '0');
+    }
+    window.adminHash = adminHash;
+    const adminPanel = document.getElementById('admin-panel');
+    window.addEventListener('keydown', e => {
+      if (!(e.ctrlKey && e.shiftKey && e.code === 'KeyA') || raceState !== 'GARAGE') return;
+      e.preventDefault();
+      const pw = prompt('管理員密碼：');
+      if (pw === null) return;
+      if (adminHash(pw) !== ADMIN_HASH) { showToast('❌ 密碼錯誤'); return; }
+      adminPanel.classList.remove('hidden');
+    });
+    document.getElementById('btnAdminClose').addEventListener('click', () => adminPanel.classList.add('hidden'));
+    adminPanel.querySelectorAll('[data-admin]').forEach(btn => btn.addEventListener('click', () => {
+      const act = btn.dataset.admin;
+      if (act === 'coins10k') gameData.coins += 10000;
+      if (act === 'coins100k') gameData.coins += 100000;
+      if (act === 'maxall') Object.keys(KART_TYPES).forEach(t => { gameData.upgrades[t] = { engine: 5, tire: 5, nitro: 5, drift: 5 }; });
+      if (act === 'reset') {
+        if (!confirm('確定要重置卡丁車存檔？金幣和強化都會歸零')) return;
+        try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+        location.href = location.pathname;
+        return;
+      }
+      saveGameData();
+      const stats = getKartEffectiveStats(gameData.selectedCar);
+      playerKart.reconfigure(gameData.selectedCar, gameData.selectedColor, stats);
+      showToast('✅ 已套用');
+    }));
 
     // 初始進入車庫介面
     openGarage();
