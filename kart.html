@@ -1275,7 +1275,7 @@
       <div class="g-darken" id="gDarken"></div>
     </div>
     <div class="g-controls">
-      <button class="g-btn gold" id="gBuy">🪙 10,000 金幣買 1 箱</button>
+      <button class="g-btn gold" id="gBuy">🪙 500 金幣買 1 箱</button>
       <button class="g-btn green" id="gOpen" style="font-size:20px;padding:14px 40px">開 1 箱</button>
     </div>
     <div class="g-note">每一箱都是獨立抽選，沒有保底。同一台車可以重複擁有。</div>
@@ -1400,6 +1400,7 @@
         <button data-admin="clearinv" style="background:#7c3aed">🧹 清空車庫背包</button>
         <button data-admin="nextday" style="background:#0e7490">📅 模擬隔天</button>
         <button data-admin="skipday" style="background:#0e7490">📅 模擬斷一天</button>
+        <button data-admin="thursday" style="background:#0e7490">🎉 模擬週四晚上</button>
         <button data-admin="reset" style="background:#b91c1c">🗑️ 重置存檔</button>
       </div>
       <div class="mp-actions"><button id="btnAdminClose">關閉</button></div>
@@ -1560,6 +1561,8 @@
     const RARITY_ORDER = ['common', 'rare', 'epic', 'mythic', 'legendary'];
     // 屬性換算：倍率 = 1 + (屬性值 - 20) × 0.01
     const statMult = v => 1 + (v - 20) * 0.01;
+    // 起始車（玩家自己開時）的性能倍率：逼大家去抽車
+    const STARTER_NERF = 0.93;
     const CAR_CATALOG = {};
     // 起始車：沿用 KART_TYPES 的數值與外型，不在抽箱池、不能合成
     Object.values(KART_TYPES).forEach(t => {
@@ -1619,12 +1622,17 @@
     loadGameData();
 
     // 依車種與強化等級計算綜合倍率屬性 (Stats)
-    function getKartEffectiveStats(typeId, customUpgrades = null) {
+    // forPlayer：玩家自己開起始車時性能打折（AI 對手不受影響）
+    function getKartEffectiveStats(typeId, customUpgrades = null, forPlayer = false) {
       const cat = CAR_CATALOG[typeId];
-      const base = (cat && !cat.starter)
+      let base = (cat && !cat.starter)
         ? { topSpeed: statMult(cat.stats.speed), accel: statMult(cat.stats.accel), steer: statMult(cat.stats.handling),
             weight: 1.0, driftTurn: statMult(cat.stats.drift), nitroCharge: statMult(cat.stats.drift) }
         : (KART_TYPES[typeId] || KART_TYPES.balanced);
+      if (forPlayer && (!cat || cat.starter)) {
+        const n = STARTER_NERF;
+        base = { topSpeed: base.topSpeed * n, accel: base.accel * n, steer: base.steer * n, weight: base.weight, driftTurn: base.driftTurn * n, nitroCharge: base.nitroCharge * n };
+      }
       const up = customUpgrades || (gameData.upgrades[typeId] || { engine: 0, tire: 0, nitro: 0, drift: 0 });
 
       // 四種強化：
@@ -4499,7 +4507,7 @@
         carColor = KART_COLORS[(idx + 1) % KART_COLORS.length].hex;
       }
 
-      const effectiveStats = getKartEffectiveStats(carType);
+      const effectiveStats = getKartEffectiveStats(carType, null, !!cfg.isPlayer);
 
       const k = new Kart({
         id: cfg.id,
@@ -4964,7 +4972,7 @@
       document.getElementById('settlement-modal').classList.remove('active');
 
       // 玩家套用當前配置
-      const playerStats = getKartEffectiveStats(gameData.selectedCar);
+      const playerStats = getKartEffectiveStats(gameData.selectedCar, null, true);
       playerKart.reconfigure(gameData.selectedCar, gameData.selectedColor, playerStats);
       setupSoloKarts();
 
@@ -5641,7 +5649,7 @@
     function peerOptions() { return window.KART_PEER_OPTIONS || { debug: 1 }; }
     function myProfile() {
       return { name: gameData.playerName, car: gameData.selectedCar, color: gameData.selectedColor,
-               stats: getKartEffectiveStats(gameData.selectedCar) };
+               stats: getKartEffectiveStats(gameData.selectedCar, null, true) };
     }
     // 房主收到的個人資料只取需要的欄位
     function cleanProfile(pf) {
@@ -6213,7 +6221,7 @@
         const local = r.id === net.myId;
         const k = new Kart({
           id: r.id, name: r.name, isPlayer: local, typeId: r.car, color: r.color,
-          stats: local ? getKartEffectiveStats(gameData.selectedCar) : r.stats,
+          stats: local ? getKartEffectiveStats(gameData.selectedCar, null, true) : r.stats,
           spawnPos: calcGridPos(row, col), spawnYaw: spawnYaw, laneOffset: r.lane || 0
         });
         k.isRemote = !local && !(net.role === 'host' && r.isAI);
@@ -6475,7 +6483,18 @@
     //   抽箱、合成、背包、登入紀錄都存在存檔（localStorage）的 gacha 欄位
     //   之後改成 'server'：這一層改呼叫伺服器 API，畫面不用動；遊戲端不能自己決定結果
     // ==========================================================
-    const BOX_PRICE = 10000;
+    const BOX_PRICE = 500; // 大約 5 場比賽的收入
+    const STARTER_GIFT_BOXES = 10; // 新手第一次簽到送的箱子
+    // 每週四晚上（台灣時間 18:00～23:59）進遊戲送 20 箱，每週一次（開完會慶功）
+    const THURSDAY_GIFT = { boxes: 20, weekday: 'Thu', fromHour: 18 };
+    function taipeiClock(offsetDays = 0) {
+      const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Taipei', weekday: 'short', hour: '2-digit', hourCycle: 'h23' })
+        .formatToParts(new Date(Date.now() + offsetDays * 86400000));
+      const get = t => (parts.find(x => x.type === t) || {}).value;
+      return { weekday: get('weekday'), hour: Number(get('hour')) };
+    }
+    // 管理員測試用：把這個分頁當成週四晚上
+    function debugForceThursday() { try { return sessionStorage.getItem('kart_force_thu') === '1'; } catch (e) { return false; } }
     const MERGE_RULES = {
       common: { to: 'rare', rate: 1 },
       rare:   { to: 'epic', rate: 1 },
@@ -6509,6 +6528,8 @@
       g.boxes = Math.max(0, Math.floor(Number(g.boxes) || 0));
       g.streak = Math.max(0, Math.min(7, Math.floor(Number(g.streak) || 0)));
       if (typeof g.lastDate !== 'string') g.lastDate = null;
+      g.starterGift = !!g.starterGift;
+      if (typeof g.thursdayClaim !== 'string') g.thursdayClaim = null;
       gameData.gacha = g;
       if (typeof gameData.gachaSound !== 'boolean') gameData.gachaSound = true;
       if (!ownsCar(gameData.selectedCar)) gameData.selectedCar = 'balanced';
@@ -6538,7 +6559,9 @@
       async daily() {
         const g = this.local();
         const today = taipeiDate(debugDayOffset());
-        if (g.lastDate === today) return { already: true, streak: g.streak, gotBox: false, broke: false };
+        let gift = 0;
+        if (!g.starterGift) { g.starterGift = true; g.boxes += STARTER_GIFT_BOXES; gift = STARTER_GIFT_BOXES; }
+        if (g.lastDate === today) { if (gift) saveGameData(); return { already: !gift, streak: g.streak, gotBox: false, broke: false, gift }; }
         const gap = g.lastDate ? dayDiff(g.lastDate, today) : null;
         let streak = (gap === 1 && g.streak < 7) ? g.streak + 1 : 1; // 中斷、第一次、或第 7 天領完 → 從 1 開始
         let gotBox = false;
@@ -6546,11 +6569,24 @@
         const broke = gap !== null && gap !== 1 && g.streak > 0 && g.streak < 7;
         g.streak = streak; g.lastDate = today;
         saveGameData();
-        return { already: false, streak, gotBox, broke };
+        return { already: false, streak, gotBox, broke, gift };
+      },
+      // 週四晚上禮物：同一個週四只送一次
+      async thursday() {
+        const g = this.local();
+        const off = debugDayOffset();
+        const c = taipeiClock(off);
+        const isTime = debugForceThursday() || (c.weekday === THURSDAY_GIFT.weekday && c.hour >= THURSDAY_GIFT.fromHour);
+        const today = taipeiDate(off);
+        if (!isTime || g.thursdayClaim === today) return { gift: 0 };
+        g.thursdayClaim = today;
+        g.boxes += THURSDAY_GIFT.boxes;
+        saveGameData();
+        return { gift: THURSDAY_GIFT.boxes };
       },
       async buyBox() {
         const g = this.local();
-        if (gameData.coins < BOX_PRICE) throw new Error('金幣不足（需要 10,000）');
+        if (gameData.coins < BOX_PRICE) throw new Error(`金幣不足（需要 ${BOX_PRICE}）`);
         gameData.coins -= BOX_PRICE;
         g.boxes += 1;
         saveGameData();
@@ -6743,7 +6779,7 @@
         .map(([n, v]) => ({ n, v, pct: v - 20, text: `${v}（${v >= 20 ? '+' : ''}${v - 20}%）` }));
       const t = c.kartType;
       return [['極速', t.topSpeed], ['加速', t.accel], ['操控', t.steer], ['甩尾', t.driftTurn]].map(([n, m]) => {
-        const pct = Math.round((m - 1) * 100);
+        const pct = Math.round((m * STARTER_NERF - 1) * 100);
         return { n, v: 20 + pct, pct, text: `${pct >= 0 ? '+' : ''}${pct}%` };
       });
     }
@@ -6788,7 +6824,7 @@
         const w = Math.max(4, Math.min(100, (s.v - 5) / 25 * 100));
         html += `<div class="ci-stat"><b>${s.n}</b><div class="bar"><i style="width:${w}%;background:${c.starter ? '#38bdf8' : css}"></i></div><span>${s.text}</span></div>`;
       }
-      if (c.starter) html += `<div class="ci-desc" style="margin-top:4px">起始車沿用原本的數值${c.kartType.weight !== 1 ? `，重量 ×${c.kartType.weight}` : ''}。</div>`;
+      if (c.starter) html += `<div class="ci-desc" style="margin-top:4px">起始車性能打 ${Math.round(STARTER_NERF * 100)} 折${c.kartType.weight !== 1 ? `，重量 ×${c.kartType.weight}` : ''}。想跑快就去抽車吧！</div>`;
       html += `<div class="ci-actions"><button class="btn-equip" id="btnEquip" ${(!have || equipped) ? 'disabled' : ''}>${equipped ? '✔ 已裝備' : (have ? '裝備這台車' : '🔒 尚未擁有')}</button></div>`;
       document.getElementById('carInfo').innerHTML = html;
       const eq = document.getElementById('btnEquip');
@@ -7061,7 +7097,7 @@
     }
     async function gachaBuy() {
       if (gacha.busy) return;
-      if (!await uiConfirm('購買箱子', `花 <b>10,000 金幣</b>買 1 個箱子？<br>目前金幣：${gameData.coins.toLocaleString()}`, '購買')) return;
+      if (!await uiConfirm('購買箱子', `花 <b>${BOX_PRICE} 金幣</b>買 1 個箱子？<br>目前金幣：${gameData.coins.toLocaleString()}`, '購買')) return;
       try { await gachaApi.buyBox(); showToast('🎁 買到 1 個箱子'); sfx.tone(880, 0.15, 'triangle', 0.12); }
       catch (e) { showToast('❌ ' + e.message); }
       gachaRefresh();
@@ -7383,7 +7419,9 @@
       dailyChecking = true;
       try {
         const r = await gachaApi.daily();
-        if (!r.already || showAlways) showDaily(r);
+        const thu = await gachaApi.thursday();
+        r.thursday = thu.gift;
+        if (!r.already || thu.gift || showAlways) showDaily(r);
       } catch (e) { console.warn(e); }
       dailyChecking = false;
       updateGarageUI();
@@ -7403,12 +7441,19 @@
       else if (streak >= 7) msg = '這一輪 7 天已經領完，明天從第 1 天重新累積';
       else msg = `連續登入第 <b style="color:#fbbf24">${streak}</b> 天，再 ${7 - streak} 天可以拿到 1 個箱子`;
       if (r.broke) msg += '<br><span style="color:#f87171;font-size:14px">（中間斷了一天，從第 1 天重新計算）</span>';
+      if (r.gift) msg = `🎁 新手禮：送你 <b style="color:#fbbf24">${r.gift} 個箱子</b>，快去車庫開箱！<br>` + msg;
+      if (r.thursday) msg = `🎉 週四晚上開完會慶功：送你 <b style="color:#fbbf24">${r.thursday} 個箱子</b>！<br>` + msg;
       document.getElementById('dMsg').innerHTML = msg;
       document.getElementById('daily-panel').classList.remove('hidden');
-      if (r.gotBox) { sfx.reveal('epic'); setTimeout(() => fx2d.burst(window.innerWidth / 2, window.innerHeight / 2, RARITY_FX.legendary, 120, 10), 200); }
+      if (r.gotBox || r.gift || r.thursday) { sfx.reveal('epic'); setTimeout(() => fx2d.burst(window.innerWidth / 2, window.innerHeight / 2, RARITY_FX.legendary, 120, 10), 200); }
       else if (!r.already) sfx.tone(784, 0.2, 'triangle', 0.1);
     }
     document.getElementById('dClose').addEventListener('click', () => { document.getElementById('daily-panel').classList.add('hidden'); updateGarageUI(); });
+    setInterval(() => {
+      if (raceState !== 'GARAGE' || urlParams.has('carlab')) return;
+      if (document.querySelector('.g-overlay:not(.hidden)') || !document.getElementById('uiConfirm').classList.contains('hidden')) return;
+      runDailyCheck(false);
+    }, 60000);
     document.getElementById('btnOpenDaily').addEventListener('click', () => showDaily({ already: true, gotBox: false, broke: false }));
 
     // Esc 關閉面板
@@ -7465,6 +7510,12 @@
       if (act === 'allcars') gachaCars('common').concat(gachaCars('rare'), gachaCars('epic'), gachaCars('mythic'), gachaCars('legendary'))
         .forEach(id => { gameData.gacha.inventory[id] = (gameData.gacha.inventory[id] || 0) + 1; });
       if (act === 'clearinv') { gameData.gacha.inventory = {}; ensureGacha(); }
+      if (act === 'thursday') {
+        try { sessionStorage.setItem('kart_force_thu', '1'); } catch (e) {}
+        adminPanel.classList.add('hidden');
+        runDailyCheck(true);
+        return;
+      }
       if (act === 'nextday' || act === 'skipday') {
         // 只影響這個分頁的「今天」，用來測試連續登入
         try { sessionStorage.setItem('kart_day_offset', String(debugDayOffset() + (act === 'nextday' ? 1 : 2))); } catch (e) {}
