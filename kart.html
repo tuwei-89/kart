@@ -623,6 +623,10 @@
       background: rgba(2, 6, 23, 0.6);
     }
     #mp-panel.hidden, #admin-panel.hidden { display: none; }
+    .adm-give { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 12px; padding-top: 12px; border-top: 1px solid #334155; font-weight: 800; color: #e2e8f0; }
+    .adm-give select, .adm-give input { background: #0f172a; color: #f1f5f9; border: 1px solid #475569; border-radius: 8px; padding: 7px 8px; font-size: 14px; font-weight: 700; }
+    .adm-give select { min-width: 220px; } .adm-give input { width: 70px !important; flex: 0 0 70px; }
+    .adm-give button { border: none; border-radius: 8px; color: #fff; font-weight: 800; padding: 8px 14px; cursor: pointer; }
     #admin-panel {
       position: absolute; inset: 0; z-index: 75;
       display: flex; align-items: center; justify-content: center;
@@ -692,7 +696,7 @@
     .mp-car.r-celestial { text-shadow: 0 0 12px rgba(125, 211, 252, 0.95); animation: mpShine 1.2s ease-in-out infinite; }
     .dex-card.r-celestial { background: linear-gradient(160deg, rgba(30, 41, 59, 0.85), rgba(125, 211, 252, 0.35), rgba(255, 255, 255, 0.25)); box-shadow: 0 0 16px rgba(186, 230, 253, 0.6); }
     #polarisFlash { position: fixed; inset: 0; pointer-events: none; z-index: 25; opacity: 0;
-      background: radial-gradient(ellipse at 50% 55%, rgba(255,255,255,0) 50%, rgba(224,242,254,0.55) 85%, rgba(255,255,255,0.8) 100%); }
+      background: radial-gradient(ellipse at 50% 55%, rgba(var(--fc, 224,242,254),0) 50%, rgba(var(--fc, 224,242,254),0.55) 85%, rgba(255,255,255,0.8) 100%); }
     #polarisFlash.go { animation: pfGo 0.5s ease-out; }
     @keyframes pfGo { 0% { opacity: 1; } 100% { opacity: 0; } }
     #celestial-fx { position: fixed; inset: 0; z-index: 9000; cursor: pointer; transition: opacity 0.6s; }
@@ -702,9 +706,9 @@
     .cx-text { position: absolute; left: 0; right: 0; top: 66%; text-align: center; pointer-events: none; color: #fff; }
     .cx-text > div { opacity: 0; transform: translateY(16px); transition: opacity 0.9s, transform 0.9s, letter-spacing 1.6s; }
     .cx-text.on > div { opacity: 1; transform: none; }
-    .cx-rar { font-size: 26px; font-weight: 900; letter-spacing: 2px; color: #bae6fd; text-shadow: 0 0 18px #7dd3fc; }
+    .cx-rar { font-size: 26px; font-weight: 900; letter-spacing: 2px; color: #f1f5f9; text-shadow: 0 0 18px var(--cxc, #7dd3fc); }
     .cx-text.on .cx-rar { letter-spacing: 14px; }
-    .cx-name { font-size: 64px; font-weight: 900; margin-top: 6px; transition-delay: 0.35s !important; text-shadow: 0 0 24px #e0f2fe, 0 0 60px #7dd3fc; }
+    .cx-name { font-size: 64px; font-weight: 900; margin-top: 6px; transition-delay: 0.35s !important; text-shadow: 0 0 24px #ffffff, 0 0 60px var(--cxc, #7dd3fc); }
     .cx-sub { font-size: 16px; color: #cbd5e1; margin-top: 8px; transition-delay: 0.8s !important; }
     .cx-tap { font-size: 13px; color: #94a3b8; margin-top: 18px; }
     .cx-text:not(.tap) .cx-tap { opacity: 0 !important; }
@@ -912,6 +916,11 @@
       color: #fff;
       box-shadow: 0 6px 18px rgba(37, 99, 235, 0.5);
     }
+    .btn-modal-settle {
+      background: linear-gradient(135deg, #f59e0b, #ea580c);
+      color: #fff;
+      box-shadow: 0 6px 18px rgba(234, 88, 12, 0.45);
+    }
     .btn-modal-secondary {
       background: rgba(30, 41, 59, 0.9);
       color: #e2e8f0;
@@ -1110,6 +1119,14 @@
       color: #475569; font-size: 30px; cursor: pointer; background: rgba(15, 23, 42, 0.6); transition: transform 0.6s cubic-bezier(.5,0,.3,1), opacity 0.6s; }
     .m-slot.full { border: 3px solid var(--rc); color: #e2e8f0; font-size: 12px; font-weight: 800; }
     .m-slot img { width: 100px; height: 70px; object-fit: contain; }
+    .m-bulk { display: flex; gap: 14px; align-items: center; margin-top: 12px; flex-wrap: wrap; justify-content: center; font-size: 13px; font-weight: 800; color: #cbd5e1; }
+    .m-bulk input { accent-color: #f59e0b; transform: scale(1.2); margin-right: 4px; }
+    #mBulk { background: linear-gradient(135deg, #f59e0b, #ef4444); padding: 10px 24px; font-size: 16px; }
+    .m-bulk-sum { font-size: 15px; font-weight: 800; color: #e2e8f0; text-align: center; line-height: 1.7; }
+    .m-bulk-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 640px; max-height: 250px; overflow: auto; }
+    .m-bulk-grid .bk { width: 82px; border: 2px solid var(--rc); border-radius: 10px; background: rgba(15, 23, 42, 0.8); position: relative; font-size: 11px; font-weight: 800; color: #e2e8f0; text-align: center; padding-bottom: 3px; animation: gPop 0.5s cubic-bezier(.2,1.6,.4,1) both; }
+    .m-bulk-grid .bk img { width: 100%; display: block; }
+    .m-bulk-grid .bk b { position: absolute; top: 2px; right: 4px; color: #fbbf24; text-shadow: 0 1px 2px #000; }
     .m-info { margin-top: 16px; text-align: center; font-size: 15px; line-height: 1.6; }
     .m-info b { color: #fbbf24; }
     .m-info .bad { color: #f87171; }
@@ -1406,6 +1423,7 @@
         <button class="gh-btn" id="btnFxQuality">✨ 特效：高</button>
         <button class="gh-btn" id="btnHudAlerts">💬 提示：開</button>
         <button class="gh-btn" id="btnSound">🔊 音效：開</button>
+        <button class="gh-btn" id="btnMusic">🎵 音樂：開</button>
         <button class="gh-btn" id="btnSaveBackup">💾 存檔</button>
         <div class="garage-coins">
           <span>💰</span>
@@ -1462,6 +1480,7 @@
     </div>
     <div class="g-controls">
       <button class="g-btn gold" id="gBuy">💰 500 金幣買 1 箱</button>
+      <button class="g-btn gold" id="gBuy10">💰 5,000 金幣買 10 箱</button>
       <button class="g-btn green" id="gOpen" style="font-size:20px;padding:14px 40px">開 1 箱</button>
       <button class="g-btn" id="gOpen10" style="font-size:20px;padding:14px 32px;background:linear-gradient(135deg,#7c3aed,#4f46e5)">開 10 箱</button>
       <button class="g-btn" id="gConsole" style="display:none">🎗️ 安慰獎（免費單抽）</button>
@@ -1495,6 +1514,11 @@
           <button class="g-btn gray" id="mAuto">自動放入</button>
           <button class="g-btn gray" id="mClear">清空</button>
           <button class="g-btn green" id="mGo" style="padding:12px 36px; font-size:18px">⚗️ 合成</button>
+        </div>
+        <div class="m-bulk">
+          <button class="g-btn" id="mBulk">⚡ 一鍵合成</button>
+          <label><input type="checkbox" id="mKeep" checked> 每款保留 1 台</label>
+          <label><input type="checkbox" id="mChain"> 合出來的繼續往上合（最多到傳說）</label>
         </div>
         <div class="m-stage" id="mStage">
           <div class="m-orb" id="mOrb"></div>
@@ -1707,8 +1731,12 @@
         <button data-admin="evonow" style="background:#7c3aed">⭐ 目前的車直接進化</button>
         <button data-admin="polaris" style="background:linear-gradient(135deg,#0ea5e9,#e0f2fe);color:#0f172a">✦ 獲得北極星（播開啟動畫）</button>
         <button data-admin="legend10" style="background:#b45309">🏆 每台傳說 +2（測試星耀合成）</button>
+        <button data-admin="polaris20" style="background:linear-gradient(135deg,#f59e0b,#fde68a);color:#0f172a">✦ 北極星直接 20 星（覺醒）</button>
         <button data-admin="reset" style="background:#b91c1c">🗑️ 重置存檔</button>
       </div>
+      <div class="adm-give">🎁 給車：<select id="admCar"></select> ×
+        <input id="admCarN" type="number" min="1" max="999" value="1">
+        <button id="admGive" style="background:#7c3aed">給這台車</button></div>
       <div class="mp-actions"><button id="btnAdminClose">關閉</button></div>
     </div>
   </div>
@@ -1726,6 +1754,7 @@
         <!-- JS 動態插入 6 台車排名成績 -->
       </div>
       <div class="modal-actions">
+        <button class="btn-modal btn-modal-settle" id="btnModalSettle" style="display:none">⏩ 直接結算</button>
         <button class="btn-modal btn-modal-primary" id="btnModalRestart">🔄 再戰一場 (R)</button>
         <button class="btn-modal btn-modal-secondary" id="btnModalGarage">🔧 返回車庫</button>
       </div>
@@ -1879,6 +1908,11 @@
       speed:    { label: '⚡ 極速型', desc: '直線最快；但甩尾時減速比較多、集氣 −10%、氮氣 −0.3 秒', driftLossMult: 1.6, nitroChargeMult: 0.9, nitroDurationAdd: -0.3 },
       drift:    { label: '🌀 甩尾型', desc: '集氣 +12%，甩尾小噴時間 ×1.5', nitroChargeMult: 1.12, miniBoostMult: 1.5 },
       balanced: { label: '⚖️ 平衡型', desc: '尾流集氣更快（1 秒 → 0.6 秒）、尾流加速更久（1.6 → 2.4 秒），跟人比賽時最強', draftChargeMult: 1 / 0.6, draftBoostMult: 1.5 },
+      balanced_drift: { label: '⚖️🌀 平衡＋甩尾型', desc: '兼具兩種特性：尾流集氣更快（1 秒 → 0.6 秒）、尾流加速更久（1.6 → 2.4 秒）；集氣 +12%、甩尾小噴時間 ×1.5', draftChargeMult: 1 / 0.6, draftBoostMult: 1.5, nitroChargeMult: 1.12, miniBoostMult: 1.5 },
+      speed_accel: { label: '⚡🚀 極速＋加速型', desc: '加速帶時間 ×1.6、集氣帶效果 ×1.5；直線很快，但甩尾減速稍多（×1.3）', driftLossMult: 1.3, padBoostMult: 1.6, zoneMult: 1.5 },
+      heavy_speed: { label: '🛡️⚡ 重型＋極速型', desc: '車身超重：撞人時對方被彈開、自己幾乎不減速；甩尾減速稍多（×1.3）', driftLossMult: 1.3 },
+      drift_accel: { label: '🌀🚀 甩尾＋加速型', desc: '集氣 +12%、小噴時間 ×1.5；加速帶時間 ×1.6、集氣帶效果 ×1.5', nitroChargeMult: 1.12, miniBoostMult: 1.5, padBoostMult: 1.6, zoneMult: 1.5 },
+      knight:   { label: '🌀⚔️ 甩尾＋穩飄型', desc: '集氣 +22%、甩尾小噴時間 ×1.3；拖飄時掉速只有一般的 55%，連續小彎輕甩也補得滿氣', nitroChargeMult: 1.22, miniBoostMult: 1.3, driftLossMult: 0.55 },
       heavy:    { label: '🛡️ 重型', desc: '車身重，撞人時比較不會被推開' },
       accel:    { label: '🚀 加速型', desc: '加速帶時間 ×1.6、集氣帶效果 ×1.5，出彎與起步最兇', padBoostMult: 1.6, zoneMult: 1.5 }
     };
@@ -3869,7 +3903,7 @@
       CM.cyl(g, 0.13, 0.13, 0.07, 12, gold, 0, 1.25, 0.3);
       CM.wheels(g, { r: 0.33, x: 0.88, zf: 0.8, zr: -0.8 });
     });
-    defCar('trainee', '練習生', 'common', 20, 20, 21, 19, '橘白雙色的教練車，車頂頂著「練」字牌。', (g) => {
+    defCar('trainee', '練習生', 'common', 19, 20, 23, 18, '橘白雙色的教練車，車頂頂著「練」字牌。', (g) => {
       const O = CM.paint('common', 0xf97316), W = CM.paint('common', 0xffffff), glass = CM.glass();
       CM.carBody(g, W, { z0: -1.15, z1: 1.22, w: 0.8, exp: 3.4, tailW: 0.88, noseW: 0.7, bulge: 0.05,
         top: [[-1.15, 0.76], [-0.9, 0.82], [0.55, 0.8], [0.98, 0.72], [1.22, 0.58]], skirt: O, skirtH: 0.3,
@@ -4214,7 +4248,7 @@
       driftFx: { kind: 'foam' }, nitroBurst: 'swirl', wheelX: 0.98, wheelZ: 1.0
     });
 
-    defCar('rocket_bunny', '火箭兔', 'rare', 21, 23, 20, 20, '粉白圓潤的小車，車頂兩隻長耳朵，車尾一顆火箭噴嘴，起步衝很快。', (g, G) => {
+    defCar('rocket_bunny', '火箭兔', 'rare', 20, 26, 19, 19, '粉白圓潤的小車，車頂兩隻長耳朵，車尾一顆火箭噴嘴，起步衝很快。', (g, G) => {
       const P = CM.paint('rare', 0xf9a8d4), W = CM.paint('rare', 0xffffff);
       CM.carBody(g, P, { z0: -1.08, z1: 1.18, w: 0.78, exp: 2.4, tailW: 0.8, noseW: 0.6, bulge: 0.06, wf: 0.72, wr: -0.72,
         top: [[-1.08, 0.82], [-0.7, 0.94], [0.2, 0.95], [0.8, 0.75], [1.18, 0.55]], skirt: W, skirtH: 0.14,
@@ -4229,7 +4263,7 @@
       CM.wheels(g, { r: 0.33, x: 0.88, zf: 0.72, zr: -0.72, rim: 0xffffff });
     }, { smoke: 0xfbcfe8 });
 
-    defCar('cheetah_launch', '彈射獵豹', 'epic', 22, 24, 21, 21, '金黃金屬漆配黑色斑點的低趴跑車，車頭兩道發光的淚痕。彈射起步、出彎加速最兇。', (g, G) => {
+    defCar('cheetah_launch', '彈射獵豹', 'epic', 23, 26, 20, 19, '金黃金屬漆配黑色斑點的低趴跑車，車頭兩道發光的淚痕。彈射起步、出彎加速最兇。', (g, G) => {
       const spots = CM.canvasTex(256, 256, (x) => {
         x.fillStyle = '#eab308'; x.fillRect(0, 0, 256, 256);
         x.fillStyle = '#1c1917';
@@ -4283,7 +4317,7 @@
       return r;
     }
 
-    defCar('pedal_hero', '單車俠', 'epic', 21, 22, 24, 21, '一台公路腳踏車加上全身緊身衣的騎士，前後兩顆細輪、彎把手、水壺架。轉彎超靈活，騎士的腳會一直踩。', (g, G) => {
+    defCar('pedal_hero', '單車俠', 'epic', 19, 22, 26, 21, '一台公路腳踏車加上全身緊身衣的騎士，前後兩顆細輪、彎把手、水壺架。轉彎超靈活，騎士的腳會一直踩。', (g, G) => {
       const frame = CM.std(0x0ea5e9, 0.25, 0.7), black = CM.std(0x111827, 0.6, 0.3), tire = CM.std(0x111111, 0.8, 0), chrome = CM.std(0xe5e7eb, 0.15, 1.0);
       const suit = CM.std(0xfacc15, 0.5, 0.1), helmet = CM.std(0x0ea5e9, 0.2, 0.6), visor = CM.std(0x0b1020, 0.05, 0.9);
       const wf = thinWheel(g, 0.48, 0.045, 0, 0.5, 0.95, tire, chrome, 8);
@@ -4310,7 +4344,7 @@
       };
     }, { smoke: 0xe0f2fe, marks: 0x38bdf8, driftFx: { kind: 'spark', color: 0x7dd3fc, rate: 0.5 }, wheelX: 0.15, wheelZ: 0.85, nitroSound: 'bell' });
 
-    defCar('thunder_bike', '雷霆重機', 'epic', 24, 23, 20, 21, '黑紅配色的超跑重機，大油箱、整流罩、雙排氣管，騎士整個人趴在車上。直線狂暴。', (g, G) => {
+    defCar('thunder_bike', '雷霆重機', 'epic', 26, 23, 18, 21, '黑紅配色的超跑重機，大油箱、整流罩、雙排氣管，騎士整個人趴在車上。直線狂暴。', (g, G) => {
       const paint = CM.std(0xb91c1c, 0.2, 0.75), black = CM.std(0x0b0b0f, 0.4, 0.6), tire = CM.std(0x111111, 0.8, 0), chrome = CM.std(0xd4d4d8, 0.15, 1.0);
       const suit = CM.std(0x18181b, 0.5, 0.2), helmet = CM.std(0xb91c1c, 0.15, 0.7), visor = CM.std(0x0b1020, 0.05, 0.9);
       const wf = thinWheel(g, 0.42, 0.13, 0, 0.42, 1.05, tire, chrome, 5);
@@ -4332,7 +4366,7 @@
       return (t, k) => { const sp = (k.speed || 0) * 0.04; wf.children[0].rotation.z -= sp; wr.children[0].rotation.z -= sp; };
     }, { smoke: 0xa1a1aa, nitro: 0xff4d4d, marks: 0xef4444, driftFx: { kind: 'spark', color: 0xff6b6b }, wheelX: 0.15, wheelZ: 0.95 });
 
-    defCar('cart_rush', '狂奔購物車', 'epic', 20, 25, 21, 22, '超市的鐵網購物車，裡面塞滿了麵包、蘋果、牛奶和一隻探頭的鴨子。四顆小萬向輪喀啦喀啦響，起步快到嚇人。', (g, G) => {
+    defCar('cart_rush', '狂奔購物車', 'epic', 20, 27, 18, 23, '超市的鐵網購物車，裡面塞滿了麵包、蘋果、牛奶和一隻探頭的鴨子。四顆小萬向輪喀啦喀啦響，起步快到嚇人。', (g, G) => {
       const wire = CM.std(0xd4d4d8, 0.25, 0.9), red = CM.std(0xdc2626, 0.5, 0.1), wheelM = CM.std(0x1f2937, 0.7, 0.1);
       const x0 = -0.62, x1 = 0.62, zb = -1.0, zf = 0.9, yb = 0.55, yt = 1.35;
       // 籃子底框＋上框（前面比較窄）
@@ -4450,7 +4484,7 @@
       CM.wheels(g, { r: 0.28, w: 0.22, x: 0.62, zf: 0.75, zr: -0.75, rim: 0xfbcfe8 });
     }, { smoke: 0xfef3c7, marks: 0x92400e, driftFx: { kind: 'boba' }, nitroSound: 'slurp' });
 
-    defCar('scooter_uncle', '機車阿伯', 'epic', 21, 23, 22, 22, '騎著 50cc 小綿羊的阿伯：半罩安全帽、白色吊嘎、海灘褲配藍白拖，腳踏板放著一顆高麗菜，菜籃插著青蔥。開氮氣會「叭叭」按喇叭。', (g, G) => {
+    defCar('scooter_uncle', '機車阿伯', 'epic', 25, 23, 18, 22, '騎著 50cc 小綿羊的阿伯：半罩安全帽、白色吊嘎、海灘褲配藍白拖，腳踏板放著一顆高麗菜，菜籃插著青蔥。直線騎超快，轉彎就……看運氣。開氮氣會「叭叭」按喇叭。', (g, G) => {
       const body = CM.std(0x22c55e, 0.3, 0.4), white = CM.std(0xf8fafc, 0.6, 0), tire = CM.std(0x111111, 0.8, 0), chrome = CM.std(0xd4d4d8, 0.2, 0.9);
       const skin = CM.std(0xd6a37c, 0.7, 0), S = CM.spline;
       const wf = thinWheel(g, 0.3, 0.1, 0, 0.3, 0.95, tire, chrome, 4);
@@ -4493,7 +4527,7 @@
       };
     }, { smoke: 0xe5e7eb, marks: 0x22c55e, driftFx: { kind: 'leaf', color: 0x86efac, rate: 0.5 }, wheelX: 0.12, wheelZ: 0.8, nitroSound: 'horn' });
 
-    defCar('garbage_truck', '黃金垃圾車', 'epic', 23, 22, 21, 22, '台灣街頭的黃色垃圾車！方方的駕駛室、後面的壓縮車斗、車尾的回收桶。開氮氣會播「給愛麗絲」，大家快出來倒垃圾。', (g, G) => {
+    defCar('garbage_truck', '黃金垃圾車', 'epic', 24, 23, 18, 23, '台灣街頭的黃色垃圾車！方方的駕駛室、後面的壓縮車斗、車尾的回收桶。開氮氣會播「給愛麗絲」，大家快出來倒垃圾。', (g, G) => {
       const yellow = CM.std(0xfacc15, 0.4, 0.25), dark = CM.std(0x1f2937, 0.6, 0.3), white = CM.std(0xf8fafc, 0.5, 0), blue = CM.std(0x2563eb, 0.5, 0.1), green = CM.std(0x16a34a, 0.5, 0.1);
       // 駕駛室
       CM.carBody(g, yellow, { z0: 0.55, z1: 1.55, w: 0.85, exp: 5, tailW: 1, frontW: 0.98, noseW: 0.9, ground: 0.4, tailBot: 0.4, noseBot: 0.45, top: [[0.55, 1.75], [1.2, 1.75], [1.45, 1.55], [1.55, 1.1]] });
@@ -4562,7 +4596,7 @@
         box.rotation.z = Math.sin(t * 7) * 0.04 * Math.min(1, (k.speed || 0) / 15);
       };
     }
-    defCar('delivery_rider', '貓熊外送', 'rare', 21, 22, 20, 21, '粉紅色的貓熊外送員，背著比人還大的保溫箱。風雨無阻、紅燈…也盡量停。開氮氣會「叮咚～」一聲。', (g, G) => buildDeliveryRider(g, G, {
+    defCar('delivery_rider', '貓熊外送', 'rare', 21, 22, 23, 18, '粉紅色的貓熊外送員，背著比人還大的保溫箱。風雨無阻、紅燈…也盡量停。開氮氣會「叮咚～」一聲。', (g, G) => buildDeliveryRider(g, G, {
       bike: 0xec4899, suit: 0xf9a8d4, helmet: 0xec4899, box: 0xec4899,
       drawBox: (x) => {
         x.fillStyle = '#ec4899'; x.fillRect(0, 0, 128, 128);
@@ -4576,7 +4610,7 @@
       }
     }), { smoke: 0xfbcfe8, wheelX: 0.12, wheelZ: 0.8, nitroSound: 'dingdong' });
 
-    defCar('ybar_rider', 'Ybar 外送', 'rare', 21, 21, 20, 22, '黑色大箱子、綠色字的 Ybar 外送員。接單、甩尾、送達，一氣呵成。開氮氣會「叮」一聲接到新單。', (g, G) => buildDeliveryRider(g, G, {
+    defCar('ybar_rider', 'Ybar 外送', 'rare', 22, 20, 23, 19, '黑色大箱子、綠色字的 Ybar 外送員。接單、甩尾、送達，一氣呵成。開氮氣會「叮」一聲接到新單。', (g, G) => buildDeliveryRider(g, G, {
       bike: 0x111827, suit: 0x111827, helmet: 0x22c55e, box: 0x0b0b0b,
       drawBox: (x) => {
         x.fillStyle = '#0b0b0b'; x.fillRect(0, 0, 128, 128);
@@ -4585,7 +4619,7 @@
       }
     }), { smoke: 0xd1fae5, wheelX: 0.12, wheelZ: 0.8, nitroSound: 'ding2' });
 
-    defCar('toilet_tank', '馬桶戰車', 'rare', 20, 22, 20, 22, '一座白瓷馬桶裝上輪子就上路了。馬桶蓋會跟著速度開開關關，開氮氣是沖水聲。', (g, G) => {
+    defCar('toilet_tank', '馬桶戰車', 'rare', 19, 21, 19, 25, '一座白瓷馬桶裝上輪子就上路了。馬桶蓋會跟著速度開開關關，開氮氣是沖水聲。', (g, G) => {
       const porcelain = CM.std(0xf8fafc, 0.18, 0.1), chrome = CM.std(0xe5e7eb, 0.15, 1.0), water = CM.std(0x7dd3fc, 0.05, 0.2, { transparent: true, opacity: 0.8 });
       // 馬桶本體（前面的碗）＋水箱（後面）
       CM.lathe(g, [[0.0, -0.55], [0.45, -0.5], [0.62, -0.2], [0.66, 0.2], [0.55, 0.5], [0.0, 0.55]], porcelain, 1.0, 0.7, 0.75).position.z = 0.35;
@@ -4655,7 +4689,7 @@
       };
     }, { smoke: 0xf1f5f9, driveFx: { kind: 'steam' }, wheelX: 0.78, wheelZ: 0.6, nitroSound: 'ding' });
 
-    defCar('blue_slipper', '藍白拖', 'rare', 21, 20, 20, 23, '一隻巨大的藍白拖在賽道上狂奔。台灣人的國民鞋，夏天的回憶。開氮氣「啪！」一聲，像被阿嬤打到。', (g, G) => {
+    defCar('blue_slipper', '藍白拖', 'rare', 20, 20, 19, 25, '一隻巨大的藍白拖在賽道上狂奔。台灣人的國民鞋，夏天的回憶。開氮氣「啪！」一聲，像被阿嬤打到。', (g, G) => {
       const blue = CM.std(0x1d4ed8, 0.5, 0.05), white = CM.std(0xf8fafc, 0.6, 0);
       // 拖鞋鞋底（俯視輪廓：前寬後窄、腳跟圓）
       const outline = [[-0.55, -1.35], ['q', 0, -1.6, 0.55, -1.35], [0.62, -0.4], ['q', 0.78, 0.6, 0.65, 1.1], ['q', 0, 1.65, -0.65, 1.1], ['q', -0.78, 0.6, -0.62, -0.4], [-0.55, -1.35]];
@@ -4679,7 +4713,7 @@
     }
 
     // ----- 稀有 -----
-    defCar('grad_chair', '研究生電腦椅', 'rare', 20, 21, 22, 21, '實驗室那張坐到塌掉的電腦椅，上面堆滿論文和一杯冷掉的咖啡。開氮氣會哀號「老師我下禮拜一定交」。', (g, G) => {
+    defCar('grad_chair', '研究生電腦椅', 'rare', 19, 20, 25, 20, '實驗室那張坐到塌掉的電腦椅，上面堆滿論文和一杯冷掉的咖啡。開氮氣會哀號「老師我下禮拜一定交」。', (g, G) => {
       const black = CM.std(0x1f2937, 0.6, 0.2), mesh = CM.std(0x374151, 0.8, 0), chrome = CM.std(0xd4d4d8, 0.2, 0.9), paper = CM.std(0xf8fafc, 0.8, 0);
       // 五爪腳＋輪子
       for (let i = 0; i < 5; i++) { const a = i / 5 * Math.PI * 2; CM.seg(g, [0, 0.35, 0], [Math.cos(a) * 0.85, 0.22, Math.sin(a) * 0.85], 0.08, black); CM.ball(g, 0.12, black, Math.cos(a) * 0.85, 0.12, Math.sin(a) * 0.85); }
@@ -4735,7 +4769,7 @@
       CM.wheels(g, { r: 0.26, x: 0.68, zf: 0.5, zr: -0.5 });
     }, { smoke: 0xfef9c3, driveFx: { kind: 'steam' }, wheelX: 0.68, wheelZ: 0.5, nitroSound: 'slurp' });
 
-    defCar('coffee_cup', '續命咖啡', 'rare', 21, 22, 21, 20, '研究生的血液。外帶杯配杯套，杯蓋一直冒蒸氣。開氮氣「咕嚕」一口，精神百倍。', (g, G) => {
+    defCar('coffee_cup', '續命咖啡', 'rare', 20, 25, 20, 19, '研究生的血液。外帶杯配杯套，杯蓋一直冒蒸氣。開氮氣「咕嚕」一口，精神百倍。', (g, G) => {
       const cup = CM.std(0xf8fafc, 0.5, 0), sleeve = CM.std(0x92400e, 0.8, 0), lidM = CM.std(0x111827, 0.4, 0.2);
       CM.cyl(g, 0.75, 0.55, 1.6, 32, cup, 0, 1.1, 0);
       CM.cyl(g, 0.7, 0.63, 0.55, 32, sleeve, 0, 1.05, 0);
@@ -4848,7 +4882,7 @@
       return (t, k) => { fans.forEach(f => { f.rotation.z += 0.2 + (k.speed || 0) * 0.02 + (k.nitroTimer > 0 ? 0.5 : 0); }); rgbM.color.setHSL((t * 0.3) % 1, 1, 0.55); };
     }, { smoke: 0xd8b4fe, marks: 0xc084fc, nitroSound: 'fan', wheelX: 0.82, wheelZ: 1.0 });
 
-    defCar('server_rack', '機房機櫃', 'epic', 22, 21, 22, 23, '整座伺服器機櫃推出來飆車，一排排指示燈狂閃。半夜三點的機房警報聲就是它的引擎聲。', (g, G) => {
+    defCar('server_rack', '機房機櫃', 'epic', 23, 21, 20, 24, '整座伺服器機櫃推出來飆車，一排排指示燈狂閃。半夜三點的機房警報聲就是它的引擎聲。', (g, G) => {
       const rack = CM.std(0x18181b, 0.4, 0.5);
       CM.box(g, 1.4, 2.0, 1.8, rack, 0, 1.3, 0);
       for (let r = 0; r < 8; r++) {
@@ -4881,7 +4915,7 @@
       };
     }, { smoke: 0xfed7aa, marks: 0xf97316, nitroSound: 'servo' });
 
-    defCar('isekai_truck', '異世界卡車', 'epic', 24, 22, 20, 22, '那台傳說中會把主角送去異世界的白色卡車。車頭前面一直轉著魔法陣，開氮氣會說「歡迎來到異世界」。', (g, G) => {
+    defCar('isekai_truck', '異世界卡車', 'epic', 26, 22, 18, 22, '那台傳說中會把主角送去異世界的白色卡車。車頭前面一直轉著魔法陣，開氮氣會說「歡迎來到異世界」。', (g, G) => {
       const white = CM.std(0xf8fafc, 0.35, 0.2), dark = CM.std(0x1f2937, 0.5, 0.3);
       CM.carBody(g, white, { z0: 0.5, z1: 1.55, w: 0.88, exp: 5, tailW: 1, noseW: 0.92, ground: 0.42, tailBot: 0.42, noseBot: 0.45, top: [[0.5, 1.8], [1.25, 1.8], [1.5, 1.5], [1.55, 1.05]] });
       CM.box(g, 1.6, 0.5, 0.05, CM.glass(), 0, 1.45, 1.44, -0.35, 0, 0);
@@ -4899,7 +4933,7 @@
       return (t, k) => { circle.rotation.z = t * (k.nitroTimer > 0 ? 4 : 1); circle.material.opacity = k.nitroTimer > 0 ? 1 : 0.55; };
     }, { smoke: 0xe0f2fe, marks: 0x67e8f9, nitroSound: 'portal', nitroVoice: ['歡迎來到異世界！', '轉生成卡車了怎麼辦', '小心前方，異世界之門'], wheelX: 0.95, wheelZ: 1.45, tail: 2.0 });
 
-    defCar('witch_broom', '魔女掃帚', 'epic', 21, 22, 22, 23, '一把會飛的魔女掃帚，騎士披著斗篷戴尖帽，一路灑星星。其實它沒有在飛，只是輪子很小看不到。', (g, G) => {
+    defCar('witch_broom', '魔女掃帚', 'epic', 20, 22, 23, 23, '一把會飛的魔女掃帚，騎士披著斗篷戴尖帽，一路灑星星。其實它沒有在飛，只是輪子很小看不到。', (g, G) => {
       const wood = CM.std(0x78350f, 0.7, 0), straw = CM.std(0xd97706, 0.85, 0), cloak = CM.std(0x4c1d95, 0.6, 0.1);
       CM.seg(g, [0, 0.9, 1.4], [0, 0.75, -0.6], 0.07, wood);
       for (let i = 0; i < 24; i++) { const a = i / 24 * Math.PI * 2; CM.seg(g, [0, 0.75, -0.6], [Math.cos(a) * 0.32, 0.75 + Math.sin(a) * 0.32, -1.5], 0.035, straw); }
@@ -4938,7 +4972,7 @@
       };
     }, { smoke: 0xbfdbfe, marks: 0x38bdf8, nitroSound: 'mechboost', nitroVoice: ['必殺！超級推進！', '出擊！', '機甲合體！'], wheelX: 0.35, wheelZ: 0.3 });
 
-    defCar('drone_quad', '空拍機', 'epic', 22, 23, 23, 20, '四軸空拍機低空飛行，四顆螺旋槳嗡嗡轉、底下吊著一台攝影機。小心別飛進禁航區。', (g, G) => {
+    defCar('drone_quad', '空拍機', 'epic', 21, 23, 25, 19, '四軸空拍機低空飛行，四顆螺旋槳嗡嗡轉、底下吊著一台攝影機。小心別飛進禁航區。', (g, G) => {
       const body = CM.std(0xf8fafc, 0.3, 0.3), arm = CM.std(0x334155, 0.4, 0.5);
       CM.carBody(g, body, { z0: -0.6, z1: 0.6, w: 0.45, exp: 3, ground: 0.95, tailBot: 0.95, noseBot: 0.95, top: [[-0.6, 1.3], [0.6, 1.3]] });
       const props = [];
@@ -4956,7 +4990,7 @@
       return (t, k) => { props.forEach((p, i) => { p.rotation.y += (i % 2 ? 0.9 : -0.9); }); g.children.length; };
     }, { smoke: 0xe2e8f0, marks: 0x38bdf8, nitroSound: 'buzz', wheelX: 0.4, wheelZ: 0.3 });
 
-    defCar('deadline_ghost', '死線幽靈', 'epic', 22, 23, 21, 22, '截止日前一晚出現的白色幽靈，胸口掛著倒數的鬧鐘。被它追上的人都會趕不完報告。開氮氣會幽幽地說「明天就要交了喔」。', (g, G) => {
+    defCar('deadline_ghost', '死線幽靈', 'epic', 24, 23, 20, 21, '截止日前一晚出現的白色幽靈，胸口掛著倒數的鬧鐘。被它追上的人都會趕不完報告。開氮氣會幽幽地說「明天就要交了喔」。', (g, G) => {
       const ghost = CM.std(0xf8fafc, 0.4, 0, { emissive: 0xe0e7ff, emissiveIntensity: 0.35, transparent: true, opacity: 0.88 });
       CM.lathe(g, [[0, 1.2], [0.55, 1.05], [0.75, 0.4], [0.8, -0.3], [0.85, -0.9], [0.0, -1.0]], ghost, 1, 1, 1.15).rotation.x = -Math.PI / 2;
       const tail = [];
@@ -5231,6 +5265,20 @@
       if (rar === 'legendary') return { legend: true, glow: col, nitro: col, marks: col, shock: col, trail: { colors: [0xfff7cc, col], minSpeed: 2, life: 0.6, width: 0.6, bySpeed: true } };
       return {};
     }
+    // ===== 特色車升神話：數值 +1（總和 92）、補上神話特效 =====
+    // 進化只剩最後一階（神話 → 傳說）：熟練度一樣 40 場、金幣降到 15,000，只改造型＋特效，數值不變
+    const PROMOTED_MYTHIC = { shiba_dash: 0xf59e0b, boba_cup: 0xd6b48c, scooter_uncle: 0x22c55e, garbage_truck: 0xfacc15, isekai_truck: 0x67e8f9, mecha_walker: 0x38bdf8 };
+    Object.entries(PROMOTED_MYTHIC).forEach(([id, col]) => {
+      const c = CAR_CATALOG[id];
+      c.rarity = 'mythic';
+      for (const k in c.stats) c.stats[k] += 1;
+      c.fx = Object.assign({}, tierFx('mythic', col), c.fx);
+      const e = EVO_CARS[id];
+      if (e) EVO_CARS[id] = Object.assign({}, e, {
+        maxLvl: 1, flat: true, names: ['', e.names[2]], desc: ['', e.desc[1] + e.desc[2]],
+        1: Object.assign({}, e[1], e[2]), req: { 1: { races: EVO_REQ[2].races, coins: 15000 } }
+      });
+    });
     Object.entries(EVO_CARS).forEach(([base, e]) => {
       const b = CAR_CATALOG[base];
       for (let lvl = 1; lvl <= evoMax(base); lvl++) {
@@ -5238,7 +5286,7 @@
         const id = base + '_evo' + lvl;
         CAR_CATALOG[id] = {
           id, name: e.names[lvl], rarity: rar, starter: false, variantOf: base, evo: lvl, type: b.type,
-          stats: { speed: b.stats.speed + lvl, accel: b.stats.accel + lvl, handling: b.stats.handling + lvl, drift: b.stats.drift + lvl },
+          stats: (d => ({ speed: b.stats.speed + d, accel: b.stats.accel + d, handling: b.stats.handling + d, drift: b.stats.drift + d }))(e.flat ? 0 : lvl),
           desc: b.desc + '（進化：' + e.desc.slice(1, lvl + 1).join(' ') + '）',
           fx: Object.assign({}, b.fx, tierFx(rar, e.color), e[lvl] || {}),
           build: (g, G) => {
@@ -5375,6 +5423,112 @@
       driftFx: { kind: 'spark', color: 0xff6b6b }, wheelX: 0.9, wheelZ: 1.25, tail: 2.1
     });
 
+    // ----- 傳說：甩尾＋穩飄型「黑騎士」——消光黑騎士戰車，氮氣噴黑炎 -----
+    defCar('black_knight', '黑騎士', 'legendary', 23, 24, 24, 25, '亮面灰黑的低趴騎士戰車。車頭是頭盔面甲，兩道紅色眼縫往兩側斜開；開放式座艙配藍色的斜擋風玻璃，兩旁立著一對肩甲尖角，頭枕上一道紅色盔脊，車尾是一片像披風往後掠的尾翼。開氮氣時排氣管噴出暗紫黑色的「黑炎」。專屬「騎士穩飄」：集氣 +22%、甩尾掉速很少，連續小彎輕甩也補得滿氣。', (g, G) => {
+      const S = CM.spline;
+      const black = CM.std(0x23262d, 0.2, 0.8, { emissive: 0x120000, emissiveIntensity: 0.1 }); // 亮面灰黑
+      const gun = CM.std(0x353a44, 0.28, 0.85);
+      const redP = CM.std(0x7f0000, 0.3, 0.6, { emissive: 0x3b0000, emissiveIntensity: 0.4 });
+      const glass = CM.std(0x1e40af, 0.05, 0.9, { transparent: true, opacity: 0.7, emissive: 0x1d4ed8, emissiveIntensity: 0.3 });
+      const inside = CM.std(0x050505, 0.9, 0.1);
+      const redG = G(0xc81e1e), eyeG = G(0xe11d1d, 'steady');
+      // 車身：楔形低趴
+      const w = S([[-2.1, 0.62], [-1.7, 0.94], [-1.0, 1.0], [0, 0.9], [0.9, 0.93], [1.5, 0.86], [2.0, 0.56], [2.3, 0.18]]);
+      const top = S([[-2.1, 0.74], [-1.6, 0.86], [-0.8, 0.84], [0.3, 0.76], [1.2, 0.66], [1.9, 0.52], [2.3, 0.34]]);
+      const bot = S([[-2.1, 0.42], [-1.8, 0.22], [1.9, 0.22], [2.3, 0.28]]);
+      CM.loft(g, black, { z0: -2.1, z1: 2.3, w, top, bot, exp: S([[-2.1, 2.4], [-1.2, 3.2], [1.2, 3.2], [2.3, 2.2]]) });
+      CM.loft(g, gun, { z0: -2.05, z1: 2.22, w: z => w(z) * 1.015, top: z => bot(z) + 0.12, bot: z => bot(z) - 0.01, exp: 3.2 });
+      // 兩側紅色腰線
+      [-1, 1].forEach(sd => {
+        let prev = null;
+        for (let z = 2.05; z >= -1.95; z -= 0.25) {
+          const pt = [sd * (w(z) * 0.985 + 0.012), bot(z) + 0.17 + Math.max(0, z - 0.6) * 0.05, z];
+          if (prev) CM.seg(g, prev, pt, 0.03, redG);
+          prev = pt;
+        }
+      });
+      // 開放式座艙：往後斜的擋風玻璃（深紅黑色）、座艙內裡、座椅、後方頭枕整流罩＋紅色盔脊
+      const ws = new THREE.Mesh(new THREE.ExtrudeGeometry(CM.shape([[-0.6, 0], [0.6, 0], [0.46, 0.4], [-0.46, 0.4]]), { depth: 0.02, bevelEnabled: false }), glass);
+      ws.position.set(0, 0.72, 0.62); ws.rotation.x = -0.95; g.add(ws);
+      CM.seg(g, [-0.6, 0.73, 0.63], [-0.46, 1.05, 0.39], 0.03, gun);
+      CM.seg(g, [0.6, 0.73, 0.63], [0.46, 1.05, 0.39], 0.03, gun);
+      CM.seg(g, [-0.46, 1.05, 0.39], [0.46, 1.05, 0.39], 0.025, redG);
+      CM.box(g, 0.92, 0.04, 1.0, inside, 0, 0.8, -0.15);
+      CM.box(g, 0.48, 0.24, 0.1, redP, 0, 0.9, -0.52, -0.25, 0, 0); // 座椅椅背（低一點，不要露太多）
+      CM.box(g, 0.5, 0.06, 0.4, inside, 0, 0.83, -0.3);
+      CM.loft(g, black, { z0: -1.35, z1: -0.6,
+        w: S([[-1.35, 0.1], [-1.0, 0.3], [-0.6, 0.32]]),
+        top: S([[-1.35, 0.84], [-0.95, 0.98], [-0.6, 1.08]]), bot: () => 0.78, exp: 2.4 });
+      CM.seg(g, [0, 1.1, -0.62], [0, 0.99, -1.0], 0.04, redP);
+      CM.seg(g, [0, 0.99, -1.0], [0, 0.86, -1.32], 0.04, redP);
+      // 車頭：頭盔面甲——中央稜線、兩道往外斜開的紅色眼縫、下方格柵
+      CM.seg(g, [0, 0.58, 2.22], [0, 0.78, 1.2], 0.06, gun);
+      [-1, 1].forEach(sd => {
+        CM.seg(g, [sd * 0.14, 0.56, 2.14], [sd * 0.66, 0.66, 1.78], 0.045, eyeG);
+        CM.seg(g, [sd * 0.66, 0.66, 1.78], [sd * 0.84, 0.72, 1.45], 0.03, eyeG);
+        CM.seg(g, [sd * 0.2, 0.62, 2.05], [sd * 0.55, 0.74, 1.6], 0.05, gun); // 眉骨
+      });
+      CM.box(g, 0.9, 0.12, 0.05, CM.std(0x0a0a0a, 0.8, 0.2), 0, 0.36, 2.2);
+      for (let i = -3; i <= 3; i++) CM.box(g, 0.025, 0.1, 0.06, redP, i * 0.12, 0.36, 2.22);
+      // 肩甲尖角：座艙兩側往上、往外翹
+      const hornShape = CM.shape([[0, 0], [0.8, 0], [0.62, 0.55]]);
+      [-1, 1].forEach(sd => {
+        const geo = new THREE.ExtrudeGeometry(hornShape, { depth: 0.06, bevelEnabled: false });
+        geo.rotateY(Math.PI / 2);
+        const m = new THREE.Mesh(geo, black); m.position.set(sd * 0.72 - 0.03, 0.8, 0.25); m.rotation.z = -sd * 0.38; m.castShadow = true; g.add(m);
+        CM.seg(g, [sd * 0.72, 0.82, 0.25], [sd * 0.93, 1.32, -0.37], 0.025, redG);
+      });
+      // 披風尾翼：往後掠、下緣一片一片像破披風
+      const cape = CM.shape([[-0.95, 0], [0.95, 0], [1.05, -0.62], [0.7, -0.5], [0.35, -0.7], [0, -0.56], [-0.35, -0.7], [-0.7, -0.5], [-1.05, -0.62]]);
+      const capeGeo = new THREE.ExtrudeGeometry(cape, { depth: 0.04, bevelEnabled: false });
+      capeGeo.rotateX(Math.PI / 2);
+      const capeM = new THREE.Mesh(capeGeo, black); capeM.position.set(0, 1.08, -1.5); capeM.rotation.x = 0.14; capeM.castShadow = true; g.add(capeM);
+      CM.seg(g, [-0.95, 1.1, -1.5], [0.95, 1.1, -1.5], 0.025, redG);
+      [-1, 1].forEach(sd => CM.seg(g, [sd * 0.5, 0.8, -1.45], [sd * 0.5, 1.07, -1.6], 0.045, gun));
+      // 雙排氣管＋尾燈
+      const pipes = [];
+      [-1, 1].forEach(sd => {
+        CM.cyl(g, 0.11, 0.13, 0.3, 14, gun, sd * 0.42, 0.42, -2.08, Math.PI / 2, 0, 0);
+        const inner = addMat(0x7c3aed, 0.25);
+        CM.add(g, new THREE.CircleGeometry(0.09, 16), inner, sd * 0.42, 0.42, -2.24, 0, Math.PI, 0, false);
+        pipes.push(inner);
+        CM.seg(g, [sd * 0.62, 0.66, -2.08], [sd * 0.95, 0.62, -1.85], 0.04, eyeG);
+      });
+      CM.wheels(g, { r: 0.37, w: 0.3, x: 0.93, zf: 1.25, zr: -1.3, rimMat: redP, tire: 0x0b0b0b });
+      return (t, k, st) => {
+        const n = k.nitroTimer > 0;
+        black.emissiveIntensity = 0.12 + 0.06 * Math.sin(t * 1.4) + st.pulse * 1.5 + (n ? 0.35 : 0);
+        eyeG.color.setHex(0xff2d2d).multiplyScalar(n ? 1.4 : 0.75 + 0.2 * Math.sin(t * 2.2));
+        pipes.forEach(m => { m.opacity = n ? 0.9 : 0.25; });
+      };
+    }, {
+      legend: true, tagIcon: '⚔️', smoke: 0x3f3f46, nitro: 0x6d28d9, glow: 0x991b1b, marks: 0x7f1d1d, shock: 0x7c3aed,
+      trail: { colors: [0xef4444, 0x3b0764], minSpeed: 2, life: 0.55, width: 0.55, bySpeed: true },
+      driftFx: { kind: 'spark', color: 0xef4444, rate: 0.5 }, wheelX: 0.93, wheelZ: 1.28, tail: 2.2, nitroSound: 'knight',
+      frame: knightFrame
+    });
+    CAR_CATALOG.black_knight.type = 'knight';
+    // 黑炎：開氮氣時兩根排氣管噴暗紫黑色火焰（一般混色，才看得出黑），夾一點紅色火星
+    function knightFrame(k, st, dt, t, F) {
+      const nOn = k.nitroTimer > 0, p = k.renderPos, s = Math.sin(k.renderYaw), c = Math.cos(k.renderYaw);
+      if (nOn && !st.prevKn) F.shocks.trigger(p.x - s * 2, p.y + 0.3, p.z - c * 2, 0x7c3aed, 6, 0.5);
+      st.prevKn = nOn;
+      if (!nOn) return;
+      const low = fxLow();
+      [-1, 1].forEach(sd => {
+        const ox = p.x - s * 2.3 + c * sd * 0.42, oy = p.y + 0.42, oz = p.z - c * 2.3 - s * sd * 0.42;
+        const n = low ? 1 : 2;
+        for (let i = 0; i < n; i++) {
+          F.norm.emit({ x: ox + celRnd(0.12), y: oy + celRnd(0.12), z: oz + celRnd(0.12),
+            vx: -s * 7 + k.velocity.x * 0.55 + celRnd(1), vy: 0.6 + Math.random() * 0.8, vz: -c * 7 + k.velocity.z * 0.55 + celRnd(1),
+            color: Math.random() < 0.6 ? 0x0b0410 : 0x2e1065, size: 0.32, grow: 1.6, life: 0.32, shape: 1, alpha: 0.75, drag: 2 });
+        }
+        if (Math.random() < (low ? 0.15 : 0.35))
+          F.add.emit({ x: ox, y: oy, z: oz, vx: -s * 9 + k.velocity.x * 0.5 + celRnd(2), vy: Math.random() * 2, vz: -c * 9 + k.velocity.z * 0.5 + celRnd(2),
+            color: Math.random() < 0.5 ? 0xef4444 : 0xa855f7, size: 0.16, life: 0.3, shape: 5, rot: Math.atan2(s, c), drag: 2 });
+      });
+    }
+
     // ----- 傳說：甩尾型「潮汐」——寬體大輪拱的跑車 -----
     defCar('tide_runner', '潮汐', 'legendary', 22, 24, 24, 26, '湖水綠珍珠漆的寬體跑車。四個鼓起的大輪拱、短短的前後懸、斜背車頂一路滑到上翹的鴨尾，車頭到車尾兩條白色賽車條紋。', (g, G) => {
       const paint = CM.std(0x0d9488, 0.2, 0.6, { emissive: 0x053b37, emissiveIntensity: 0.35 });
@@ -5445,7 +5599,7 @@
       g.add(a, b, core);
       return g;
     }
-    defCar('polaris', '北極星', 'celestial', 27, 26, 27, 26, '開發者的專屬車。珍珠白懸浮飛行器，沒有輪子——四顆冰藍懸浮輪莢、水晶 X 翼、車尾一顆旋轉的雪花引擎，車頭鑲著一顆北極星。開氮氣會變形：翼展開成 X、輪莢翻成推進器；氮氣 0.55 秒後觸發「二段加速」。', (g, G) => {
+    defCar('polaris', '北極星', 'celestial', 29, 26, 27, 29, '開發者的專屬車（合成不會出，可以衝到 20 星）。珍珠白懸浮飛行器，沒有輪子——四顆冰藍懸浮輪莢、水晶 X 翼、車尾一顆旋轉的雪花引擎，車頭鑲著一顆北極星。開氮氣會變形：翼展開成 X、輪莢翻成推進器；氮氣 0.55 秒後觸發「二段加速」。', (g, G) => {
       const S = CM.spline;
       const pearl = CM.std(0xf8fbff, 0.14, 0.5, { emissive: 0xc7e6ff, emissiveIntensity: 0.08 });
       const silver = CM.std(0x6f8fc4, 0.14, 1.0, { emissive: 0x1e3a8a, emissiveIntensity: 0.18 });
@@ -5574,6 +5728,16 @@
       const orbit = [];
       for (let i = 0; i < 5; i++) { const m = polarisStarMesh(0.1, glowW); g.add(m); orbit.push(m); }
 
+      // ---- 20 星覺醒：頭上一圈星冠＋地面旋轉雪花陣 ----
+      const crown = new THREE.Group(); crown.position.set(0, 2.05, -0.1); g.add(crown);
+      const crownStars = [];
+      for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2, m = polarisStarMesh(i % 2 ? 0.07 : 0.11, glowW); m.position.set(Math.cos(a) * 0.75, 0, Math.sin(a) * 0.75); crown.add(m); crownStars.push(m); }
+      const crownGold = G(0xfde68a, 'steady');
+      const cring = new THREE.TorusGeometry(0.75, 0.018, 6, 48); cring.rotateX(Math.PI / 2);
+      CM.add(crown, cring, crownGold, 0, 0, 0, 0, 0, 0, false);
+      const sigilMat = new THREE.MeshBasicMaterial({ map: polarisSnowTex(), color: 0xfef3c7, transparent: true, opacity: 0.3, blending: THREE.AdditiveBlending, depthWrite: false });
+      const sigil = new THREE.Mesh(new THREE.PlaneGeometry(3.4, 3.4), sigilMat); sigil.rotation.x = -Math.PI / 2; sigil.position.y = 0.05; sigil.renderOrder = 2; g.add(sigil);
+      crown.visible = sigil.visible = false;
       let lastT = null, morph = 0, rollA = 0, burst = 0;
       return (t, k, st) => {
         const dt = lastT === null ? 0 : Math.min(0.1, Math.max(0, t - lastT)); lastT = t;
@@ -5625,6 +5789,19 @@
         pearl.emissiveIntensity = 0.08 + 0.05 * Math.sin(t * 1.4) + st.pulse * 1.2 + e * 0.25 + burst * 0.6;
         crystal.emissiveIntensity = 0.4 + e * 0.6 + burst * 0.8;
         glowEdge.color.setHex(stage2 ? 0xfff7d6 : 0xe0f2fe);
+        const s20 = polarisAwake(k);
+        crown.visible = sigil.visible = s20;
+        if (s20) {
+          crown.rotation.y = t * (0.8 + e * 1.2);
+          crown.position.y = 2.05 + 0.06 * Math.sin(t * 2) + 0.2 * e;
+          crown.scale.setScalar(1 + 0.25 * e + 0.4 * burst);
+          crownStars.forEach((m, i) => { m.rotation.z = t * 3 + i; m.scale.setScalar(0.85 + 0.3 * Math.abs(Math.sin(t * 3 + i))); });
+          sigil.rotation.z = -t * 0.5;
+          sigilMat.opacity = 0.2 + 0.07 * Math.sin(t * 2.5) + 0.15 * e + 0.2 * burst;
+          sigil.scale.setScalar(1 + 0.15 * e + 0.25 * burst);
+          engineGlowMat.color.setHex(stage2 ? 0xfde68a : 0xbae6fd);
+          glowEdge.color.setHex(stage2 ? 0xfde68a : 0xfff7d6);
+        }
       };
     }, {
       legend: true, tagIcon: '✦', smoke: 0xe0f2fe, nitro: 0xe0f2fe, glow: 0x7dd3fc, marks: 0xbae6fd, shock: 0xffffff,
@@ -5634,9 +5811,11 @@
       emitFx: (k, F, q) => polarisEmit(k, F, q),
       onNitro: (k, st, F) => polarisOnNitro(k, st, F)
     });
-    CAR_CATALOG.polaris.type = 'balanced';
+    CAR_CATALOG.polaris.type = 'balanced_drift'; // 星耀專屬：平衡＋甩尾雙特性
+    CAR_CATALOG.polaris.exclusive = true;        // 開發者專屬：合成不會出、可以衝到 20 星
 
     // ---- 北極星的特效 ----
+    function polarisAwake(k) { return ((k.stats && k.stats.stars) || (raceState === 'GARAGE' && typeof carStars === 'function' ? carStars('polaris') : 0)) >= 20; }
     function polarisNear(k, d = 40) { return k === playerKart || (playerKart && k.renderPos.distanceTo(playerKart.renderPos) < d); }
     function polarisOnNitro(k, st, F) {
       st.nAge = 0; st.stage2 = false;
@@ -5659,6 +5838,16 @@
         F.add.emit({ x: p.x, y: p.y + 0.9, z: p.z, vx: Math.cos(a) * sp + k.velocity.x * 0.5, vy: 1 + Math.random() * 3, vz: Math.sin(a) * sp + k.velocity.z * 0.5,
           color: i % 3 === 0 ? 0xfef3c7 : 0xffffff, size: 0.7, life: 0.7, shape: 2, spin: 4, drag: 2.2 });
       }
+      if (polarisAwake(k)) {
+        // 20 星：再一圈金色雪花貼地炸開
+        F.shocks.trigger(p.x, p.y, p.z, 0xfde68a, 24, 0.9);
+        const m = fxLow() ? 10 : 24;
+        for (let i = 0; i < m; i++) {
+          const a = i / m * Math.PI * 2, sp = 16;
+          F.add.emit({ x: p.x, y: p.y + 0.35, z: p.z, vx: Math.cos(a) * sp + k.velocity.x * 0.5, vy: 0.5, vz: Math.sin(a) * sp + k.velocity.z * 0.5,
+            color: i % 2 ? 0xfde68a : 0xffffff, size: 0.45, life: 0.55, shape: 6, spin: 4, drag: 2.5 });
+        }
+      }
       if (k === playerKart) polarisScreenFlash();
       if (polarisNear(k)) sfx.carSound('polaris2');
     }
@@ -5672,6 +5861,7 @@
           vx: -s * sp + c * side + k.velocity.x * 0.3, vy: 1 + Math.random() * 3, vz: -c * sp - s * side + k.velocity.z * 0.3,
           color: i % 2 ? 0xffffff : 0xe0f2fe, size: i % 2 ? 0.55 : 0.4, life: 0.55, shape: i % 2 ? 2 : 6, spin: 5, drag: 2 });
       }
+      if (polarisAwake(k)) F.shocks.trigger(p.x - s * 1.8, p.y, p.z - c * 1.8, 0xfde68a, 8, 0.5);
       if (polarisNear(k, 30)) sfx.carSound('polarismini');
     }
     function polarisFrame(k, st, dt, t, F) {
@@ -5726,6 +5916,12 @@
           }
         }
       }
+      // 20 星：星冠灑下金色星屑
+      if (!low && polarisAwake(k) && Math.random() < 0.35) {
+        const a = Math.random() * 6.28;
+        F.add.emit({ x: p.x + Math.cos(a) * 0.8, y: p.y + 2.05, z: p.z + Math.sin(a) * 0.8, vx: k.velocity.x * 0.8 + rnd(0.6), vy: -0.6, vz: k.velocity.z * 0.8 + rnd(0.6),
+          color: Math.random() < 0.5 ? 0xfde68a : 0xffffff, size: 0.2, life: 0.8, shape: 2, spin: 3 });
+      }
       // 平常：車身周圍飄著細雪
       if (!low && Math.random() < 0.3) F.add.emit({ x: p.x + rnd(3), y: p.y + 0.6 + Math.random() * 1.6, z: p.z + rnd(4),
         vx: k.velocity.x * 0.3 + rnd(0.5), vy: 0.3, vz: k.velocity.z * 0.3 + rnd(0.5), color: 0xffffff, size: 0.18, life: 1.0, shape: 6, spin: rnd(3), alpha: 0.85 });
@@ -5746,8 +5942,717 @@
     function polarisScreenFlash() {
       const el = document.getElementById('polarisFlash');
       if (!el) return;
+      el.style.setProperty('--fc', '224,242,254');
       el.classList.remove('go'); void el.offsetWidth; el.classList.add('go');
     }
+
+    // ==========================================================
+    // ✦ 星耀（第二批）：日冕、朔月、星河、彗星 —— 10 台傳說合成（北極星是開發者專屬，合成不會出）
+    //   每台都是「兩種類型合體」＋一個專屬機制；物理在 celestial 系統那段（Kart.update 外掛）
+    // ==========================================================
+    const CEL_TAG_COLS = {
+      corona: ['#b45309', '#fbbf24', '#fff7d6'], new_moon: ['#4c1d95', '#a78bfa', '#f5f3ff'],
+      galaxy: ['#86198f', '#f0abfc', '#e0f2fe'], comet: ['#0e7490', '#67e8f9', '#ffffff']
+    };
+    function celNear(k, d = 40) { return k === playerKart || (playerKart && k.renderPos && k.renderPos.distanceTo(playerKart.renderPos) < d); }
+    const celRnd = a => (Math.random() - 0.5) * a;
+    function celWheel(parent, sd, r, wdt, tire, hubMat, rimMat, spokeMat, nSpoke = 6) {
+      const wg = new THREE.Group(); parent.add(wg);
+      const spin = new THREE.Group(); wg.add(spin);
+      CM.cyl(spin, r, r, wdt, 26, tire, 0, 0, 0, 0, 0, Math.PI / 2);
+      const off = sd * (wdt / 2 + 0.005);
+      if (hubMat) CM.add(spin, new THREE.CircleGeometry(r * 0.62, 26), hubMat, off, 0, 0, 0, sd * Math.PI / 2, 0, false);
+      if (rimMat) CM.add(spin, new THREE.TorusGeometry(r * 0.7, 0.025, 6, 30), rimMat, off, 0, 0, 0, Math.PI / 2, 0, false);
+      for (let i = 0; i < nSpoke; i++) {
+        const a = i / nSpoke * Math.PI * 2;
+        CM.seg(spin, [off + sd * 0.005, Math.cos(a) * r * 0.18, Math.sin(a) * r * 0.18], [off + sd * 0.005, Math.cos(a) * r * 0.62, Math.sin(a) * r * 0.62], 0.035, spokeMat);
+      }
+      return { wg, spin, r };
+    }
+    const addMat = (color, opacity) => new THREE.MeshBasicMaterial({ color, transparent: true, opacity, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+
+    // ---------------------------------------------------------- 日冕（極速＋加速）
+    defCar('corona', '日冕', 'celestial', 28, 28, 25, 25, '黑曜石車身鑲金，車尾立著一圈會轉的日冕光環，十二道日珥火舌繞著一顆小太陽。踩到加速帶觸發「日蝕衝刺」：太陽被黑影吞沒、只剩一圈鑽石環，極速再提高。', (g, G) => {
+      const S = CM.spline;
+      const obsidian = CM.std(0x16121d, 0.22, 0.85, { emissive: 0x2a1200, emissiveIntensity: 0.25 });
+      const gold = CM.std(0xf5b301, 0.16, 1.0, { emissive: 0x7c2d12, emissiveIntensity: 0.12 });
+      const amber = CM.std(0x3b1d06, 0.06, 0.6, { transparent: true, opacity: 0.85, emissive: 0xf59e0b, emissiveIntensity: 0.18 });
+      const tire = CM.std(0x0f0f12, 0.85, 0);
+      const gSun = G(0xfff1b8, 'steady'), gOr = G(0xfb923c, 'breath'), gRed = G(0xf97316, 'flicker'), gGold = G(0xfde047, 'steady');
+      const root = new THREE.Group(); g.add(root);
+      const w = S([[-1.9, 0.74], [-1.4, 0.92], [-0.2, 0.86], [1.1, 0.8], [1.8, 0.56], [2.35, 0.18]]);
+      const top = S([[-1.9, 0.8], [-1.2, 0.86], [0, 0.8], [1.0, 0.68], [1.8, 0.5], [2.35, 0.34]]);
+      const bot = S([[-1.9, 0.34], [-1.5, 0.24], [1.8, 0.24], [2.35, 0.3]]);
+      CM.loft(root, obsidian, { z0: -1.9, z1: 2.35, w, top, bot, exp: 3 });
+      // 金色背甲、金色側裙
+      CM.loft(root, gold, { z0: -1.8, z1: 2.1, w: z => w(z) * 0.3, top: z => top(z) + 0.035, bot: z => top(z) - 0.1, exp: 2.4 });
+      CM.loft(root, gold, { z0: -1.85, z1: 2.25, w: z => w(z) * 1.012, top: z => bot(z) + 0.1, bot: z => bot(z) - 0.01, exp: 3.4 });
+      // 琥珀色座艙
+      CM.loft(root, amber, { z0: -0.85, z1: 0.75,
+        w: S([[-0.85, 0.16], [-0.4, 0.42], [0.2, 0.44], [0.75, 0.12]]),
+        top: S([[-0.85, 0.86], [-0.4, 1.14], [0.2, 1.16], [0.75, 0.8]]), bot: () => 0.76, exp: 2.2, n: 36, m: 28 });
+      // 側面光帶、頭燈、尾燈
+      [-1, 1].forEach(sd => {
+        let prev = null;
+        for (let z = 2.05; z >= -1.75; z -= 0.25) {
+          const pt = [sd * (w(z) + 0.014), (top(z) + bot(z)) / 2 + 0.04, z];
+          if (prev) CM.seg(root, prev, pt, 0.03, gOr);
+          prev = pt;
+        }
+        CM.seg(root, [sd * 0.14, 0.44, 2.3], [sd * 0.58, 0.52, 1.82], 0.05, gSun);
+        CM.seg(root, [sd * 0.22, 0.62, -1.93], [sd * 0.68, 0.64, -1.8], 0.05, gRed);
+        // 太陽翼：肩上兩片斜立的金翼
+        const fin = new THREE.Mesh(new THREE.ExtrudeGeometry(CM.shape([[0, 0], [0.7, 0.06], [0.18, 0.44]]), { depth: 0.03, bevelEnabled: false }), gold);
+        fin.geometry.rotateY(Math.PI / 2);
+        fin.position.set(sd * 0.62, 0.8, -0.35); fin.rotation.z = -sd * 0.55; fin.castShadow = true; root.add(fin);
+        CM.seg(root, [sd * 0.62, 0.81, -0.35], [sd * 0.86, 1.15, -0.55], 0.03, gGold);
+      });
+      // 車頭：小太陽徽記＋前鏟
+      CM.box(root, 1.3, 0.05, 0.3, gold, 0, 0.27, 2.12);
+      const emb = new THREE.Group(); root.add(emb);
+      CM.add(emb, new THREE.CircleGeometry(0.1, 20), gSun, 0, 0, 0.01, 0, 0, 0, false);
+      for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; CM.seg(emb, [Math.cos(a) * 0.12, Math.sin(a) * 0.12, 0], [Math.cos(a) * 0.2, Math.sin(a) * 0.2, 0], 0.025, gGold); }
+      emb.position.set(0, 0.5, 2.33);
+      // ---- 車尾：日冕光環 ----
+      const corona = new THREE.Group(); corona.position.set(0, 1.1, -2.05); root.add(corona);
+      const spinR = new THREE.Group(); corona.add(spinR);
+      CM.add(spinR, new THREE.TorusGeometry(0.74, 0.06, 10, 56), gold);
+      CM.add(spinR, new THREE.TorusGeometry(0.64, 0.022, 6, 56), gOr, 0, 0, 0, 0, 0, 0, false);
+      const spikes = [];
+      for (let i = 0; i < 12; i++) {
+        const a = i / 12 * Math.PI * 2, long = i % 2 === 0;
+        const sp = new THREE.Group(); sp.position.set(Math.cos(a) * 0.78, Math.sin(a) * 0.78, 0); sp.rotation.z = a - Math.PI / 2; spinR.add(sp);
+        CM.cone(sp, long ? 0.075 : 0.05, long ? 0.34 : 0.2, 8, long ? gOr : gSun, 0, long ? 0.17 : 0.1, 0);
+        spikes.push({ sp, long, ph: i });
+      }
+      const core = CM.ball(corona, 0.25, gSun, 0, 0, 0);
+      const sunGlowMat = addMat(0xfbbf24, 0.35);
+      CM.add(corona, new THREE.CircleGeometry(0.56, 40), sunGlowMat, 0, 0, 0.05, 0, 0, 0, false);
+      // 日蝕：黑色月影＋鑽石環（從車後面看得到）
+      const eclDisc = CM.add(corona, new THREE.CircleGeometry(0.28, 32), new THREE.MeshBasicMaterial({ color: 0x050308, side: THREE.DoubleSide }), 0, 0, -0.28, 0, 0, 0, false);
+      const halo = CM.add(corona, new THREE.TorusGeometry(0.31, 0.03, 8, 40), gSun, 0, 0, -0.29, 0, 0, 0, false);
+      const diamond = polarisStarMesh(0.13, gSun); diamond.position.set(0.22, 0.21, -0.31); corona.add(diamond);
+      [-1, 1].forEach(sd => CM.seg(root, [sd * 0.36, 0.74, -1.78], [sd * 0.5, 0.56, -2.05], 0.07, gold));
+      // ---- 輪子：金輻條＋太陽輪心 ----
+      const wheels = [];
+      [[0.98, 1.3], [1.0, -1.25]].forEach(([x, z]) => [-1, 1].forEach(sd => {
+        const wl = celWheel(g, sd, 0.38, 0.3, tire, gOr, gold, gSun, 8);
+        wl.wg.position.set(sd * x, 0.38, z); wheels.push(wl);
+      }));
+      let lastT = null, ecl = 0, nit = 0;
+      return (t, k, st) => {
+        const dt = lastT === null ? 0 : Math.min(0.1, Math.max(0, t - lastT)); lastT = t;
+        const sp = k.speed || 0;
+        const want = raceState === 'GARAGE' ? (Math.sin(t * 0.8) > 0.3 ? 1 : 0) : (k.celFx ? 1 : 0);
+        ecl += (want - ecl) * (1 - Math.exp(-6 * dt));
+        nit += ((k.nitroTimer > 0 ? 1 : 0) - nit) * (1 - Math.exp(-6 * dt));
+        spinR.rotation.z += dt * (0.6 + sp * 0.06 + nit * 3 + ecl * 2);
+        spikes.forEach(s => { const f = 1 + 0.2 * Math.sin(t * 7 + s.ph * 1.3) + 0.7 * nit + 0.4 * ecl; s.sp.scale.set(1, f, 1); });
+        corona.scale.setScalar(1 + 0.12 * nit + 0.08 * ecl);
+        core.scale.setScalar((1 + 0.1 * Math.sin(t * 5) + 0.3 * nit) * (1 - 0.15 * ecl));
+        eclDisc.scale.setScalar(Math.max(0.001, ecl));
+        halo.scale.setScalar(Math.max(0.001, ecl * (1 + 0.08 * Math.sin(t * 10))));
+        diamond.scale.setScalar(Math.max(0.001, ecl * (0.8 + 0.4 * Math.abs(Math.sin(t * 6)))));
+        diamond.rotation.z = t * 2;
+        sunGlowMat.opacity = 0.28 + 0.2 * nit + 0.3 * ecl + 0.05 * Math.sin(t * 6);
+        sunGlowMat.color.setHex(ecl > 0.5 ? 0xfff7d6 : 0xfbbf24);
+        wheels.forEach(wl => { wl.spin.rotation.x += sp * dt / wl.r; });
+        gold.emissiveIntensity = 0.12 + 0.08 * Math.sin(t * 1.6) + (st.pulse || 0) + 0.25 * nit + 0.3 * ecl;
+        root.rotation.z += ((k.isDrifting ? -k.driftDir * 0.06 : 0) - root.rotation.z) * (1 - Math.exp(-6 * dt));
+      };
+    }, {
+      legend: true, tagIcon: '☀', smoke: 0xfde68a, nitro: 0xfb923c, glow: 0xf59e0b, marks: 0xfb923c, shock: 0xfbbf24,
+      trail: { colors: [0xfde047, 0xb91c1c], minSpeed: 2, life: 0.5, width: 0.32, bySpeed: true, sparkle: true },
+      tail: 2.1, wheelX: 1.0, wheelZ: 1.25, nitroSound: 'corona',
+      frame: (k, st, dt, t, F) => coronaFrame(k, st, dt, t, F),
+      emitFx: (k, F, q) => celDriftSparks(k, F, q, 1.0, 1.25, [0xfde047, 0xfb923c, 0xffffff], 5)
+    });
+    function coronaFrame(k, st, dt, t, F) {
+      const low = fxLow(), p = k.renderPos, s = Math.sin(k.renderYaw), c = Math.cos(k.renderYaw);
+      const on = !!k.celFx && raceState !== 'GARAGE';
+      if (on && !st.prevCel) {
+        // 日蝕衝刺：金色＋橘色衝擊波、金色星星往外炸
+        F.shocks.trigger(p.x, p.y, p.z, 0xfde047, 15, 0.6);
+        F.shocks.trigger(p.x, p.y, p.z, 0xf97316, 9, 0.8);
+        const n = low ? 10 : 30;
+        for (let i = 0; i < n; i++) {
+          const a = i / n * Math.PI * 2, v = 9 + Math.random() * 5;
+          F.add.emit({ x: p.x, y: p.y + 1.0, z: p.z, vx: Math.cos(a) * v + k.velocity.x * 0.5, vy: 1 + Math.random() * 2, vz: Math.sin(a) * v + k.velocity.z * 0.5,
+            color: i % 3 ? 0xfde047 : 0xffffff, size: 0.6, life: 0.6, shape: 2, spin: 4, drag: 2.2 });
+        }
+        if (k === playerKart) celScreenFlash('253,224,71');
+        if (celNear(k)) sfx.carSound('corona2');
+      }
+      st.prevCel = on;
+      const mini = k.miniBoostTimer > 0;
+      if (mini && !st.prevMini) {
+        F.shocks.trigger(p.x - s * 1.8, p.y, p.z - c * 1.8, 0xfb923c, 5, 0.45);
+        if (celNear(k, 30)) sfx.carSound('polarismini');
+      }
+      st.prevMini = mini;
+      // 日冕光環的位置與平面（左右 = (c,0,-s)、上下 = y）
+      const rx = p.x - s * 2.1, ry = p.y + 1.1, rz = p.z - c * 2.1;
+      if (raceState === 'GARAGE') {
+        if (Math.random() < 0.18) { const a = Math.random() * 6.28; F.add.emit({ x: rx + c * Math.cos(a) * 0.8, y: ry + Math.sin(a) * 0.8, z: rz - s * Math.cos(a) * 0.8, vx: celRnd(0.5), vy: 0.8, vz: celRnd(0.5), color: Math.random() < 0.5 ? 0xfb923c : 0xfde047, size: 0.16, life: 1.2, shape: 5, spin: 2 }); }
+        return;
+      }
+      if (k.nitroTimer > 0) {
+        const n = low ? 1 : 2;
+        for (let i = 0; i < n; i++) {
+          F.add.emit({ x: rx + celRnd(0.4), y: ry + celRnd(0.4), z: rz + celRnd(0.4), vx: -s * (13 + Math.random() * 5) + k.velocity.x * 0.5, vy: celRnd(1.2), vz: -c * (13 + Math.random() * 5) + k.velocity.z * 0.5,
+            color: on ? (i % 2 ? 0xfff7d6 : 0xfde047) : (i % 2 ? 0xfb923c : 0xfbbf24), size: 0.42, grow: 0.8, life: 0.26, shape: 0, alpha: 0.8 });
+        }
+      }
+      // 日蝕中：鑽石環邊緣冒出白金色日珥
+      if (on && !low) {
+        for (let i = 0; i < 2; i++) {
+          const a = Math.random() * Math.PI * 2, ca = Math.cos(a), sa = Math.sin(a);
+          F.add.emit({ x: rx + c * ca * 0.78, y: ry + sa * 0.78, z: rz - s * ca * 0.78, vx: c * ca * 3 + k.velocity.x * 0.7, vy: sa * 3, vz: -s * ca * 3 + k.velocity.z * 0.7,
+            color: i ? 0xfff1b8 : 0xfde047, size: 0.3, life: 0.3, shape: 5, spin: 3 });
+        }
+      }
+      // 平常：光環邊緣偶爾飄出火星
+      if (!low && Math.random() < 0.25) {
+        const a = Math.random() * Math.PI * 2;
+        F.add.emit({ x: rx + c * Math.cos(a) * 0.85, y: ry + Math.sin(a) * 0.85, z: rz - s * Math.cos(a) * 0.85, vx: k.velocity.x * 0.5 + celRnd(1), vy: 0.6, vz: k.velocity.z * 0.5 + celRnd(1),
+          color: Math.random() < 0.5 ? 0xfb923c : 0xfde047, size: 0.16, life: 0.6, shape: 5, spin: 3 });
+      }
+    }
+    // 共用：甩尾時後輪噴粒子
+    function celDriftSparks(k, F, q, wX, wZ, cols, shape) {
+      if (!k.isDrifting || k.speed < 8) return;
+      const s = Math.sin(k.yaw), c = Math.cos(k.yaw), y = k.pos.y;
+      for (const side of [-1, 1]) {
+        if (Math.random() > q) continue;
+        const wx = k.pos.x + side * c * wX - s * wZ, wz = k.pos.z - side * s * wX - c * wZ;
+        F.add.emit({ x: wx, y: y + 0.25, z: wz, vx: -k.velocity.x * 0.15 + celRnd(4), vy: 1.5 + Math.random() * 2.5, vz: -k.velocity.z * 0.15 + celRnd(4),
+          color: cols[Math.floor(Math.random() * cols.length)], size: 0.36, life: 0.6, shape, spin: celRnd(6), grav: 4 });
+      }
+    }
+    function celScreenFlash(rgb) {
+      const el = document.getElementById('polarisFlash');
+      if (!el) return;
+      el.style.setProperty('--fc', rgb);
+      el.classList.remove('go'); void el.offsetWidth; el.classList.add('go');
+    }
+
+    // ---------------------------------------------------------- 朔月（重型＋極速）
+    defCar('new_moon', '朔月', 'celestial', 28, 25, 26, 27, '靛黑色的重裝車，一彎銀色新月從車頭跨到車尾，車尾掛著一顆引力黑球、三顆小衛星繞著轉。車身超重（×2.6）：撞到人幾乎不減速，對方直接被彈開；開氮氣時裝甲板展開、地面盪出一圈圈引力波。', (g, G) => {
+      const S = CM.spline;
+      const indigo = CM.std(0x1e1b4b, 0.2, 0.85, { emissive: 0x1e1040, emissiveIntensity: 0.25 });
+      const black = CM.std(0x0a0910, 0.35, 0.7);
+      const silver = CM.std(0xe5e7eb, 0.12, 1.0, { emissive: 0x4c1d95, emissiveIntensity: 0.08 });
+      const vglass = CM.std(0x2e1065, 0.05, 0.5, { transparent: true, opacity: 0.82, emissive: 0x7c3aed, emissiveIntensity: 0.25 });
+      const tire = CM.std(0x0c0b10, 0.85, 0);
+      const plateMat = CM.std(0x3f3a5a, 0.25, 0.9, { emissive: 0x1e1040, emissiveIntensity: 0.2 });
+      const gLav = G(0xc4b5fd, 'breath'), gVio = G(0x8b5cf6, 'steady'), gW = G(0xf5f3ff, 'steady');
+      const root = new THREE.Group(); g.add(root);
+      const w = S([[-2.0, 0.86], [-1.5, 1.0], [0, 0.98], [1.2, 0.94], [1.85, 0.74], [2.2, 0.4]]);
+      const top = S([[-2.0, 0.92], [-1.2, 0.98], [0.2, 0.92], [1.3, 0.78], [2.2, 0.52]]);
+      const bot = S([[-2.0, 0.36], [-1.6, 0.26], [1.8, 0.26], [2.2, 0.32]]);
+      CM.loft(root, indigo, { z0: -2.0, z1: 2.2, w, top, bot, exp: 3.6 });
+      CM.loft(root, black, { z0: -1.95, z1: 2.15, w: z => w(z) * 1.015, top: z => bot(z) + 0.18, bot: z => bot(z) - 0.01, exp: 4 });
+      CM.loft(root, vglass, { z0: -0.7, z1: 0.55,
+        w: S([[-0.7, 0.16], [-0.3, 0.4], [0.2, 0.42], [0.55, 0.12]]),
+        top: S([[-0.7, 0.98], [-0.3, 1.12], [0.2, 1.13], [0.55, 0.92]]), bot: () => 0.88, exp: 2.2, n: 36, m: 28 });
+      // 側面裝甲板（開氮氣會往外掀開）
+      const plates = [];
+      [-1, 1].forEach(sd => [0.95, 0.05, -0.85].forEach(z => {
+        const pv = new THREE.Group(); root.add(pv);
+        CM.box(pv, 0.06, 0.38, 0.8, plateMat, 0, -0.2, 0);
+        CM.seg(pv, [sd * 0.04, -0.37, -0.36], [sd * 0.04, -0.37, 0.36], 0.03, gLav);
+        CM.seg(pv, [sd * 0.04, -0.03, -0.36], [sd * 0.04, -0.03, 0.36], 0.02, gVio);
+        pv.position.set(sd * (w(z) + 0.03), top(z) - 0.06, z);
+        plates.push({ pv, sd });
+      }));
+      // 新月：從車頭跨到車尾的銀色弧
+      const R = 1.9, cres = [];
+      for (let i = 0; i <= 28; i++) { const a = i / 28 * Math.PI; cres.push([R * Math.cos(a), R * Math.sin(a)]); }
+      for (let i = 27; i >= 1; i--) { const a = i / 28 * Math.PI; cres.push([R * Math.cos(a), R * 0.62 * Math.sin(a)]); }
+      const cg = new THREE.ExtrudeGeometry(CM.shape(cres), { depth: 0.09, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.02, bevelSegments: 2, curveSegments: 8 });
+      cg.rotateY(-Math.PI / 2); cg.translate(0.045, 0, 0);
+      const moonArc = new THREE.Mesh(cg, silver); moonArc.castShadow = true;
+      moonArc.position.set(0, 0.7, -0.15); moonArc.scale.set(1, 0.45, 1); root.add(moonArc);
+      let prevE = null;
+      for (let i = 0; i <= 20; i++) {
+        const a = i / 20 * Math.PI, pt = [0, 0.7 + (R + 0.03) * Math.sin(a) * 0.45, -0.15 + (R + 0.03) * Math.cos(a)];
+        if (prevE) CM.seg(root, prevE, pt, 0.05, gLav);
+        prevE = pt;
+      }
+      // 車頭：新月形撞角
+      const ram = new THREE.TorusGeometry(0.78, 0.085, 8, 28, Math.PI); ram.rotateX(Math.PI / 2);
+      CM.add(root, ram, silver, 0, 0.42, 1.55);
+      const ram2 = new THREE.TorusGeometry(0.7, 0.022, 6, 28, Math.PI); ram2.rotateX(Math.PI / 2);
+      CM.add(root, ram2, gVio, 0, 0.5, 1.55, 0, 0, 0, false);
+      [-1, 1].forEach(sd => {
+        CM.seg(root, [sd * 0.16, 0.55, 2.18], [sd * 0.6, 0.62, 1.86], 0.045, gW);
+        CM.seg(root, [sd * 0.3, 0.72, -2.02], [sd * 0.78, 0.74, -1.9], 0.05, gVio);
+      });
+      // 車尾：引力黑球＋三顆小衛星
+      const orbG = new THREE.Group(); orbG.position.set(0, 1.0, -2.3); root.add(orbG);
+      const orbMat = CM.std(0x07040f, 0.1, 0.9, { emissive: 0x3b0764, emissiveIntensity: 0.6 });
+      const orb = CM.ball(orbG, 0.34, orbMat, 0, 0, 0);
+      const oring = CM.add(orbG, new THREE.TorusGeometry(0.52, 0.03, 6, 40), gLav, 0, 0, 0, 0, 0, 0, false);
+      const oring2 = CM.add(orbG, new THREE.TorusGeometry(0.62, 0.016, 6, 40), gVio, 0, 0, 0, 1.2, 0, 0, false);
+      const orbGlowMat = addMat(0x8b5cf6, 0.3);
+      CM.add(orbG, new THREE.CircleGeometry(0.6, 36), orbGlowMat, 0, 0, 0.03, 0, 0, 0, false);
+      const moons = [0, 1, 2].map(() => CM.ball(orbG, 0.07, silver, 0, 0, 0));
+      CM.seg(root, [0, 0.86, -1.95], [0, 0.95, -2.12], 0.14, black);
+      [-1, 1].forEach(sd => CM.seg(root, [sd * 0.5, 0.8, -1.92], [sd * 0.26, 0.98, -2.22], 0.07, silver));
+      // 大輪子：銀色新月輪心
+      const wheels = [];
+      [[1.02, 1.3], [1.04, -1.3]].forEach(([x, z]) => [-1, 1].forEach(sd => {
+        const wl = celWheel(g, sd, 0.44, 0.36, tire, black, gLav, silver, 5);
+        wl.wg.position.set(sd * x, 0.44, z); wheels.push(wl);
+      }));
+      let lastT = null, e = 0;
+      return (t, k, st) => {
+        const dt = lastT === null ? 0 : Math.min(0.1, Math.max(0, t - lastT)); lastT = t;
+        const sp = k.speed || 0;
+        const want = raceState === 'GARAGE' ? (Math.sin(t * 0.85) > 0.2 ? 1 : 0) : (k.nitroTimer > 0 ? 1 : 0);
+        e += (want - e) * (1 - Math.exp(-(want > e ? 6 : 3) * dt));
+        const ee = e * e * (3 - 2 * e);
+        const bump = Math.max(0, (k.moonBumpT || 0));
+        plates.forEach(pl => { pl.pv.rotation.z = pl.sd * 0.38 * ee; });
+        orbG.scale.setScalar(1 + 0.25 * ee + 0.05 * Math.sin(t * 3));
+        oring.rotation.z += dt * (1 + 3 * ee); oring2.rotation.y += dt * (2 + 3 * ee);
+        orbGlowMat.opacity = 0.25 + 0.35 * ee + 0.08 * Math.sin(t * 4) + bump * 0.6;
+        orbMat.emissiveIntensity = 0.5 + 0.6 * ee + bump;
+        moons.forEach((m, i) => {
+          const a = t * (1.4 + 2 * ee) + i * Math.PI * 2 / 3, r = 0.72 + 0.25 * ee;
+          m.position.set(Math.cos(a) * r, Math.sin(a) * r * 0.45 + Math.sin(a + i) * 0.1, Math.sin(a) * r * 0.6);
+        });
+        silver.emissiveIntensity = 0.08 + 0.3 * ee + (st.pulse || 0) + bump * 1.5;
+        wheels.forEach(wl => { wl.spin.rotation.x += sp * dt / wl.r; });
+        root.rotation.z += ((k.isDrifting ? -k.driftDir * 0.04 : 0) - root.rotation.z) * (1 - Math.exp(-5 * dt));
+      };
+    }, {
+      legend: true, tagIcon: '☾', smoke: 0xc4b5fd, nitro: 0xa78bfa, glow: 0x8b5cf6, marks: 0xa78bfa, shock: 0xc4b5fd,
+      trail: { colors: [0xc4b5fd, 0x312e81], minSpeed: 2, life: 0.5, width: 0.3, bySpeed: true, sparkle: true },
+      tail: 2.3, wheelX: 1.04, wheelZ: 1.3, nitroSound: 'moon',
+      frame: (k, st, dt, t, F) => moonFrame(k, st, dt, t, F),
+      emitFx: (k, F, q) => celDriftSparks(k, F, q, 1.04, 1.3, [0xc4b5fd, 0xf5f3ff, 0x8b5cf6], 5)
+    });
+    CAR_CATALOG.new_moon.weight = 2.6;
+    function moonFrame(k, st, dt, t, F) {
+      const low = fxLow(), p = k.renderPos, s = Math.sin(k.renderYaw), c = Math.cos(k.renderYaw);
+      if (k.moonBumpT > 0) k.moonBumpT -= dt;
+      const mini = k.miniBoostTimer > 0;
+      if (mini && !st.prevMini) { F.shocks.trigger(p.x - s * 1.8, p.y, p.z - c * 1.8, 0xc4b5fd, 5, 0.45); if (celNear(k, 30)) sfx.carSound('polarismini'); }
+      st.prevMini = mini;
+      const ox = p.x - s * 2.3, oy = p.y + 1.0, oz = p.z - c * 2.3;
+      if (raceState === 'GARAGE') {
+        if (Math.random() < 0.15) { const a = Math.random() * 6.28; F.add.emit({ x: ox + Math.cos(a) * 1.2, y: oy + celRnd(0.6), z: oz + Math.sin(a) * 1.2, vx: -Math.cos(a) * 1.0, vy: 0, vz: -Math.sin(a) * 1.0, color: 0xc4b5fd, size: 0.15, life: 1.1, shape: 0 }); }
+        return;
+      }
+      if (k.nitroTimer > 0) {
+        // 引力波：地面一圈一圈往外盪（貼地、半透明，不擋路）
+        st.ringT = (st.ringT || 0) - dt;
+        if (st.ringT <= 0 && !low) {
+          st.ringT = 0.22;
+          for (let i = 0; i < 18; i++) {
+            const a = i / 18 * Math.PI * 2;
+            F.add.emit({ x: p.x + Math.cos(a) * 1.4, y: p.y + 0.12, z: p.z + Math.sin(a) * 1.4, vx: Math.cos(a) * 6 + k.velocity.x * 0.8, vy: 0, vz: Math.sin(a) * 6 + k.velocity.z * 0.8,
+              color: i % 2 ? 0xa78bfa : 0xc4b5fd, size: 0.3, life: 0.45, shape: 0, alpha: 0.6 });
+          }
+        }
+        // 黑球被吸進去的光點
+        const n = low ? 1 : 2;
+        for (let i = 0; i < n; i++) {
+          const a = Math.random() * 6.28, r = 1.3;
+          F.add.emit({ x: ox + c * Math.cos(a) * r, y: oy + Math.sin(a) * r, z: oz - s * Math.cos(a) * r, vx: -c * Math.cos(a) * r * 4 + k.velocity.x, vy: -Math.sin(a) * r * 4, vz: s * Math.cos(a) * r * 4 + k.velocity.z,
+            color: i ? 0xf5f3ff : 0xa78bfa, size: 0.22, life: 0.25, shape: 0 });
+        }
+        F.norm.emit({ x: ox + celRnd(0.3), y: oy + celRnd(0.3), z: oz + celRnd(0.3), vx: -s * 8 + k.velocity.x * 0.5, vy: celRnd(1), vz: -c * 8 + k.velocity.z * 0.5,
+          color: 0x2e1065, size: 0.5, grow: 1.0, life: 0.35, shape: 1, alpha: 0.5 });
+      }
+      if (!low && Math.random() < 0.2) F.add.emit({ x: p.x + celRnd(3), y: p.y + 0.5 + Math.random() * 1.2, z: p.z + celRnd(4), vx: k.velocity.x * 0.4, vy: 0.2, vz: k.velocity.z * 0.4, color: 0xc4b5fd, size: 0.14, life: 0.8, shape: 2, spin: 2 });
+    }
+    // 撞車：朔月撞人時一圈紫色衝擊波＋悶響
+    function celOnBump(a, b) {
+      for (const k of [a, b]) {
+        if (carBase(k.typeId) !== 'new_moon' || !k.renderPos || !CarFX.ready) continue;
+        const o = k === a ? b : a, p = k.renderPos;
+        k.moonBumpT = 0.5;
+        CarFX.shocks.trigger((p.x + o.renderPos.x) / 2, p.y, (p.z + o.renderPos.z) / 2, 0xc4b5fd, 7, 0.45);
+        for (let i = 0; i < 14; i++) {
+          const an = Math.random() * 6.28, v = 4 + Math.random() * 5;
+          CarFX.add.emit({ x: (p.x + o.renderPos.x) / 2, y: p.y + 0.6, z: (p.z + o.renderPos.z) / 2, vx: Math.cos(an) * v, vy: 2 + Math.random() * 3, vz: Math.sin(an) * v,
+            color: i % 2 ? 0xf5f3ff : 0xa78bfa, size: 0.3, life: 0.5, shape: 5, grav: 6 });
+        }
+        if (celNear(k, 30)) sfx.carSound('moonbump');
+      }
+    }
+
+    // ---------------------------------------------------------- 星河（甩尾＋加速）
+    function galaxyNebulaTex() {
+      const t = CM.canvasTex(256, 128, (x, w, h) => {
+        const gr = x.createLinearGradient(0, 0, w, h);
+        gr.addColorStop(0, '#1e1b4b'); gr.addColorStop(0.35, '#581c87'); gr.addColorStop(0.6, '#831843'); gr.addColorStop(0.85, '#1e3a8a'); gr.addColorStop(1, '#0f172a');
+        x.fillStyle = gr; x.fillRect(0, 0, w, h);
+        for (let i = 0; i < 40; i++) {
+          const cx = Math.random() * w, cy = Math.random() * h, r = 10 + Math.random() * 30;
+          const rg = x.createRadialGradient(cx, cy, 0, cx, cy, r);
+          rg.addColorStop(0, ['rgba(244,114,182,0.28)', 'rgba(103,232,249,0.2)', 'rgba(167,139,250,0.28)'][i % 3]); rg.addColorStop(1, 'rgba(0,0,0,0)');
+          x.fillStyle = rg; x.fillRect(cx - r, cy - r, r * 2, r * 2);
+        }
+        for (let i = 0; i < 170; i++) { x.fillStyle = `rgba(255,255,255,${0.4 + Math.random() * 0.6})`; x.beginPath(); x.arc(Math.random() * w, Math.random() * h, 0.4 + Math.random() * 1.1, 0, 6.28); x.fill(); }
+      }, true);
+      t.repeat.set(0.35, 1.4);
+      return t;
+    }
+    function galaxySpiralTex() {
+      return CM.canvasTex(256, 256, (x, w, h) => {
+        x.translate(128, 128);
+        const core = x.createRadialGradient(0, 0, 0, 0, 0, 60);
+        core.addColorStop(0, 'rgba(255,255,255,1)'); core.addColorStop(0.3, 'rgba(253,230,138,0.6)'); core.addColorStop(1, 'rgba(192,132,252,0)');
+        x.fillStyle = core; x.fillRect(-128, -128, 256, 256);
+        for (let arm = 0; arm < 3; arm++) {
+          for (let i = 0; i < 260; i++) {
+            const u = i / 260, th = u * Math.PI * 3.2 + arm * Math.PI * 2 / 3, r = 8 + u * 112;
+            const px = Math.cos(th) * r + (Math.random() - 0.5) * 14 * u, py = Math.sin(th) * r + (Math.random() - 0.5) * 14 * u;
+            x.fillStyle = ['rgba(240,171,252,', 'rgba(165,243,252,', 'rgba(255,255,255,'][i % 3] + (0.9 - u * 0.6) + ')';
+            x.beginPath(); x.arc(px, py, 0.8 + Math.random() * 2.2 * (1 - u * 0.5), 0, 6.28); x.fill();
+          }
+        }
+      });
+    }
+    defCar('galaxy', '星河', 'celestial', 25, 27, 27, 27, '魟魚造型的星空飛行器，寬大的星雲翼中間隆起深紫機身，背上立著一座旋轉的銀河，後面拖著一條會甩的星尾。專屬「連甩」：小噴結束後 1.8 秒內再甩出小噴就算連甩，一段比一段強（最多三段）。', (g, G) => {
+      const S = CM.spline;
+      const tex = galaxyNebulaTex();
+      const nebula = CM.std(0xffffff, 0.3, 0.4, { map: tex, emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: 0.35 });
+      const dglass = CM.std(0x1e1b4b, 0.05, 0.5, { transparent: true, opacity: 0.8, emissive: 0xc026d3, emissiveIntensity: 0.25 });
+      const dark = CM.std(0x0f0a2e, 0.3, 0.7);
+      const gPink = G(0xf0abfc, 'breath'), gCyan = G(0x67e8f9, 'steady'), gW = G(0xffffff, 'steady'), gVio = G(0xa855f7, 'steady');
+      const root = new THREE.Group(); g.add(root);
+      const fus = CM.std(0x2e1065, 0.15, 0.9, { emissive: 0x4c1d95, emissiveIntensity: 0.22 });
+      // 翼：魟魚形、比較厚的星雲翼
+      const w = S([[-1.7, 0.3], [-1.2, 0.74], [-0.4, 1.16], [0.4, 1.1], [1.2, 0.72], [1.9, 0.36], [2.3, 0.14]]);
+      const top = S([[-1.7, 0.76], [-0.8, 0.88], [0.2, 0.9], [1.2, 0.78], [2.3, 0.52]]);
+      const bot = S([[-1.7, 0.5], [-1.0, 0.32], [1.6, 0.32], [2.3, 0.4]]);
+      CM.loft(root, nebula, { z0: -1.7, z1: 2.3, w, top, bot, exp: S([[-1.7, 2.4], [0, 2.2], [2.3, 2.4]]) });
+      CM.loft(root, dark, { z0: -1.6, z1: 2.2, w: z => w(z) * 0.55, top: z => bot(z) + 0.1, bot: z => bot(z) - 0.04, exp: 2.6 });
+      // 中間隆起的機身（讓整台車有份量）
+      const fw = S([[-1.9, 0.22], [-1.3, 0.48], [-0.3, 0.6], [0.8, 0.56], [1.8, 0.36], [2.5, 0.12]]);
+      const ft = S([[-1.9, 0.92], [-1.1, 1.18], [-0.3, 1.26], [0.8, 1.14], [1.8, 0.86], [2.5, 0.58]]);
+      CM.loft(root, fus, { z0: -1.9, z1: 2.5, w: fw, top: ft, bot: () => 0.42, exp: 2.5 });
+      CM.loft(root, nebula, { z0: -1.7, z1: 2.3, w: z => fw(z) * 0.45, top: z => ft(z) + 0.025, bot: z => ft(z) - 0.1, exp: 2.2 }); // 背上一條星雲帶
+      [-1, 1].forEach(sd => {
+        let prev = null;
+        for (let z = 2.3; z >= -1.75; z -= 0.2) {
+          const pt = [sd * (fw(z) * 0.72 + 0.01), ft(z) - 0.08, z];
+          if (prev) CM.seg(root, prev, pt, 0.025, gPink);
+          prev = pt;
+        }
+      });
+      CM.loft(root, dglass, { z0: 0.05, z1: 1.35,
+        w: S([[0.05, 0.12], [0.4, 0.34], [0.9, 0.3], [1.35, 0.08]]),
+        top: S([[0.05, 1.22], [0.4, 1.42], [0.9, 1.36], [1.35, 1.02]]), bot: () => 1.0, exp: 2.2, n: 32, m: 26 });
+      // 翼緣光線（沿著最寬的邊）
+      [-1, 1].forEach(sd => {
+        let prev = null;
+        for (let z = 2.1; z >= -1.55; z -= 0.2) {
+          const pt = [sd * (w(z) + 0.01), (top(z) + bot(z)) / 2, z];
+          if (prev) CM.seg(root, prev, pt, 0.03, z > 0 ? gPink : gCyan);
+          prev = pt;
+        }
+      });
+      // 翼尖上翹的鰭＋星星
+      const tipStars = [];
+      [-1, 1].forEach(sd => {
+        const fin = new THREE.Mesh(new THREE.ExtrudeGeometry(CM.shape([[0, 0], [0.62, 0.06], [0.16, 0.6]]), { depth: 0.03, bevelEnabled: false }), fus);
+        fin.geometry.rotateY(Math.PI / 2);
+        fin.position.set(sd * 1.1, 0.66, 0.15); fin.rotation.z = -sd * 0.3; root.add(fin);
+        CM.seg(root, [sd * 1.1, 0.68, 0.15], [sd * 1.3, 1.22, -0.02], 0.028, gPink);
+        const ts = polarisStarMesh(0.1, gW); ts.position.set(sd * 1.31, 1.25, -0.03); root.add(ts); tipStars.push(ts);
+      });
+      // 車頭：兩支往前彎的頭鰭
+      [-1, 1].forEach(sd => {
+        const pts = [[sd * 0.34, 0.56, 2.0], [sd * 0.48, 0.58, 2.3], [sd * 0.46, 0.66, 2.6], [sd * 0.3, 0.76, 2.78]];
+        for (let i = 0; i < pts.length - 1; i++) CM.seg(root, pts[i], pts[i + 1], 0.09, fus);
+        for (let i = 0; i < pts.length - 1; i++) CM.seg(root, [pts[i][0], pts[i][1] + 0.05, pts[i][2]], [pts[i + 1][0], pts[i + 1][1] + 0.05, pts[i + 1][2]], 0.028, gCyan);
+        const hs = polarisStarMesh(0.08, gW); hs.position.set(sd * 0.3, 0.8, 2.8); root.add(hs); tipStars.push(hs);
+      });
+      // 背上的銀河盤（立在機身後段、往後仰，從後面看得到）
+      CM.cyl(root, 0.06, 0.1, 0.22, 10, fus, 0, 1.24, -1.0);
+      const disc = new THREE.Group(); disc.position.set(0, 1.4, -1.0); disc.rotation.x = -Math.PI / 2 + 0.45; root.add(disc);
+      const spiralMat = new THREE.MeshBasicMaterial({ map: galaxySpiralTex(), transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+      const spiral = CM.add(disc, new THREE.CircleGeometry(0.66, 48), spiralMat, 0, 0, 0.01, 0, 0, 0, false);
+      const dRing = CM.add(disc, new THREE.TorusGeometry(0.69, 0.025, 6, 48), gVio, 0, 0, 0, 0, 0, 0, false);
+      const dcore = CM.ball(root, 0.08, gW, 0, 1.42, -1.0);
+      // 光環輪（沒有輪胎，四個發光圓環）
+      const rings = [];
+      [[0.94, 1.25], [1.0, -1.2]].forEach(([x, z]) => [-1, 1].forEach(sd => {
+        const wg = new THREE.Group(); g.add(wg);
+        const spin = new THREE.Group(); wg.add(spin);
+        const t1 = new THREE.TorusGeometry(0.34, 0.075, 12, 32); t1.rotateY(Math.PI / 2);
+        CM.add(spin, t1, gPink, 0, 0, 0, 0, 0, 0, false);
+        const t2 = new THREE.TorusGeometry(0.23, 0.025, 6, 32); t2.rotateY(Math.PI / 2);
+        CM.add(spin, t2, gCyan, 0, 0, 0, 0, 0, 0, false);
+        const hub = new THREE.CircleGeometry(0.2, 24); hub.rotateY(Math.PI / 2);
+        CM.add(spin, hub, addMat(0xa855f7, 0.35), 0, 0, 0, 0, 0, 0, false);
+        for (let i = 0; i < 3; i++) { const a = i * Math.PI / 3; CM.seg(spin, [0, Math.cos(a) * 0.32, Math.sin(a) * 0.32], [0, -Math.cos(a) * 0.32, -Math.sin(a) * 0.32], 0.03, gW); }
+        wg.position.set(sd * x, 0.38, z);
+        CM.seg(g, [sd * (x - 0.32), 0.46, z], [sd * (x - 0.02), 0.4, z], 0.09, fus);
+        rings.push(spin);
+      }));
+      // 星尾：一節一節、會甩
+      const tailSegs = [];
+      for (let i = 0; i < 9; i++) { const m = CM.ball(root, 0.085 - i * 0.006, i % 2 ? gVio : gPink, 0, 0.8, -1.9 - i * 0.17); m.castShadow = false; tailSegs.push(m); }
+      const tailStar = polarisStarMesh(0.13, gW); root.add(tailStar);
+      const TAIL_COL = [0xffffff, 0xf0abfc, 0xa78bfa, 0x67e8f9];
+      let lastT = null, lvS = 0, roll = 0, sway = 0;
+      return (t, k, st) => {
+        const dt = lastT === null ? 0 : Math.min(0.1, Math.max(0, t - lastT)); lastT = t;
+        const sp = k.speed || 0;
+        const lv = raceState === 'GARAGE' ? Math.floor(t / 1.6) % 4 : (k.celLv || 0);
+        lvS += (lv - lvS) * (1 - Math.exp(-5 * dt));
+        const nit = k.nitroTimer > 0 ? 1 : 0;
+        root.position.y = 0.04 * Math.sin(t * 2.2);
+        root.rotation.z += ((k.isDrifting ? -k.driftDir * 0.14 : 0) - root.rotation.z) * (1 - Math.exp(-6 * dt));
+        spiral.rotation.z += dt * (0.6 + sp * 0.04 + lvS * 1.5 + nit * 2);
+        dRing.scale.setScalar(1 + 0.05 * Math.sin(t * 3) + lvS * 0.06);
+        spiralMat.opacity = 0.7 + 0.1 * lvS;
+        dcore.scale.setScalar(1 + 0.3 * Math.sin(t * 5) + lvS * 0.4);
+        roll += sp * dt / 0.3;
+        rings.forEach(r => { r.rotation.x = roll; });
+        sway += ((k.isDrifting ? k.driftDir : 0) - sway) * (1 - Math.exp(-4 * dt));
+        tailSegs.forEach((m, i) => {
+          const u = (i + 1) / tailSegs.length;
+          m.position.x = Math.sin(t * 3.2 - i * 0.55) * 0.05 * (i + 1) * 0.6 + sway * u * u * 0.8;
+          m.position.y = 0.8 + 0.03 * Math.sin(t * 2.4 - i * 0.6) + u * 0.12;
+        });
+        const last = tailSegs[tailSegs.length - 1];
+        tailStar.position.set(last.position.x * 1.1, last.position.y + 0.02, last.position.z - 0.2);
+        tailStar.rotation.z = t * 3;
+        tailStar.scale.setScalar(1 + 0.2 * Math.sin(t * 6) + lvS * 0.35);
+        tipStars.forEach((s, i) => { s.rotation.z = t * 2.5 + i; s.scale.setScalar(0.9 + 0.2 * Math.sin(t * 4 + i) + lvS * 0.2); });
+        gW.color.setHex(TAIL_COL[Math.min(3, Math.round(lvS))]);
+        nebula.emissiveIntensity = 0.35 + 0.12 * lvS + (st.pulse || 0) + nit * 0.2;
+        tex.offset.x = (t * 0.02) % 1;
+      };
+    }, {
+      legend: true, tagIcon: '✧', smoke: 0xf0abfc, nitro: 0xc084fc, glow: 0xa855f7, marks: 0xf0abfc, shock: 0xf0abfc,
+      trail: { colors: [0xf0abfc, 0x312e81], minSpeed: 2, life: 0.55, width: 0.32, bySpeed: true, sparkle: true },
+      tail: 2.0, wheelX: 0.98, wheelZ: 1.15, nitroSound: 'galaxy',
+      frame: (k, st, dt, t, F) => galaxyFrame(k, st, dt, t, F),
+      emitFx: (k, F, q) => celDriftSparks(k, F, q, 0.98, 1.15, [0xf0abfc, 0x67e8f9, 0xffffff, 0xa78bfa], 2)
+    });
+    function galaxyFrame(k, st, dt, t, F) {
+      const low = fxLow(), p = k.renderPos, s = Math.sin(k.renderYaw), c = Math.cos(k.renderYaw);
+      const mini = k.miniBoostTimer > 0;
+      if (mini && !st.prevMini && raceState !== 'GARAGE') {
+        // 連甩小噴：段數越高越大、顏色從粉 → 紫 → 青金
+        const lv = Math.max(0, (k.celLv || 0));
+        const col = [0xf0abfc, 0xf0abfc, 0xa78bfa, 0x67e8f9][lv], col2 = lv >= 3 ? 0xfde68a : 0xffffff;
+        F.shocks.trigger(p.x - s * 1.6, p.y, p.z - c * 1.6, col, 5 + lv * 3, 0.5);
+        const n = (low ? 6 : 14) + lv * (low ? 3 : 8);
+        for (let i = 0; i < n; i++) {
+          const a = i / n * Math.PI * 2, v = 5 + lv * 2 + Math.random() * 4;
+          F.add.emit({ x: p.x - s * 1.9, y: p.y + 0.7, z: p.z - c * 1.9, vx: Math.cos(a) * v + k.velocity.x * 0.4, vy: 1 + Math.random() * 2, vz: Math.sin(a) * v + k.velocity.z * 0.4,
+            color: i % 3 ? col : col2, size: 0.4 + lv * 0.08, life: 0.55, shape: 2, spin: 5, drag: 2 });
+        }
+        if (lv >= 3 && k === playerKart) celScreenFlash('240,171,252');
+        if (celNear(k, 30)) sfx.carSound(lv >= 3 ? 'galaxy3' : lv === 2 ? 'galaxy2' : 'galaxy1');
+      }
+      st.prevMini = mini;
+      if (raceState === 'GARAGE') {
+        if (Math.random() < 0.2) F.add.emit({ x: p.x + celRnd(5), y: p.y + 0.5 + Math.random() * 2, z: p.z + celRnd(6), vx: 0, vy: 0.15, vz: 0, color: [0xf0abfc, 0x67e8f9, 0xffffff][Math.floor(Math.random() * 3)], size: 0.16, life: 1.6, shape: 2, spin: 2 });
+        return;
+      }
+      if (k.nitroTimer > 0) {
+        const ex = p.x - s * 1.8, ey = p.y + 0.65, ez = p.z - c * 1.8, n = low ? 1 : 2;
+        for (let i = 0; i < n; i++) {
+          F.add.emit({ x: ex + celRnd(0.8), y: ey + celRnd(0.3), z: ez + celRnd(0.8), vx: -s * 11 + k.velocity.x * 0.5 + celRnd(2), vy: celRnd(1), vz: -c * 11 + k.velocity.z * 0.5 + celRnd(2),
+            color: [0xc084fc, 0xf0abfc, 0x67e8f9][Math.floor(Math.random() * 3)], size: 0.4, grow: 1.0, life: 0.35, shape: 1, alpha: 0.55 });
+        }
+        if (!low) F.add.emit({ x: ex + celRnd(1), y: ey + celRnd(0.4), z: ez + celRnd(1), vx: -s * 6 + k.velocity.x * 0.6, vy: 0.5, vz: -c * 6 + k.velocity.z * 0.6, color: 0xffffff, size: 0.24, life: 0.5, shape: 2, spin: 4 });
+      }
+      // 星尾末端灑星屑（連甩段數越高越多）
+      const lv = k.celLv || 0;
+      if (!low && Math.random() < 0.25 + lv * 0.2) {
+        F.add.emit({ x: p.x - s * 3.5 + celRnd(0.3), y: p.y + 0.95, z: p.z - c * 3.4 + celRnd(0.3), vx: k.velocity.x * 0.3 + celRnd(1), vy: 0.3, vz: k.velocity.z * 0.3 + celRnd(1),
+          color: [0xffffff, 0xf0abfc, 0xa78bfa, 0x67e8f9][lv], size: 0.2, life: 0.7, shape: 2, spin: 3 });
+      }
+    }
+
+    // ---------------------------------------------------------- 彗星（純極速）
+    function cometTailTex() {
+      return CM.canvasTex(32, 128, (x, w, h) => {
+        const gr = x.createLinearGradient(0, 0, 0, h);
+        gr.addColorStop(0, 'rgba(255,255,255,0.95)'); gr.addColorStop(0.3, 'rgba(165,243,252,0.6)'); gr.addColorStop(1, 'rgba(14,116,144,0)');
+        x.fillStyle = gr; x.fillRect(0, 0, w, h);
+        const side = x.createLinearGradient(0, 0, w, 0);
+        side.addColorStop(0, 'rgba(0,0,0,1)'); side.addColorStop(0.5, 'rgba(0,0,0,0)'); side.addColorStop(1, 'rgba(0,0,0,1)');
+        x.globalCompositeOperation = 'destination-out'; x.fillStyle = side; x.fillRect(0, 0, w, h);
+      });
+    }
+    defCar('comet', '彗星', 'celestial', 30, 25, 25, 26, '全遊戲最快的一台。冰白色子彈型車身配深藍浮筒，車頭包著一顆會轉的冰晶彗核和一圈光暈，車尾一對水晶尾鰭撐著尾翼，後面拖著長長的彗尾。專屬「流星衝刺」：氮氣快結束時再衝一段，極速更高。', (g, G) => {
+      const S = CM.spline;
+      const iceW = CM.std(0xf0f9ff, 0.12, 0.6, { emissive: 0x7dd3fc, emissiveIntensity: 0.1 });
+      const deep = CM.std(0x0c4a6e, 0.2, 0.9, { emissive: 0x082f49, emissiveIntensity: 0.3 });
+      const cryst = CM.std(0xcffafe, 0.02, 0.3, { transparent: true, opacity: 0.62, emissive: 0x22d3ee, emissiveIntensity: 0.5, side: THREE.DoubleSide });
+      const tglass = CM.std(0x083344, 0.05, 0.5, { transparent: true, opacity: 0.85, emissive: 0x0891b2, emissiveIntensity: 0.2 });
+      const tire = CM.std(0x0b1220, 0.85, 0);
+      const gC = G(0x67e8f9, 'breath'), gW = G(0xffffff, 'steady'), gB = G(0x38bdf8, 'steady');
+      const root = new THREE.Group(); g.add(root);
+      // 車身：子彈形、有厚度的流線車身（不再是扁平長矛）
+      const w = S([[-2.1, 0.6], [-1.6, 0.86], [-0.6, 0.86], [0.6, 0.78], [1.6, 0.58], [2.3, 0.32], [2.62, 0.1]]);
+      const top = S([[-2.1, 0.95], [-1.4, 1.06], [-0.4, 1.04], [0.8, 0.9], [1.8, 0.7], [2.62, 0.48]]);
+      const bot = S([[-2.1, 0.36], [-1.7, 0.25], [2.2, 0.25], [2.62, 0.33]]);
+      CM.loft(root, iceW, { z0: -2.1, z1: 2.62, w, top, bot, exp: S([[-2.1, 2.6], [0, 2.4], [2.62, 2.2]]) });
+      CM.loft(root, deep, { z0: -2.05, z1: 2.55, w: z => w(z) * 1.015, top: z => bot(z) + 0.17, bot: z => bot(z) - 0.01, exp: 3 });
+      CM.loft(root, deep, { z0: -1.95, z1: 2.4, w: z => w(z) * 0.14, top: z => top(z) + 0.025, bot: z => top(z) - 0.05, exp: 2 }); // 背脊深藍條
+      // 兩側浮筒：深藍色、前端有發光進氣口
+      [-1, 1].forEach(sd => {
+        CM.loft(root, deep, { z0: -1.15, z1: 0.95, x: () => sd * 0.82,
+          w: S([[-1.15, 0.12], [-0.8, 0.22], [0.5, 0.22], [0.95, 0.1]]), top: S([[-1.15, 0.62], [-0.6, 0.72], [0.5, 0.7], [0.95, 0.56]]), bot: () => 0.3, exp: 2.6, n: 28, m: 24 });
+        CM.add(root, new THREE.CircleGeometry(0.1, 20), gC, sd * 0.82, 0.52, 0.97, 0, 0, 0, false);
+        CM.seg(root, [sd * 1.04, 0.5, 0.6], [sd * 1.04, 0.56, -0.9], 0.03, gC);
+      });
+      // 大座艙
+      CM.loft(root, tglass, { z0: -1.0, z1: 0.65,
+        w: S([[-1.0, 0.16], [-0.55, 0.42], [0.1, 0.44], [0.65, 0.12]]),
+        top: S([[-1.0, 1.04], [-0.55, 1.36], [0.1, 1.38], [0.65, 0.92]]), bot: () => 0.94, exp: 2.2, n: 34, m: 28 });
+      [-1, 1].forEach(sd => {
+        let prev = null;
+        for (let z = 2.45; z >= -1.95; z -= 0.25) {
+          const pt = [sd * (w(z) + 0.012), (top(z) + bot(z)) / 2 + 0.06, z];
+          if (prev) CM.seg(root, prev, pt, 0.028, gC);
+          prev = pt;
+        }
+        CM.seg(root, [sd * 0.1, 0.46, 2.55], [sd * 0.46, 0.54, 2.0], 0.045, gW);
+      });
+      // 車頭：冰晶彗核＋光暈
+      const nucleus = new THREE.Group(); nucleus.position.set(0, 0.55, 2.74); root.add(nucleus);
+      const nuc = CM.add(nucleus, new THREE.IcosahedronGeometry(0.25, 0), cryst);
+      const nucCore = CM.add(nucleus, new THREE.IcosahedronGeometry(0.11, 0), gW, 0, 0, 0, 0, 0, 0, false);
+      const comaMat = addMat(0x7dd3fc, 0.1);
+      const coma = CM.add(nucleus, new THREE.SphereGeometry(0.29, 20, 14), comaMat, 0, 0, 0, 0, 0, 0, false);
+      // 車尾：一對直立的水晶尾鰭＋上面一片水晶尾翼
+      const finShape = CM.shape([[0, 0], [0.55, 0], [1.25, 0.75], [1.0, 0.8]]);
+      [-1, 1].forEach(sd => {
+        const geo = new THREE.ExtrudeGeometry(finShape, { depth: 0.04, bevelEnabled: false });
+        geo.rotateY(Math.PI / 2); // 形狀 x → 往後（-z）
+        const m = new THREE.Mesh(geo, cryst); m.position.set(sd * 0.46 - 0.02, 0.95, -1.15); m.rotation.z = -sd * 0.12; root.add(m);
+        CM.seg(root, [sd * 0.46, 0.97, -1.7], [sd * 0.56, 1.72, -2.4], 0.035, gW);
+      });
+      CM.box(root, 1.5, 0.04, 0.42, cryst, 0, 1.7, -2.3);
+      CM.seg(root, [-0.75, 1.73, -2.1], [0.75, 1.73, -2.1], 0.03, gC);
+      // 雙推進器
+      const thr = [];
+      [-1, 1].forEach(sd => {
+        CM.cyl(root, 0.19, 0.22, 0.4, 16, deep, sd * 0.36, 0.62, -2.15, Math.PI / 2, 0, 0);
+        const dm = addMat(0x38bdf8, 0.5);
+        CM.add(root, new THREE.CircleGeometry(0.16, 20), dm, sd * 0.36, 0.62, -2.36, 0, Math.PI, 0, false);
+        thr.push(dm);
+      });
+      // 彗尾：三條半透明光帶（細、不擋路）
+      const tailTex = cometTailTex();
+      const streamers = [];
+      [[0, 1.0, 0], [-0.4, 0.66, 0.5], [0.4, 0.66, -0.5]].forEach(([x, y, rz]) => {
+        const m = new THREE.MeshBasicMaterial({ map: tailTex, color: 0xa5f3fc, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+        const geo = new THREE.PlaneGeometry(0.34, 1.6); geo.translate(0, -0.8, 0); geo.rotateX(Math.PI / 2); // 從原點往後延伸
+        const piv = new THREE.Group(); piv.position.set(x, y, -2.25); piv.rotation.z = rz; root.add(piv);
+        const mesh = new THREE.Mesh(geo, m); piv.add(mesh);
+        streamers.push({ piv, mesh, m });
+      });
+      const wheels = [];
+      [[0.92, 1.45], [0.96, -1.4]].forEach(([x, z]) => [-1, 1].forEach(sd => {
+        const wl = celWheel(g, sd, 0.37, 0.28, tire, deep, gC, gB, 5);
+        wl.wg.position.set(sd * x, 0.37, z); wheels.push(wl);
+      }));
+      let lastT = null, dash = 0, nit = 0;
+      return (t, k, st) => {
+        const dt = lastT === null ? 0 : Math.min(0.1, Math.max(0, t - lastT)); lastT = t;
+        const sp = k.speed || 0;
+        const want = raceState === 'GARAGE' ? (Math.sin(t * 0.9) > 0.4 ? 1 : 0) : (k.celFx ? 1 : 0);
+        dash += (want - dash) * (1 - Math.exp(-7 * dt));
+        nit += ((k.nitroTimer > 0 ? 1 : 0) - nit) * (1 - Math.exp(-6 * dt));
+        nuc.rotation.x += dt * 1.3; nuc.rotation.y += dt * 2.1;
+        nucCore.scale.setScalar(1 + 0.25 * Math.sin(t * 7) + dash * 0.5);
+        coma.scale.setScalar(1 + 0.08 * Math.sin(t * 3) + 0.25 * nit + 0.4 * dash);
+        comaMat.opacity = 0.06 + 0.04 * nit + 0.06 * dash;
+        const len = raceState === 'GARAGE' ? 0.9 + 0.5 * dash : 0.5 + Math.min(1, sp / 40) * 0.6 + 0.3 * nit + 0.6 * dash;
+        streamers.forEach((s, i) => {
+          s.mesh.scale.set(1 + 0.3 * dash, len * (1 + 0.06 * Math.sin(t * 9 + i * 2)), 1);
+          s.m.opacity = 0.32 + 0.12 * nit + 0.2 * dash;
+          s.m.color.setHex(dash > 0.5 ? 0xffffff : 0xa5f3fc);
+        });
+        thr.forEach(m => { m.opacity = 0.4 + 0.4 * nit + 0.2 * dash + 0.08 * Math.sin(t * 12); m.color.setHex(dash > 0.5 ? 0xffffff : 0x38bdf8); });
+        cryst.emissiveIntensity = 0.5 + 0.4 * nit + 0.8 * dash + (st.pulse || 0);
+        wheels.forEach(wl => { wl.spin.rotation.x += sp * dt / wl.r; });
+        root.rotation.z += ((k.isDrifting ? -k.driftDir * 0.07 : 0) - root.rotation.z) * (1 - Math.exp(-6 * dt));
+      };
+    }, {
+      legend: true, tagIcon: '☄', smoke: 0xe0f2fe, nitro: 0x67e8f9, glow: 0x38bdf8, marks: 0x67e8f9, shock: 0xa5f3fc,
+      trail: { colors: [0xe0f2fe, 0x0e7490], minSpeed: 2, life: 0.7, width: 0.26, bySpeed: true, sparkle: true },
+      tail: 2.4, wheelX: 0.94, wheelZ: 1.3, nitroSound: 'comet',
+      frame: (k, st, dt, t, F) => cometFrame(k, st, dt, t, F),
+      emitFx: (k, F, q) => celDriftSparks(k, F, q, 0.94, 1.3, [0x67e8f9, 0xe0f2fe, 0xffffff], 6)
+    });
+    function cometFrame(k, st, dt, t, F) {
+      const low = fxLow(), p = k.renderPos, s = Math.sin(k.renderYaw), c = Math.cos(k.renderYaw);
+      const on = !!k.celFx && raceState !== 'GARAGE';
+      if (on && !st.prevCel) {
+        F.shocks.trigger(p.x, p.y, p.z, 0xa5f3fc, 15, 0.55);
+        F.shocks.trigger(p.x, p.y, p.z, 0xffffff, 9, 0.7);
+        const n = low ? 10 : 26;
+        for (let i = 0; i < n; i++) {
+          const sp = 10 + Math.random() * 10, side = celRnd(8);
+          F.add.emit({ x: p.x - s * 1.5, y: p.y + 0.7, z: p.z - c * 1.5, vx: -s * sp + c * side + k.velocity.x * 0.3, vy: 0.5 + Math.random() * 2, vz: -c * sp - s * side + k.velocity.z * 0.3,
+            color: i % 2 ? 0xffffff : 0x67e8f9, size: 0.5, life: 0.5, shape: 5, rot: Math.atan2(s, c), drag: 2 });
+        }
+        if (k === playerKart) celScreenFlash('165,243,252');
+        if (celNear(k)) sfx.carSound('cometdash');
+      }
+      st.prevCel = on;
+      const mini = k.miniBoostTimer > 0;
+      if (mini && !st.prevMini) { F.shocks.trigger(p.x - s * 1.8, p.y, p.z - c * 1.8, 0x67e8f9, 5, 0.45); if (celNear(k, 30)) sfx.carSound('polarismini'); }
+      st.prevMini = mini;
+      if (raceState === 'GARAGE') {
+        // 偶爾一顆小流星斜斜劃過
+        if (Math.random() < 0.03) {
+          const x0 = p.x + celRnd(6), z0 = p.z + celRnd(6);
+          for (let i = 0; i < 6; i++) F.add.emit({ x: x0 + i * 0.15, y: p.y + 3.2 - i * 0.1, z: z0, vx: -5, vy: -3, vz: 0, color: i ? 0x67e8f9 : 0xffffff, size: 0.2 - i * 0.02, life: 0.6, shape: 0 });
+        }
+        return;
+      }
+      if (k.nitroTimer > 0) {
+        const n = low ? 1 : 2;
+        for (const sd of [-1, 1]) for (let i = 0; i < n; i++) {
+          F.add.emit({ x: p.x - s * 2.4 + c * sd * 0.36 + celRnd(0.2), y: p.y + 0.62 + celRnd(0.2), z: p.z - c * 2.4 - s * sd * 0.36 + celRnd(0.2),
+            vx: -s * (14 + Math.random() * 6) + k.velocity.x * 0.5, vy: celRnd(1), vz: -c * (14 + Math.random() * 6) + k.velocity.z * 0.5,
+            color: on ? 0xffffff : (i ? 0x38bdf8 : 0x67e8f9), size: 0.32, grow: 0.6, life: 0.22, shape: 0, alpha: 0.8 });
+        }
+      }
+      // 流星衝刺中：車後拉出一條細長的光線（貼著車尾、很細）
+      if (on) {
+        for (let i = 0; i < (low ? 1 : 3); i++) {
+          const back = 2.4 + Math.random() * 1.5;
+          F.add.emit({ x: p.x - s * back + celRnd(0.2), y: p.y + 0.6 + celRnd(0.2), z: p.z - c * back + celRnd(0.2), vx: k.velocity.x * 0.6, vy: 0, vz: k.velocity.z * 0.6,
+            color: i % 2 ? 0xffffff : 0xa5f3fc, size: 0.26, life: 0.3, shape: 0, alpha: 0.9 });
+        }
+      }
+      // 彗核前方的冰屑
+      if (!low && Math.random() < 0.3) F.add.emit({ x: p.x + s * 2.8 + celRnd(0.4), y: p.y + 0.5 + celRnd(0.3), z: p.z + c * 2.8 + celRnd(0.4), vx: k.velocity.x * 0.2 + celRnd(1), vy: 0.3, vz: k.velocity.z * 0.2 + celRnd(1),
+        color: 0xe0f2fe, size: 0.15, life: 0.5, shape: 6, spin: 3 });
+    }
+
+    // 星耀開啟動畫的主題（顏色、中央圖形）
+    const CEL_THEME = {
+      polaris:  { shape: 'flake',  a: '125,211,252', b: '224,242,254', c: '#7dd3fc', sub: '開發者專屬——全世界只有這一台' },
+      corona:   { shape: 'sun',    a: '251,146,60',  b: '254,243,199', c: '#f59e0b', sub: '十台傳說、極低機率的奇蹟——日冕降臨' },
+      new_moon: { shape: 'moon',   a: '167,139,250', b: '237,233,254', c: '#8b5cf6', sub: '十台傳說、極低機率的奇蹟——新月升起' },
+      galaxy:   { shape: 'galaxy', a: '240,171,252', b: '224,231,255', c: '#c084fc', sub: '十台傳說、極低機率的奇蹟——整座銀河都是你的' },
+      comet:    { shape: 'comet',  a: '103,232,249', b: '236,254,255', c: '#22d3ee', sub: '十台傳說、極低機率的奇蹟——劃過天際的那一道光' }
+    };
+
+    CAR_CATALOG.corona.autoCollide = 1.35; CAR_CATALOG.galaxy.autoCollide = 1.4; CAR_CATALOG.new_moon.autoCollide = 1.45; CAR_CATALOG.comet.autoCollide = 1.35;
+    CAR_CATALOG.corona.type = 'speed_accel';
+    CAR_CATALOG.new_moon.type = 'heavy_speed';
+    CAR_CATALOG.galaxy.type = 'drift_accel';
+    CAR_CATALOG.comet.type = 'speed';
 
     function buildCatalogCar(cat) {
       const g = new THREE.Group();
@@ -6059,7 +6964,7 @@
             if (carId === 'aurora') {
               for (let i = 0; i <= 4; i++) gr.addColorStop(i / 4, '#' + auroraColor(t * 0.25 + i / 4, _fxCol).getHexString());
             } else {
-              const cols = rar === 'mythic' ? ['#7f1d1d', '#ef4444', '#fee2e2'] : (rar === 'celestial' ? ['#7dd3fc', '#e0f2fe', '#ffffff'] : ['#92400e', '#fbbf24', '#fffbeb']);
+              const cols = rar === 'mythic' ? ['#7f1d1d', '#ef4444', '#fee2e2'] : (rar === 'celestial' ? (CEL_TAG_COLS[carBase(carId)] || ['#7dd3fc', '#e0f2fe', '#ffffff']) : ['#92400e', '#fbbf24', '#fffbeb']);
               const p = 0.15 + 0.7 * ((t * 0.5) % 1);
               gr.addColorStop(0, cols[0]); gr.addColorStop(p - 0.15, cols[1]); gr.addColorStop(p, cols[2]);
               gr.addColorStop(p + 0.15, cols[1]); gr.addColorStop(1, cols[0]);
@@ -7223,6 +8128,13 @@
       raceEnd.finalOrder = null;
       raceEndTimerEl.style.display = 'none';
       setModalButtonsEnabled(true);
+      document.getElementById('btnModalSettle').style.display = 'none';
+    }
+    // 單人賽：自己衝線後不用等 AI，直接用目前的進度排名結算（熟練度、金幣照拿）
+    function soloSettleNow() {
+      if (net.role || raceState !== 'FINISHED' || raceEnd.ended) return false;
+      finalizeRace(computeOrder().map(k => k.id));
+      return true;
     }
     function computeOrder() { return [...karts].sort((a, b) => b.progress - a.progress); }
     function teamResult(order) {
@@ -7271,6 +8183,7 @@
     }
 
     function openGarage() {
+      if (soloSettleNow()) showToast(document.getElementById('modalRewardBadge').textContent, 3000);
       raceState = 'GARAGE';
       document.getElementById('hudTeamScore').style.display = 'none';
       raceEndTimerEl.style.display = 'none';
@@ -7286,6 +8199,7 @@
 
     function resetRace() {
       if (net.role) return; // 連線中由房主開賽
+      if (soloSettleNow()) showToast(document.getElementById('modalRewardBadge').textContent, 3000);
       resetRaceEnd();
       raceState = 'COUNTDOWN';
       countdownTimer = 3.8;
@@ -7316,9 +8230,10 @@
     function finishRace() {
       raceState = 'FINISHED';
       document.getElementById('modalRecord').innerHTML = '';
-      document.getElementById('modalRewardBadge').textContent = '⏳ 等待其他車手衝線，比賽結束後結算金幣';
+      document.getElementById('modalRewardBadge').textContent = net.role ? '⏳ 等待其他車手衝線，比賽結束後結算金幣' : '⏳ 等待其他車手衝線…（不想等可以直接結算）';
       document.getElementById('modalTotalTime').textContent = formatTime(playerKart.finishTime || playerKart.totalTime);
-      setModalButtonsEnabled(false);
+      setModalButtonsEnabled(!net.role); // 單人可以直接再戰／回車庫（會先自動結算）
+      document.getElementById('btnModalSettle').style.display = net.role ? 'none' : '';
       renderLeaderboard();
       document.getElementById('settlement-modal').classList.add('active');
     }
@@ -7379,6 +8294,7 @@
     function finalizeRace(orderIds) {
       if (raceEnd.ended) return;
       raceEnd.ended = true;
+      document.getElementById('btnModalSettle').style.display = 'none';
       const order = orderIds.map(id => karts.find(k => k.id === id)).filter(Boolean);
       karts.forEach(k => { if (!order.includes(k)) order.push(k); });
       raceEnd.finalOrder = order;
@@ -7641,6 +8557,7 @@
       if (net.role) { net.inRace = false; openGarage(); mpEls.panel.classList.remove('hidden'); renderLobby(); return; }
       openGarage();
     });
+    document.getElementById('btnModalSettle').addEventListener('click', () => soloSettleNow());
     document.getElementById('btnModalRestart').addEventListener('click', () => {
       if (net.role) { net.inRace = false; openGarage(); mpEls.panel.classList.remove('hidden'); renderLobby(); return; }
       resetRace();
@@ -7766,16 +8683,16 @@
         hudBoostAlert.textContent = '💥 START STALL! (太早按爆缸)';
         hudBoostAlert.className = 'boost-alert active stall';
       } else if (p.nitroTimer > 0) {
-        hudBoostAlert.textContent = p.polarisStage2 ? '✦ 二段加速!! ✦' : '🚀 NITRO BOOST!!';
+        hudBoostAlert.textContent = celHudText(p) || '🚀 NITRO BOOST!!';
         hudBoostAlert.className = 'boost-alert active';
       } else if (p.padBoostTimer > 0) {
-        hudBoostAlert.textContent = '⏩ 加速帶!';
+        hudBoostAlert.textContent = celHudText(p) || '⏩ 加速帶!';
         hudBoostAlert.className = 'boost-alert active';
       } else if (p.draftBoostTimer > 0) {
         hudBoostAlert.textContent = '💨 尾流加速!';
         hudBoostAlert.className = 'boost-alert active';
       } else if (p.miniBoostTimer > 0) {
-        hudBoostAlert.textContent = rocketStartStatus === 'SUCCESS' ? '⚡ ROCKET START!!' : '⚡ MINI BOOST!';
+        hudBoostAlert.textContent = celHudText(p) || (rocketStartStatus === 'SUCCESS' ? '⚡ ROCKET START!!' : '⚡ MINI BOOST!');
         hudBoostAlert.className = 'boost-alert active rocket';
       } else {
         hudBoostAlert.className = 'boost-alert';
@@ -7839,25 +8756,98 @@
     };
 
     // ==========================================================
+    // 星耀第二批的專屬機制（物理）——只在「模擬這台車的電腦」上跑；畫面用 k.celFx / k.celLv（連線時用狀態旗標同步）
+    //   日冕：踩到加速帶 → 日蝕衝刺（極速 ×1.05、加速 ×1.15）
+    //   彗星：氮氣要結束時 → 流星衝刺（再多 0.6 秒、極速 ×1.06）
+    //   星河：小噴結束後 1.8 秒內再甩出小噴 → 連甩（第 2、3 段小噴時間 ×1.25 / ×1.5、極速 +2% / +4%）
+    //   朔月：重量 ×2.6（在車款資料設定），氮氣時 celFx
+    // ==========================================================
+    const CEL_CORONA_SPEED = 1.05, CEL_COMET_DASH = 0.6, CEL_COMET_SPEED = 1.06;
+    const CEL_GALAXY_WINDOW = 1.8, CEL_GALAXY_MULT = [1, 1.25, 1.5], CEL_GALAXY_SPEED = [1, 1.02, 1.04];
+    const _kartUpdateCel = Kart.prototype.update;
+    function celRun(k, sp, ac, dt, input) {
+      const ts = k.stats.topSpeedMult, a = k.stats.accelMult;
+      k.stats.topSpeedMult = ts * sp; k.stats.accelMult = a * ac;
+      try { return _kartUpdateCel.call(k, dt, input); } finally { k.stats.topSpeedMult = ts; k.stats.accelMult = a; }
+    }
+    Kart.prototype.update = function (dt, input) {
+      const b = carBase(this.typeId);
+      if (b === 'corona') {
+        this.celLv = 0;
+        const on = this.padBoostTimer > 0;
+        this.celFx = on;
+        return on ? celRun(this, CEL_CORONA_SPEED, 1.15, dt, input) : _kartUpdateCel.call(this, dt, input);
+      }
+      if (b === 'comet') {
+        this.celLv = 0;
+        if (this.nitroTimer <= 0) this.cometDashed = false;
+        else if (!this.cometDashed && this.nitroTimer <= dt + 1e-6) { this.cometDashed = true; this.nitroTimer += CEL_COMET_DASH; }
+        const on = this.cometDashed && this.nitroTimer > 0;
+        this.celFx = on;
+        const r = on ? celRun(this, CEL_COMET_SPEED, 1.2, dt, input) : _kartUpdateCel.call(this, dt, input);
+        if (this.nitroTimer <= 0) { this.celFx = false; }
+        return r;
+      }
+      if (b === 'galaxy') {
+        const before = this.miniBoostTimer, lv = this.galaxyLv || 0;
+        const r = (before > 0 && lv > 0) ? celRun(this, CEL_GALAXY_SPEED[lv], 1.1, dt, input) : _kartUpdateCel.call(this, dt, input);
+        if (this.miniBoostTimer > before + 1e-6) {
+          const chained = this.galaxyGap !== undefined && this.galaxyGap < CEL_GALAXY_WINDOW;
+          this.galaxyLv = chained ? Math.min(2, lv + 1) : 0;
+          this.miniBoostTimer *= CEL_GALAXY_MULT[this.galaxyLv];
+          this.galaxyGap = 0;
+        } else if (this.miniBoostTimer <= 0 && !this.isDrifting) {
+          this.galaxyGap = (this.galaxyGap === undefined ? 99 : this.galaxyGap) + dt;
+          if (this.galaxyGap > CEL_GALAXY_WINDOW) this.galaxyLv = 0;
+        }
+        // 畫面用：1 = 一般小噴、2 = 連甩第二段、3 = 第三段；0 = 沒有連甩
+        this.celLv = this.galaxyLv ? this.galaxyLv + 1 : 0;
+        this.celFx = this.galaxyLv > 0 && this.miniBoostTimer > 0;
+        return r;
+      }
+      if (b === 'new_moon') {
+        this.celLv = 0;
+        const r = _kartUpdateCel.call(this, dt, input);
+        this.celFx = this.nitroTimer > 0;
+        return r;
+      }
+      this.celFx = false; this.celLv = 0;
+      return _kartUpdateCel.call(this, dt, input);
+    };
+    // HUD：專屬機制的提示字
+    function celHudText(p) {
+      const b = carBase(p.typeId);
+      if (b === 'polaris' && p.polarisStage2) return '✦ 二段加速!! ✦';
+      if (!p.celFx) return null;
+      if (b === 'comet') return '☄️ 流星衝刺!!';
+      if (b === 'corona') return '☀️ 日蝕衝刺!!';
+      if (b === 'galaxy') return `🌌 連甩 ×${p.celLv}!!`;
+      return null;
+    }
+
+    // ==========================================================
     // 星耀開啟動畫：夜空落雪 → 六道光束拼出巨大雪花 → 收成一點 → 白光爆開 → 「✦ 星 耀 ✦ 北極星」
     // ==========================================================
     function celestialReveal(carId) {
       return new Promise(done => {
         const c = CAR_CATALOG[carId] || CAR_CATALOG.polaris;
+        const th = CEL_THEME[c.id] || CEL_THEME.polaris;
         const root = document.getElementById('celestial-fx');
         const cv = document.getElementById('cxCanvas'), txt = document.getElementById('cxText');
         root.classList.remove('hidden', 'out');
         const W = cv.width = window.innerWidth, H = cv.height = window.innerHeight, ctx = cv.getContext('2d');
         const cx = W / 2, cy = H * 0.44, R = Math.min(W, H) * 0.26;
         txt.innerHTML = `<div class="cx-rar">✦ 星　耀 ✦</div><div class="cx-name">${escapeHtml(c.name)}</div>
-          <div class="cx-sub">十台傳說、極低機率的奇蹟——你是極少數擁有它的人</div><div class="cx-tap">點一下繼續</div>`;
+          <div class="cx-sub">${escapeHtml(th.sub)}</div><div class="cx-tap">點一下繼續</div>`;
         txt.className = 'cx-text';
+        txt.style.setProperty('--cxc', th.c);
         const snow = Array.from({ length: 220 }, () => ({ x: Math.random() * W, y: Math.random() * H, r: 0.6 + Math.random() * 2.4, v: 20 + Math.random() * 60, w: Math.random() * 6 }));
         const stars = Array.from({ length: 140 }, () => ({ x: Math.random() * W, y: Math.random() * H, r: 0.5 + Math.random() * 1.6, ph: Math.random() * 6 }));
         const parts = [];
         const t0 = performance.now();
         let prev = t0, arp = 0, boomed = false, textOn = false, canSkip = false, finished = false;
         const NOTES = [523, 587, 659, 784, 880, 1047, 1175, 1319, 1568];
+        const A = al => `rgba(${th.a},${al})`, B = al => `rgba(${th.b},${al})`;
         const finish = () => {
           if (finished) return;
           finished = true;
@@ -7865,19 +8855,53 @@
           setTimeout(() => { root.classList.add('hidden'); root.classList.remove('out'); done(); }, 600);
         };
         root.onclick = () => { if (canSkip) finish(); };
-        const flakePath = (k, grow) => {
-          // 雪花：6 支主幹、每支 2 對分枝，grow 0~1 依序長出來
-          for (let a = 0; a < 6; a++) {
-            ctx.save(); ctx.rotate(a * Math.PI / 3 + k);
-            const L = R * Math.min(1, grow * 1.4);
-            ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -L);
-            [[0.42, 0.26], [0.68, 0.18], [0.86, 0.1]].forEach(([at, b]) => {
-              if (grow * 1.4 < at) return;
-              const g2 = Math.min(1, (grow * 1.4 - at) * 3);
-              ctx.moveTo(0, -R * at); ctx.lineTo(R * b * g2, -R * (at + b * g2));
-              ctx.moveTo(0, -R * at); ctx.lineTo(-R * b * g2, -R * (at + b * g2));
+        // 中央圖形：依車款不同（雪花、太陽、新月、銀河、彗星），grow 0~1 慢慢長出來
+        const drawShape = (k, grow) => {
+          const gg = Math.min(1, grow * 1.4);
+          if (th.shape === 'flake') {
+            for (let a = 0; a < 6; a++) {
+              ctx.save(); ctx.rotate(a * Math.PI / 3 + k);
+              ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -R * gg);
+              [[0.42, 0.26], [0.68, 0.18], [0.86, 0.1]].forEach(([at, b]) => {
+                if (grow * 1.4 < at) return;
+                const g2 = Math.min(1, (grow * 1.4 - at) * 3);
+                ctx.moveTo(0, -R * at); ctx.lineTo(R * b * g2, -R * (at + b * g2));
+                ctx.moveTo(0, -R * at); ctx.lineTo(-R * b * g2, -R * (at + b * g2));
+              });
+              ctx.stroke(); ctx.restore();
+            }
+          } else if (th.shape === 'sun') {
+            ctx.beginPath(); ctx.arc(0, 0, R * 0.42 * gg, 0, Math.PI * 2); ctx.stroke();
+            for (let a = 0; a < 12; a++) {
+              const an = a * Math.PI / 6 + k, L = R * (0.55 + (a % 2 ? 0.25 : 0.45) * Math.min(1, Math.max(0, grow * 1.4 - 0.3) * 1.6));
+              if (grow * 1.4 < 0.3) break;
+              ctx.beginPath(); ctx.moveTo(Math.cos(an) * R * 0.52, Math.sin(an) * R * 0.52); ctx.lineTo(Math.cos(an) * L, Math.sin(an) * L); ctx.stroke();
+            }
+          } else if (th.shape === 'moon') {
+            const r = R * 0.62 * gg;
+            ctx.save(); ctx.rotate(-0.5 + k * 0.2);
+            ctx.beginPath(); ctx.arc(0, 0, r, Math.PI * 0.12, Math.PI * 1.88, false);
+            ctx.arc(r * 0.42, -r * 0.05, r * 0.8, Math.PI * 1.72, Math.PI * 0.28, true);
+            ctx.closePath(); ctx.stroke(); ctx.restore();
+          } else if (th.shape === 'galaxy') {
+            for (let arm = 0; arm < 3; arm++) {
+              ctx.beginPath();
+              const n = Math.floor(60 * gg);
+              for (let i = 0; i <= n; i++) {
+                const u = i / 60, an = u * Math.PI * 3 + arm * Math.PI * 2 / 3 + k * 2, r = R * (0.06 + u * 0.94);
+                if (i === 0) ctx.moveTo(Math.cos(an) * r, Math.sin(an) * r); else ctx.lineTo(Math.cos(an) * r, Math.sin(an) * r);
+              }
+              ctx.stroke();
+            }
+          } else {
+            // 彗星：彗核＋三條往左上拉長的尾巴
+            const hx = R * 0.35, hy = R * 0.25;
+            ctx.beginPath(); ctx.arc(hx, hy, R * 0.16 * gg, 0, Math.PI * 2); ctx.stroke();
+            [-0.16, 0, 0.16].forEach((o, i) => {
+              const L = R * (1.5 - Math.abs(o) * 2) * Math.min(1, Math.max(0, grow * 1.4 - 0.2) * 1.4);
+              const an = Math.PI * 1.2 + o;
+              ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(hx + Math.cos(an) * L, hy + Math.sin(an) * L); ctx.stroke();
             });
-            ctx.stroke(); ctx.restore();
           }
         };
         const frame = now => {
@@ -7886,41 +8910,35 @@
           ctx.globalCompositeOperation = 'source-over';
           ctx.fillStyle = `rgba(2,6,23,${Math.min(0.94, T / 0.8 * 0.94)})`;
           ctx.clearRect(0, 0, W, H); ctx.fillRect(0, 0, W, H);
-          // 星空
-          stars.forEach(s => { ctx.globalAlpha = Math.min(1, T / 1.2) * (0.4 + 0.6 * Math.abs(Math.sin(T * 2 + s.ph))); ctx.fillStyle = '#e0f2fe'; ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill(); });
-          // 落雪
+          stars.forEach(s => { ctx.globalAlpha = Math.min(1, T / 1.2) * (0.4 + 0.6 * Math.abs(Math.sin(T * 2 + s.ph))); ctx.fillStyle = th.b ? B(1) : '#e0f2fe'; ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill(); });
           snow.forEach(s => { s.y += s.v * dt; s.x += Math.sin(T + s.w) * 12 * dt; if (s.y > H + 5) { s.y = -5; s.x = Math.random() * W; }
-            ctx.globalAlpha = Math.min(1, T / 0.6) * 0.85; ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill(); });
+            ctx.globalAlpha = Math.min(1, T / 0.6) * 0.85; ctx.fillStyle = th.shape === 'flake' ? '#ffffff' : A(0.9); ctx.beginPath(); ctx.arc(s.x, s.y, s.r * (th.shape === 'flake' ? 1 : 0.6), 0, Math.PI * 2); ctx.fill(); });
           ctx.globalAlpha = 1;
           ctx.globalCompositeOperation = 'lighter';
-          // 光束＋雪花成形（1.0 ~ 3.4 秒）
           if (T > 1.0 && T < 3.9) {
             const u = Math.min(1, (T - 1.0) / 2.2);
             const shrink = T > 3.4 ? 1 - (T - 3.4) / 0.5 : 1;
             ctx.save(); ctx.translate(cx, cy); ctx.scale(shrink, shrink);
-            // 六道光束從畫面外射向中心
             for (let a = 0; a < 6; a++) {
               const ang = a * Math.PI / 3 + 0.3, far = Math.max(W, H);
               const head = far * (1 - Math.min(1, u * 1.6));
               const gx = Math.cos(ang), gy = Math.sin(ang);
               const grd = ctx.createLinearGradient(gx * far, gy * far, gx * head, gy * head);
-              grd.addColorStop(0, 'rgba(125,211,252,0)'); grd.addColorStop(1, 'rgba(224,242,254,0.9)');
+              grd.addColorStop(0, A(0)); grd.addColorStop(1, B(0.9));
               ctx.strokeStyle = grd; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(gx * far, gy * far); ctx.lineTo(gx * head, gy * head); ctx.stroke();
             }
-            ctx.lineCap = 'round';
-            ctx.shadowColor = '#7dd3fc'; ctx.shadowBlur = 30;
-            ctx.strokeStyle = 'rgba(186,230,253,0.55)'; ctx.lineWidth = 16; flakePath(T * 0.25, Math.max(0, u * 1.3 - 0.3));
-            ctx.shadowBlur = 12; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 5; flakePath(T * 0.25, Math.max(0, u * 1.3 - 0.3));
+            ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+            ctx.shadowColor = th.c; ctx.shadowBlur = 30;
+            ctx.strokeStyle = A(0.55); ctx.lineWidth = 16; drawShape(T * 0.25, Math.max(0, u * 1.3 - 0.3));
+            ctx.shadowBlur = 12; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 5; drawShape(T * 0.25, Math.max(0, u * 1.3 - 0.3));
             const coreR = 10 + 30 * u + (T > 3.4 ? 60 * (1 - shrink) : 0);
             const cg = ctx.createRadialGradient(0, 0, 0, 0, 0, coreR * 2);
-            cg.addColorStop(0, 'rgba(255,255,255,1)'); cg.addColorStop(0.4, 'rgba(224,242,254,0.6)'); cg.addColorStop(1, 'rgba(125,211,252,0)');
+            cg.addColorStop(0, 'rgba(255,255,255,1)'); cg.addColorStop(0.4, B(0.6)); cg.addColorStop(1, A(0));
             ctx.fillStyle = cg; ctx.beginPath(); ctx.arc(0, 0, coreR * 2, 0, Math.PI * 2); ctx.fill();
             ctx.restore();
-            // 越來越高的琶音
             const step = Math.floor((T - 1.0) / 0.26);
             if (step > arp - 1 && arp < NOTES.length) { sfx.tone(NOTES[arp], 0.5, 'triangle', 0.07); sfx.tone(NOTES[arp] * 2, 0.4, 'sine', 0.03); arp++; }
           }
-          // 白光爆開（3.9 秒）
           if (T >= 3.9 && !boomed) {
             boomed = true;
             sfx.boom(0.9); sfx.reveal('legendary');
@@ -7928,19 +8946,17 @@
             for (let i = 0; i < 260; i++) {
               const a = Math.random() * Math.PI * 2, v = 200 + Math.random() * 700;
               parts.push({ x: cx, y: cy, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 1, star: Math.random() < 0.35, r: 1.5 + Math.random() * 3,
-                c: ['#ffffff', '#e0f2fe', '#bae6fd', '#fef3c7'][i % 4] });
+                c: ['#ffffff', B(1), A(1), '#fef3c7'][i % 4] });
             }
           }
           if (boomed) {
             const bt = T - 3.9;
-            // 衝擊波光環
             [0, 0.18].forEach(d => { const rr = Math.max(0, bt - d) * 900; if (rr > 0 && rr < Math.max(W, H) * 1.3) {
-              ctx.strokeStyle = `rgba(224,242,254,${Math.max(0, 0.8 - bt * 0.8)})`; ctx.lineWidth = 10; ctx.beginPath(); ctx.arc(cx, cy, rr, 0, Math.PI * 2); ctx.stroke(); } });
-            // 中央一直亮著的北極星
+              ctx.strokeStyle = B(Math.max(0, 0.8 - bt * 0.8)); ctx.lineWidth = 10; ctx.beginPath(); ctx.arc(cx, cy, rr, 0, Math.PI * 2); ctx.stroke(); } });
             const sr = 70 + 10 * Math.sin(T * 3);
             ctx.save(); ctx.translate(cx, cy); ctx.rotate(T * 0.4);
             const sg = ctx.createRadialGradient(0, 0, 0, 0, 0, sr * 2.2);
-            sg.addColorStop(0, 'rgba(255,255,255,0.9)'); sg.addColorStop(0.3, 'rgba(224,242,254,0.35)'); sg.addColorStop(1, 'rgba(125,211,252,0)');
+            sg.addColorStop(0, 'rgba(255,255,255,0.9)'); sg.addColorStop(0.3, B(0.35)); sg.addColorStop(1, A(0));
             ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(0, 0, sr * 2.2, 0, Math.PI * 2); ctx.fill();
             ctx.fillStyle = '#ffffff';
             for (let a = 0; a < 4; a++) { ctx.rotate(Math.PI / 2); ctx.beginPath(); ctx.moveTo(0, -sr * 1.6); ctx.lineTo(sr * 0.14, 0); ctx.lineTo(-sr * 0.14, 0); ctx.closePath(); ctx.fill(); }
@@ -7950,7 +8966,6 @@
               if (p.star) { ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(T * 3); ctx.fillRect(-p.r * 2, -0.8, p.r * 4, 1.6); ctx.fillRect(-0.8, -p.r * 2, 1.6, p.r * 4); ctx.restore(); }
               else { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill(); } });
             ctx.globalAlpha = 1;
-            // 全白閃光淡出
             if (bt < 0.9) { ctx.globalCompositeOperation = 'source-over'; ctx.fillStyle = `rgba(255,255,255,${1 - bt / 0.9})`; ctx.fillRect(0, 0, W, H); }
             if (bt > 0.5 && !textOn) { textOn = true; txt.classList.add('on'); }
             if (bt > 2.6 && !canSkip) { canSkip = true; txt.classList.add('tap'); }
@@ -8654,7 +9669,7 @@
     // 遊戲放上網之後，把網址填在這裡（例如 'https://你的帳號.github.io/kart/kart.html'），
     // 這樣就算你是從自己電腦的檔案開遊戲，產生的邀請連結也會指向網路上的版本
     const GAME_URL = '';
-    const NET_PREFIX = 'mofish-kart-v4-'; // v4：加入道具賽（道具訊息），跟舊版不互通
+    const NET_PREFIX = 'mofish-kart-v8-'; // v8：新傳說車黑騎士；v7：特色車數值依個性重新分配；v6：六台特色車升神話；v5：星耀新車、專屬機制狀態旗標（v4 加入道具賽），跟舊版不互通
     const NET_SEND_INTERVAL = 0.05;
     const NET_INTERP_DELAY = 100;
     const MAX_RACERS = 8;
@@ -9367,7 +10382,7 @@
     // ---------- 狀態同步 ----------
     function packKart(k) {
       const f = (k.isDrifting ? 1 : 0) | (k.nitroTimer > 0 ? 2 : 0) | (k.padBoostTimer > 0 ? 4 : 0) |
-                (k.draftBoostTimer > 0 ? 8 : 0) | (k.miniBoostTimer > 0 ? 16 : 0) | (k.isFinished ? 32 : 0);
+                (k.draftBoostTimer > 0 ? 8 : 0) | (k.miniBoostTimer > 0 ? 16 : 0) | (k.isFinished ? 32 : 0) | (k.celFx ? 64 : 0) | (((k.celLv || 0) & 3) << 7);
       const r2 = v => Math.round(v * 100) / 100;
       return { id: k.id, t: Math.round(net.now()), x: r2(k.pos.x), y: r2(k.pos.y), z: r2(k.pos.z), yaw: Math.round(k.yaw * 1000) / 1000,
                vx: r2(k.velocity.x), vz: r2(k.velocity.z), f, dd: k.driftDir, lap: k.currentLap, pr: Math.round(k.progress * 10) / 10,
@@ -9428,6 +10443,7 @@
       k.padBoostTimer = (s.f & 4) ? 1 : 0;
       k.draftBoostTimer = (s.f & 8) ? 1 : 0;
       k.miniBoostTimer = (s.f & 16) ? 1 : 0;
+      k.celFx = !!(s.f & 64); k.celLv = (s.f >> 7) & 3;
       const near = findNearestCenter(k.pos, k.lastTrackIndex);
       k.lastTrackIndex = near.index;
       const tan = trackTangents[near.index];
@@ -9618,12 +10634,13 @@
     const adminCost = c => (gameData.adminFree ? 0 : c);   // 管理員免費模式
     const STAR_RATE = [1.0, 0.9, 0.8, 0.65, 0.5, 0.4, 0.3, 0.2, 0.1, 0.05]; // 衝 +1 ～ +10 的成功率
     const STAR_BONUS = 0.002;
+    const STAR_RATE_EX = [0.05, 0.05, 0.04, 0.04, 0.03, 0.03, 0.02, 0.02, 0.01, 0.01]; // 專屬車 +11 ～ +20
+    function carMaxStars(id) { const c = CAR_CATALOG[carBase(id)]; return c && c.exclusive ? 20 : 10; }
+    function starRate(cur) { return cur < 10 ? STAR_RATE[cur] : (STAR_RATE_EX[cur - 10] || 0); }
     const STAR_OVERLOAD = 0.005;   // 隱藏：每次衝星 0.5% 車子爆炸
     function carStars(id) { const b = carBase(id); return (gameData.gacha && gameData.gacha.stars && gameData.gacha.stars[b]) || 0; }
     // 分解重複的車換金幣（每款至少留 1 台）。開一箱平均只能分解回約 130 金幣，不會變成刷錢漏洞
     const DISMANTLE_VALUE = { common: 50, rare: 150, epic: 500, mythic: 1500, legendary: 5000, celestial: 50000 };
-    // 10 連抽：前 9 張固定普通，只有最後 1 張用這組機率（稀有、史詩各 +5 個百分點，神話、傳說不變）
-    const TEN_PULL_LAST_RATES = { common: 0.60, rare: 0.27, epic: 0.11, mythic: 0.019, legendary: 0.001 };
     // 每週四晚上（台灣時間 18:00～23:59）進遊戲送 20 箱，每週一次（開完會慶功）
     const THURSDAY_GIFT = { boxes: 20, weekday: 'Thu', fromHour: 18 };
     function taipeiClock(offsetDays = 0) {
@@ -9643,6 +10660,7 @@
     };
     const MERGE_TROLL_RATE = 0.05; // 每次合成（所有稀有度）有 5% 會先亮出高一階的車再炸掉，5 台全部不返還
     const gachaCars = rar => Object.values(CAR_CATALOG).filter(c => !c.starter && !c.variantOf && c.rarity === rar).map(c => c.id);
+    const mergePool = rar => gachaCars(rar).filter(id => !CAR_CATALOG[id].exclusive); // 合成結果（北極星不會出）
     function secureRandom() { const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] / 4294967296; }
     function pickOne(arr) { return arr[Math.floor(secureRandom() * arr.length)]; }
     function rollRarity(r = secureRandom()) {
@@ -9674,6 +10692,8 @@
       if (!g.stars || typeof g.stars !== 'object') g.stars = {};
       if (!g.mastery || typeof g.mastery !== 'object') g.mastery = {};
       if (!g.evo || typeof g.evo !== 'object') g.evo = {};
+      for (const b in g.evo) { const mx = evoMax(b); if (!(mx > 0)) delete g.evo[b]; else g.evo[b] = Math.max(0, Math.min(mx, Math.floor(Number(g.evo[b]) || 0))); }
+      if (!CAR_CATALOG[gameData.selectedCar]) { const b = String(gameData.selectedCar || '').replace(/_evo\d+$/, ''); gameData.selectedCar = CAR_CATALOG[b] ? evolvedId(b) : 'balanced'; }
       if (typeof g.thursdayClaim !== 'string') g.thursdayClaim = null;
       gameData.gacha = g;
       if (typeof gameData.gachaSound !== 'boolean') gameData.gachaSound = true;
@@ -9737,11 +10757,12 @@
         saveGameData();
         return { gift: THURSDAY_GIFT.boxes };
       },
-      async buyBox() {
+      async buyBox(n = 1) {
         const g = this.local();
-        if (gameData.coins < adminCost(BOX_PRICE)) throw new Error(`金幣不足（需要 ${BOX_PRICE}）`);
-        gameData.coins -= adminCost(BOX_PRICE);
-        g.boxes += 1;
+        n = Math.max(1, Math.min(10, Math.floor(n) || 1));
+        if (gameData.coins < adminCost(BOX_PRICE * n)) throw new Error(`金幣不足（需要 ${(BOX_PRICE * n).toLocaleString()}）`);
+        gameData.coins -= adminCost(BOX_PRICE * n);
+        g.boxes += n;
         saveGameData();
         return { boxes: g.boxes, coins: gameData.coins };
       },
@@ -9749,10 +10770,12 @@
         const g = this.local();
         if (g.boxes < 10) throw new Error('箱子不到 10 個');
         const ids = [];
-        for (let i = 0; i < 9; i++) ids.push(pickOne(gachaCars('common')));
-        let r = secureRandom(), acc = 0, last = 'common';
-        for (const k of RARITY_ORDER) { acc += TEN_PULL_LAST_RATES[k]; if (r < acc) { last = k; break; } }
-        ids.push(pickOne(gachaCars(last)));
+        // 10 連抽：每一抽都是獨立的單抽機率（跟開 10 次 1 箱一樣）
+        for (let i = 0; i < 10; i++) ids.push(pickOne(gachaCars(rollRarity())));
+        // 演出用：把最好的一台換到最後一枚硬幣（只換順序，不影響機率）
+        let bi = 9;
+        ids.forEach((id, i) => { if (RARITY_ORDER.indexOf(CAR_CATALOG[id].rarity) > RARITY_ORDER.indexOf(CAR_CATALOG[ids[bi]].rarity)) bi = i; });
+        [ids[bi], ids[9]] = [ids[9], ids[bi]];
         g.boxes -= 10;
         const results = ids.map(carId => {
           const isNew = !g.inventory[carId];
@@ -9805,7 +10828,7 @@
         for (const id of Object.keys(need)) { g.inventory[id] -= need[id]; if (g.inventory[id] <= 0) delete g.inventory[id]; }
         if (secureRandom() < MERGE_TROLL_RATE) {
           // 神奇機率：什麼都不給，只拿一台高一階的車出來「展示」一下
-          const teaseId = pickOne(gachaCars(rule.to));
+          const teaseId = pickOne(mergePool(rule.to));
           let unequipped = false;
           if (!ownsCar(gameData.selectedCar)) { gameData.selectedCar = 'balanced'; unequipped = true; }
           saveGameData();
@@ -9813,7 +10836,7 @@
         }
         const success = secureRandom() < rule.rate;
         const outRarity = success ? rule.to : rarity;
-        const carId = pickOne(gachaCars(outRarity));
+        const carId = pickOne(mergePool(outRarity));
         const isNew = !g.inventory[carId];
         g.inventory[carId] = (g.inventory[carId] || 0) + 1;
         let unequipped = false;
@@ -9864,12 +10887,13 @@
       async star(carId) {
         const g = this.local(), b = carBase(carId), cur = (g.stars[b] || 0);
         if (!ownsCar(b)) throw new Error('還沒有這台車');
-        if (cur >= 10) throw new Error('已經 +10 滿星了');
+        const maxSt = carMaxStars(b), ex = !!CAR_CATALOG[b].exclusive;
+        if (cur >= maxSt) throw new Error(`已經 +${maxSt} 滿星了`);
         if (gameData.coins < adminCost(STAR_COST)) throw new Error('金幣不夠（衝一次 1,000）');
         gameData.coins -= adminCost(STAR_COST);
         let result, now = cur;
         // 隱藏機制：每次衝星都有 0.5% 整台車承受不了力量而爆炸（畫面上不顯示），補償 100 箱
-        if (secureRandom() < STAR_OVERLOAD) {
+        if (!ex && secureRandom() < STAR_OVERLOAD) { // 專屬車不會爆車
           const c = CAR_CATALOG[b];
           g.stars = Object.assign({}, g.stars, { [b]: 0 });
           if (!c.starter) { g.inventory[b] = (g.inventory[b] || 1) - 1; if (g.inventory[b] <= 0) delete g.inventory[b]; }
@@ -9878,8 +10902,8 @@
           saveGameData();
           return { result: 'overload', from: cur, to: 0, lostCar: !c.starter };
         }
-        if (secureRandom() < STAR_RATE[cur]) { now = cur + 1; result = 'success'; }
-        else if (cur >= 8 && secureRandom() < 0.5) { now = 0; result = 'boom'; }
+        if (secureRandom() < starRate(cur)) { now = cur + 1; result = 'success'; }
+        else if (cur >= 8 && !ex && secureRandom() < 0.5) { now = 0; result = 'boom'; }
         else if (cur >= 5) { now = cur - 1; result = 'down'; }
         else result = 'fail';
         g.stars = Object.assign({}, g.stars, { [b]: now });
@@ -10082,7 +11106,7 @@
       const evoId = have ? evolvedId(id) : id, ev = CAR_CATALOG[evoId];
       let html = `<div class="ci-name" style="color:${have ? '#fff' : '#64748b'}">${have ? escapeHtml(carLabel(evoId)) : '???'}</div>
         <div class="ci-rar"><span style="color:${rarityCss(evoId)}">${rarityName(evoId)}${evoId !== id ? '（進化 ' + '★'.repeat(ev.evo) + '）' : ''}</span>
-          <span class="ci-own">${c.starter ? '永久擁有' : (have ? `擁有 ×${carCount(id)}` : '尚未擁有（開箱或合成取得）')}</span></div>
+          <span class="ci-own">${c.starter ? '永久擁有' : (have ? `擁有 ×${carCount(id)}` : (c.exclusive ? '開發者專屬（無法取得）' : '尚未擁有（開箱或合成取得）'))}</span></div>
         <div class="ci-trait"><b>${CAR_TRAITS[carTraitType(id)].label}</b>　${CAR_TRAITS[carTraitType(id)].desc}</div>
         <div class="ci-desc">${have ? escapeHtml(ev.desc || '') : '還沒擁有這台車，外型與名稱保密中。'}</div>`;
       for (const s of statRows(evoId)) {
@@ -10094,12 +11118,12 @@
       html += `<div class="ci-actions"><button class="btn-equip" id="btnEquip" ${(!have || equipped) ? 'disabled' : ''}>${equipped ? '✔ 已裝備' : (have ? '裝備這台車' : '🔒 尚未擁有')}</button></div>`;
       // 衝星區塊
       if (have) {
-        const st = carStars(id);
-        const stars = '★'.repeat(st) + '☆'.repeat(10 - st);
+        const st = carStars(id), maxSt = carMaxStars(id), ex = !!c.exclusive;
+        const stars = '★'.repeat(st) + '☆'.repeat(Math.max(0, maxSt - st));
         html += `<div class="ci-star"><div class="cs-t">🌟 衝星 <b>+${st}</b> <span class="cs-s">${stars}</span></div>`;
-        if (st < 10) html += `<div class="cs-d">下一星成功率 <b>${Math.round(STAR_RATE[st] * 100)}%</b>　${st >= 8 ? '<span class="bad">失敗：一半機率爆星歸零，不然掉一星</span>' : (st >= 5 ? '<span class="bad">失敗會掉一星</span>' : '失敗不會掉星')}</div>
+        if (st < maxSt) html += `<div class="cs-d">下一星成功率 <b>${Math.round(starRate(st) * 100)}%</b>　${st >= 8 && !ex ? '<span class="bad">失敗：一半機率爆星歸零，不然掉一星</span>' : (st >= 5 ? `<span class="bad">失敗會掉一星${ex ? '（專屬車不會爆星）' : ''}</span>` : '失敗不會掉星')}${ex && st < 20 ? '<br>✦ 衝到 20 星覺醒：頭上星冠、地面金色雪花陣、二段加速多一圈金色雪花' : ''}</div>
           <button class="btn-star" id="btnStar" ${gameData.coins >= adminCost(STAR_COST) ? '' : 'disabled'}>🔨 衝星（${adminCost(STAR_COST) ? STAR_COST.toLocaleString() + ' 💰' : '免費'}）</button>`;
-        else html += `<div class="cs-d">滿星！四項屬性 +2%，名牌顯示 ★10。</div>`;
+        else html += `<div class="cs-d">滿星！四項屬性 +${Math.round(maxSt * STAR_BONUS_EARLY * 100)}%，名牌顯示 ★${maxSt}。${ex ? '✦ 已覺醒：星冠＋金色雪花陣' : ''}</div>`;
         html += `</div>`;
       }
       // 進化區塊
@@ -10109,7 +11133,7 @@
           const req = evoReq(id, lvl + 1), nextRar = RARITIES[RARITY_ORDER[RARITY_ORDER.indexOf(c.rarity) + lvl + 1]];
           const okM = m >= req.races || !!gameData.adminFree, okC = gameData.coins >= adminCost(req.coins);
           html += `<div class="ci-evo"><div class="ce-t">⭐ 進化 → <b style="color:${nextRar.css}">${nextRar.name}・${escapeHtml(EVO_CARS[id].names[lvl + 1])}</b></div>
-            <div class="ce-d">${escapeHtml(EVO_CARS[id].desc[lvl + 1])}＋${nextRar.name}特效、四項屬性 +1</div>
+            <div class="ce-d">${escapeHtml(EVO_CARS[id].desc[lvl + 1])}＋${nextRar.name}特效${EVO_CARS[id].flat ? '（外型改造，數值不變）' : '、四項屬性 +1'}</div>
             <div class="ce-r"><span>熟練度</span><div class="bar"><i style="width:${Math.min(100, m / req.races * 100)}%"></i></div><span class="${okM ? 'ok' : ''}">${Math.min(m, req.races)}/${req.races} 場</span></div>
             <button class="btn-evo" id="btnEvo" ${okM && okC ? '' : 'disabled'}>⭐ 進化（${req.coins.toLocaleString()} 💰）</button></div>`;
         } else html += `<div class="ci-evo"><div class="ce-t">⭐ 已進化到最高（${'★'.repeat(lvl)}）</div><div class="ce-d">熟練度 ${m} 場</div></div>`;
@@ -10363,7 +11387,7 @@
     const tpBuyLines = ['💸 付款失敗：這遊戲根本沒有儲值功能😂', '🤡 你真的想付錢？醒醒啊', '🏧 銀行說：不要', '🛵 阿伯說：錢留著買檳榔啦', '📵 交易被你的理智擋下來了'];
     function openTrollPack() {
       const el = document.getElementById('troll-pack');
-      document.getElementById('tpImg').src = carThumb('scooter_uncle_evo2');
+      document.getElementById('tpImg').src = carThumb('scooter_uncle_evo' + evoMax('scooter_uncle'));
       const buy = document.getElementById('tpBuy');
       buy.style.transform = ''; buy.dataset.n = '0';
       el.classList.remove('hidden');
@@ -10551,9 +11575,20 @@
     // 特色車的簡單音效：[頻率, 長度, 波形, 音量, 延遲, 滑到的頻率]
     const SIMPLE_SOUNDS = {
       sigh:      [[440, 0.8, 'sine', 0.12, 0, 180]],
+      knight:    [[90, 0.7, 'sawtooth', 0.14, 0, 42], [60, 0.8, 'square', 0.06, 0.03, 35], [180, 0.35, 'sawtooth', 0.05, 0.05, 70]],
       polaris:   [[1047, 0.5, 'sine', 0.08, 0], [1319, 0.5, 'sine', 0.07, 0.07], [1568, 0.6, 'sine', 0.07, 0.14], [2093, 0.8, 'triangle', 0.05, 0.21], [300, 0.6, 'sawtooth', 0.04, 0, 900]],
       polaris2:  [[180, 0.5, 'sawtooth', 0.12, 0, 60], [1568, 0.7, 'sine', 0.08, 0.05], [2093, 0.7, 'sine', 0.07, 0.12], [2637, 0.9, 'sine', 0.06, 0.19], [3136, 1.0, 'triangle', 0.04, 0.26]],
       polarismini: [[2093, 0.18, 'sine', 0.07, 0], [2637, 0.25, 'sine', 0.06, 0.06]],
+      corona:    [[220, 0.5, 'sawtooth', 0.07, 0, 440], [659, 0.4, 'triangle', 0.06, 0.1], [880, 0.5, 'triangle', 0.05, 0.2]],
+      corona2:   [[110, 0.6, 'sawtooth', 0.1, 0, 55], [1319, 0.5, 'sine', 0.07, 0.05], [1760, 0.7, 'sine', 0.06, 0.15], [2637, 0.8, 'triangle', 0.04, 0.25]],
+      moon:      [[90, 0.7, 'sine', 0.14, 0, 45], [440, 0.6, 'sine', 0.05, 0.1, 330], [660, 0.6, 'sine', 0.04, 0.2, 495]],
+      moonbump:  [[70, 0.35, 'sine', 0.18, 0, 40], [180, 0.25, 'square', 0.05, 0, 90]],
+      galaxy:    [[784, 0.4, 'sine', 0.06, 0], [988, 0.4, 'sine', 0.06, 0.08], [1175, 0.5, 'sine', 0.05, 0.16], [1568, 0.6, 'triangle', 0.04, 0.24]],
+      galaxy1:   [[1175, 0.18, 'sine', 0.07, 0], [1568, 0.22, 'sine', 0.05, 0.05]],
+      galaxy2:   [[1319, 0.2, 'sine', 0.07, 0], [1760, 0.24, 'sine', 0.06, 0.05], [2093, 0.3, 'sine', 0.05, 0.1]],
+      galaxy3:   [[1568, 0.22, 'sine', 0.08, 0], [2093, 0.26, 'sine', 0.07, 0.05], [2637, 0.32, 'sine', 0.06, 0.1], [3136, 0.5, 'triangle', 0.05, 0.15]],
+      comet:     [[1200, 0.5, 'sawtooth', 0.04, 0, 300], [2637, 0.3, 'sine', 0.05, 0.05]],
+      cometdash: [[300, 0.5, 'sawtooth', 0.07, 0, 2400], [3136, 0.4, 'sine', 0.05, 0.2], [2093, 0.6, 'triangle', 0.04, 0.25]],
       zap:       [[2000, 0.15, 'sawtooth', 0.08, 0, 200], [1500, 0.12, 'square', 0.05, 0.12, 300]],
       clicky:    Array.from({ length: 10 }, (_, i) => [3200 + (i % 3) * 300, 0.025, 'square', 0.06, i * 0.06]),
       gulp:      [[300, 0.12, 'sine', 0.2, 0, 150], [260, 0.12, 'sine', 0.2, 0.2, 130], [880, 0.2, 'triangle', 0.1, 0.45]],
@@ -10637,7 +11672,10 @@
       document.getElementById('gOpen').disabled = gacha.busy || gameData.gacha.boxes <= 0;
       document.getElementById('gOpen').textContent = gameData.gacha.boxes > 0 ? '開 1 箱' : '沒有箱子';
       document.getElementById('gBuy').disabled = gacha.busy || gameData.coins < adminCost(BOX_PRICE);
-      document.getElementById('gOpen10').disabled = gacha.busy || gameData.gacha.boxes < 10;
+      document.getElementById('gBuy10').disabled = gacha.busy || gameData.coins < adminCost(BOX_PRICE * 10);
+      const short = tenShort();
+      document.getElementById('gOpen10').disabled = gacha.busy || !canTen();
+      document.getElementById('gOpen10').textContent = short ? `開 10 箱（差 ${short} 箱用 ${(BOX_PRICE * short).toLocaleString()} 金幣補）` : '開 10 箱';
       const dry = gameData.gacha.dryDraws || 0, cb = document.getElementById('gConsole');
       cb.style.display = dry >= CONSOLATION_EVERY ? '' : 'none';
       cb.disabled = gacha.busy;
@@ -10668,6 +11706,16 @@
       gacha.panel.classList.remove('result');
       openOverlay('gacha-panel');
       gachaIdleReel();
+      gachaRefresh();
+    }
+    // 十連抽：箱子不夠時可以直接用金幣補
+    function tenShort() { return Math.max(0, 10 - gameData.gacha.boxes); }
+    function canTen() { const n = tenShort(); return n === 0 || gameData.coins >= adminCost(BOX_PRICE * n); }
+    async function gachaBuy10() {
+      if (gacha.busy) return;
+      if (!await uiConfirm('購買箱子', `花 <b>${(BOX_PRICE * 10).toLocaleString()} 金幣</b>買 10 個箱子？<br>目前金幣：${gameData.coins.toLocaleString()}`, '購買')) return;
+      try { await gachaApi.buyBox(10); showToast('🎁 買到 10 個箱子'); sfx.tone(880, 0.15, 'triangle', 0.12); sfx.tone(1175, 0.2, 'triangle', 0.1, 0.1); }
+      catch (e) { showToast('❌ ' + e.message); }
       gachaRefresh();
     }
     async function gachaBuy() {
@@ -11000,7 +12048,7 @@
           .replace('style="--rc:', `style="animation-delay:${i * 0.07}s;--rc:`)
           .replace('</div></div>', `</div>${r.isNew ? '<span class="rnew">NEW</span>' : ''}</div>`)).join('')}</div>
         <div style="display:flex;gap:12px">
-          <button class="g-btn" id="gTenAgain" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)" ${gameData.gacha.boxes >= 10 ? '' : 'disabled'}>再開 10 箱（剩 ${gameData.gacha.boxes} 箱）</button>
+          <button class="g-btn" id="gTenAgain" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)" ${canTen() ? '' : 'disabled'}>再開 10 箱（剩 ${gameData.gacha.boxes} 箱${tenShort() ? `，差的用金幣補` : ''}）</button>
           <button class="g-btn gray" id="gTenBack">返回</button>
         </div>`;
       el.classList.add('on');
@@ -11012,6 +12060,12 @@
     }
     async function gachaOpenTen() {
       if (gacha.busy) return;
+      const short = tenShort();
+      if (short) {
+        if (!canTen()) { showToast(`❌ 箱子不到 10 個，金幣也不夠補（差 ${short} 箱）`); return; }
+        if (!await uiConfirm('用金幣補箱子', `箱子還差 <b>${short}</b> 個，花 <b>${(BOX_PRICE * short).toLocaleString()} 金幣</b>補滿再開 10 箱？<br>目前金幣：${gameData.coins.toLocaleString()}`, '補滿並開箱')) return;
+        try { await gachaApi.buyBox(short); } catch (e) { showToast('❌ ' + e.message); gachaRefresh(); return; }
+      }
       let res;
       try { res = await gachaApi.openTen(); } catch (e) { showToast('❌ ' + e.message); return; }
       gacha.busy = true;
@@ -11033,11 +12087,140 @@
     document.getElementById('gOpen').addEventListener('click', gachaOpen);
     document.getElementById('gConsole').addEventListener('click', gachaConsolation);
     document.getElementById('gBuy').addEventListener('click', gachaBuy);
+    document.getElementById('gBuy10').addEventListener('click', gachaBuy10);
     document.getElementById('gSound').addEventListener('click', () => { gameData.gachaSound = !gameData.gachaSound; saveGameData(); gachaRefresh(); });
     document.getElementById('btnSound').addEventListener('click', () => { gameData.gachaSound = !gameData.gachaSound; saveGameData(); if (gameData.gachaSound) sfx.tone(880, 0.12, 'triangle', 0.08); });
 
+    // ---------- 大廳音樂：有 music/lobby.mp3 就播那個檔案，沒有就播內建的原創小曲；進比賽淡出、回車庫淡入 ----------
+    const MUSIC_LV = [0, 0.35, 0.7];          // 關、小聲、開
+    const MUSIC_LV_NAME = ['關', '小聲', '開'];
+    const lobbyMusic = {
+      started: false, el: null, useFile: false, ctx: null, gain: null, echo: null, noise: null,
+      step: 0, nextT: 0, timer: null, vol: 0,
+      level() { const v = gameData.musicLv; return v === 0 || v === 1 || v === 2 ? v : 2; },
+      target() {
+        const g = document.getElementById('garage-screen');
+        return g && !g.classList.contains('hidden') ? MUSIC_LV[this.level()] * gameVolume() : 0;
+      },
+      start() {
+        if (this.started) return;
+        this.started = true;
+        const el = new Audio('music/lobby.mp3');
+        el.loop = true; el.volume = 0; el.preload = 'auto';
+        el.addEventListener('canplaythrough', () => {
+          if (this.useFile) return;
+          this.useFile = true; this.stopSynth();
+          el.play().catch(() => { this.useFile = false; this.startSynth(); });
+        }, { once: true });
+        el.addEventListener('error', () => { if (!this.useFile && !this.ctx) this.startSynth(); }, { once: true });
+        this.el = el;
+        setTimeout(() => { if (!this.useFile && !this.ctx) this.startSynth(); }, 1500); // 檔案不存在或載太慢：先播內建曲
+        setInterval(() => this.tick(), 100);
+      },
+      tick() {
+        const t = this.target();
+        this.vol += Math.max(-0.03, Math.min(0.03, t - this.vol)); // 約 2 秒淡入淡出
+        if (Math.abs(t - this.vol) < 0.005) this.vol = t;
+        if (this.useFile && this.el) {
+          this.el.volume = Math.max(0, Math.min(1, this.vol));
+          if (this.vol <= 0 && !this.el.paused) this.el.pause();
+          else if (this.vol > 0 && this.el.paused) this.el.play().catch(() => {});
+        } else if (this.gain) this.gain.gain.value = this.vol * 0.55;
+      },
+      // ===== 內建原創曲：C 大調、132 BPM、8 小節循環 =====
+      startSynth() {
+        try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return; }
+        const ac = this.ctx;
+        this.gain = ac.createGain(); this.gain.gain.value = 0;
+        const comp = ac.createDynamicsCompressor();
+        this.gain.connect(comp); comp.connect(ac.destination);
+        // 旋律加一點回音，比較不乾
+        const d = ac.createDelay(1), fb = ac.createGain(), wet = ac.createGain();
+        d.delayTime.value = 60 / 132 * 0.75; fb.gain.value = 0.28; wet.gain.value = 0.35;
+        d.connect(fb); fb.connect(d); d.connect(wet); wet.connect(this.gain);
+        this.echo = d;
+        const len = Math.floor(ac.sampleRate * 0.25), buf = ac.createBuffer(1, len, ac.sampleRate), ch = buf.getChannelData(0);
+        for (let i = 0; i < len; i++) ch[i] = Math.random() * 2 - 1;
+        this.noise = buf;
+        this.step = 0; this.nextT = ac.currentTime + 0.1;
+        this.timer = setInterval(() => this.schedule(), 60);
+      },
+      stopSynth() {
+        if (this.timer) clearInterval(this.timer);
+        this.timer = null;
+        if (this.ctx) { this.ctx.close().catch(() => {}); this.ctx = null; this.gain = null; }
+      },
+      schedule() {
+        const ac = this.ctx; if (!ac) return;
+        if (ac.state === 'suspended') ac.resume().catch(() => {});
+        const dt = 60 / 132 / 2;
+        if (this.vol <= 0.001) { this.nextT = ac.currentTime + 0.05; return; } // 靜音時不排音符
+        while (this.nextT < ac.currentTime + 0.25) {
+          this.playStep(this.step, this.nextT, dt);
+          this.step = (this.step + 1) % 64; this.nextT += dt;
+        }
+      },
+      note(midi, t, dur, type, vol, echo, lp) {
+        const ac = this.ctx, o = ac.createOscillator(), g = ac.createGain();
+        o.type = type; o.frequency.value = 440 * Math.pow(2, (midi - 69) / 12);
+        g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + 0.012);
+        g.gain.setTargetAtTime(0, t + dur * 0.6, dur * 0.25);
+        let n = o;
+        if (lp) { const f = ac.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = lp; o.connect(f); n = f; }
+        n.connect(g); g.connect(this.gain); if (echo) g.connect(this.echo);
+        o.start(t); o.stop(t + dur + 0.4);
+      },
+      drum(t, kind) {
+        const ac = this.ctx, g = ac.createGain();
+        if (kind === 'kick') {
+          const o = ac.createOscillator(); o.type = 'sine';
+          o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(45, t + 0.12);
+          g.gain.setValueAtTime(0.45, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+          o.connect(g); g.connect(this.gain); o.start(t); o.stop(t + 0.2); return;
+        }
+        const s = ac.createBufferSource(), f = ac.createBiquadFilter();
+        s.buffer = this.noise; f.type = 'highpass';
+        f.frequency.value = kind === 'snare' ? 1500 : 7000;
+        const v = kind === 'snare' ? 0.13 : (kind === 'hat2' ? 0.025 : 0.04), len = kind === 'snare' ? 0.13 : 0.035;
+        g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(0.001, t + len);
+        s.connect(f); f.connect(g); g.connect(this.gain); s.start(t); s.stop(t + len + 0.02);
+      },
+      playStep(i, t, dt) {
+        const M = LOBBY_MEL, bar = i >> 3, e = i & 7;
+        const m = M[i];
+        if (typeof m === 'number') { let l = 1; while (M[(i + l) % 64] === '-') l++; this.note(m, t, l * dt * 0.95, 'triangle', 0.17, true); }
+        const root = LOBBY_BASS[bar];
+        this.note(root + (e % 2 ? 12 : 0), t, dt * 0.8, 'triangle', 0.2);
+        if (e % 2) LOBBY_CHORD[bar].forEach(n => this.note(n, t, dt * 0.55, 'square', 0.022, false, 1600));
+        if (e === 0 || e === 4) this.drum(t, 'kick');
+        if (e === 2 || e === 6) this.drum(t, 'snare');
+        this.drum(t, e % 2 ? 'hat2' : 'hat');
+      }
+    };
+    // 旋律（MIDI 音高；'-' 是延長、null 是休止），每小節 8 個八分音符
+    const LOBBY_MEL = [
+      72, '-', 76, 79, 81, 79, 76, '-',
+      74, '-', 76, 72, 69, '-', 72, '-',
+      77, '-', 76, 74, 72, 74, 76, '-',
+      74, '-', '-', 71, 67, '-', null, null,
+      72, '-', 76, 79, 84, '-', 83, 81,
+      79, '-', 76, '-', 71, 74, 76, '-',
+      77, 76, 77, 81, 79, '-', 77, 76,
+      74, '-', 71, 74, 72, '-', '-', null
+    ];
+    const LOBBY_BASS = [48, 45, 41, 43, 48, 40, 41, 43];
+    const LOBBY_CHORD = [[60, 64, 67], [57, 60, 64], [57, 60, 65], [55, 59, 62], [60, 64, 67], [55, 59, 64], [57, 60, 65], [55, 59, 62]];
+    // 瀏覽器規定要先有使用者操作才能出聲
+    ['pointerdown', 'keydown'].forEach(ev => window.addEventListener(ev, () => lobbyMusic.start(), { once: true, capture: true }));
+    function renderMusicBtn() { document.getElementById('btnMusic').textContent = (lobbyMusic.level() ? '🎵' : '🔇') + ' 音樂：' + MUSIC_LV_NAME[lobbyMusic.level()]; }
+    document.getElementById('btnMusic').addEventListener('click', () => {
+      gameData.musicLv = (lobbyMusic.level() + 2) % 3; // 開 → 小聲 → 關 → 開
+      saveGameData(); renderMusicBtn(); lobbyMusic.start();
+    });
+    renderMusicBtn();
+
     // ---------- 比賽音效：引擎聲（依速度、換檔，依車款類型音色不同）、甩尾輪胎聲、氮氣噴射聲 ----------
-    const ENGINE_TONE = { speed: 78, drift: 88, balanced: 70, heavy: 46, accel: 95 };
+    const ENGINE_TONE = { speed: 78, drift: 88, balanced: 70, heavy: 46, accel: 95, knight: 50 }; // 黑騎士：低沉厚實
     const raceAudio = {
       ready: false, level: 0,
       build() {
@@ -11086,7 +12269,7 @@
         this.engGain.gain.setTargetAtTime(raceState === 'COUNTDOWN' ? 0.3 : 0.4 + Math.min(1, spd / 30) * 0.4, t, 0.1);
         const drifting = k.isDrifting && spd > 8;
         this.skid.gn.gain.setTargetAtTime(drifting ? 0.55 : 0, t, drifting ? 0.03 : 0.12);
-        this.skid.flt.frequency.setTargetAtTime(900 + spd * 18, t, 0.1);
+        this.skid.flt.frequency.setTargetAtTime((900 + spd * 18) * (k.stats && k.stats.trait === 'knight' ? 0.55 : 1), t, 0.1);
         this.jet.gn.gain.setTargetAtTime(k.nitroTimer > 0 ? 0.5 : (boost ? 0.2 : 0), t, 0.06);
       }
     };
@@ -11129,10 +12312,10 @@
       const to = RARITIES[rule.to];
       document.getElementById('mInfo').innerHTML =
         `已放入 <b>${merge.slots.length}</b> / ${mergeNeed()} 台　→　合成 1 台${rule.to === 'celestial' ? '' : '隨機的'} <b style="color:${to.css}">${to.name}</b>
-         ${rule.to === 'celestial' ? '<br><span style="color:#e0f2fe">✦ 傳說的奇蹟：成功機率極低。合成出來的是全遊戲最強的「北極星」</span>' : ''}
+         ${rule.to === 'celestial' ? '<br><span style="color:#e0f2fe">✦ 傳說的奇蹟：成功機率極低。成功會隨機拿到一台星耀：日冕、朔月、星河、彗星</span>' : ''}
          ${rule.rate < 1 ? `<br><span class="bad">有可能失敗：失敗時 ${mergeNeed()} 台車消失，退回 1 台隨機的${RARITIES[merge.tier].name}車款</span>` : ''}`;
       document.getElementById('mGo').disabled = merge.busy || merge.slots.length !== mergeNeed();
-      document.getElementById('mAuto').disabled = document.getElementById('mClear').disabled = merge.busy;
+      document.getElementById('mAuto').disabled = document.getElementById('mClear').disabled = document.getElementById('mBulk').disabled = merge.busy;
       document.getElementById('mClose').disabled = merge.busy;
     }
     function openMergePanel() {
@@ -11172,6 +12355,78 @@
       renderMerge();
     });
     document.getElementById('mClear').addEventListener('click', () => { merge.slots = []; renderMerge(); });
+    // ---------- 一鍵合成：把這個稀有度能合的全部合完（可選：合出來的繼續往上合） ----------
+    function bulkPick(tier, keep) {
+      const need = (MERGE_RULES[tier] && MERGE_RULES[tier].need) || 5;
+      const left = {};
+      gachaCars(tier).forEach(id => { left[id] = Math.max(0, carCount(id) - (keep ? 1 : 0)); });
+      const slots = [];
+      const ids = Object.keys(left).sort((a, b) => left[b] - left[a]);
+      for (const id of ids) while (slots.length < need && left[id] > 0) { slots.push(id); left[id]--; }
+      return slots.length === need ? slots : null;
+    }
+    function bulkCount(tier, keep) {
+      const need = (MERGE_RULES[tier] && MERGE_RULES[tier].need) || 5;
+      return Math.floor(gachaCars(tier).reduce((a, id) => a + Math.max(0, carCount(id) - (keep ? 1 : 0)), 0) / need);
+    }
+    document.getElementById('mBulk').addEventListener('click', async () => {
+      if (merge.busy) return;
+      const keep = document.getElementById('mKeep').checked, chain = document.getElementById('mChain').checked;
+      const start = merge.tier, first = bulkCount(start, keep);
+      if (first <= 0) { showToast(`這個稀有度可以合成的車不夠${keep ? '（每款保留 1 台）' : ''}`); return; }
+      const from = RARITIES[start], to = RARITIES[MERGE_RULES[start].to];
+      const tiers = [start];
+      if (chain && start !== 'legendary') for (let i = RARITY_ORDER.indexOf(start) + 1; i < RARITY_ORDER.indexOf('legendary'); i++) tiers.push(RARITY_ORDER[i]);
+      const ok = await uiConfirm('⚡ 一鍵合成',
+        `用 <b style="color:${from.css}">${from.name}</b> 合成 <b>${first}</b> 次 → <b style="color:${to.css}">${to.name}</b>
+         ${keep ? '（每款保留 1 台）' : '<br><span style="color:#fbbf24">不保留：可能會用掉你目前裝備的車</span>'}
+         ${tiers.length > 1 ? `<br>合出來的車會繼續往上合，一路合到<b style="color:${RARITIES.legendary.css}">傳說</b>為止` : ''}
+         ${MERGE_RULES[start].rate < 1 ? '<br><span style="color:#f87171">每一次都可能失敗（退回 1 台），也可能遇到神奇機率</span>' : ''}`, '全部合成');
+      if (!ok) return;
+      merge.busy = true; merge.slots = [];
+      renderMerge();
+      const got = {}, tally = { n: 0, ok: 0, fail: 0, troll: 0 };
+      let celestial = null;
+      try {
+        for (const tier of tiers) {
+          let guard = 0;
+          for (let slots = bulkPick(tier, keep); slots && guard < 5000; slots = bulkPick(tier, keep), guard++) {
+            const res = await gachaApi.merge(slots);
+            tally.n++;
+            if (res.troll) tally.troll++;
+            else if (res.success) { tally.ok++; got[res.carId] = (got[res.carId] || 0) + 1; if (res.rarity === 'celestial' && !celestial) celestial = res.carId; }
+            else tally.fail++;
+          }
+        }
+      } catch (e) { showToast('❌ ' + e.message); }
+      // 演出：光球＋進度條，然後列出拿到的車
+      const orb = document.getElementById('mOrb'), prog = document.getElementById('mProg'), out = document.getElementById('mResult');
+      out.innerHTML = '';
+      orb.className = 'm-orb'; orb.style.setProperty('--rc', '#fbbf24');
+      prog.style.transition = 'none'; prog.style.width = '0';
+      mergeStage(true);
+      void prog.offsetWidth;
+      prog.style.transition = 'width 1.2s ease-in'; prog.style.width = '100%';
+      for (let i = 0; i < 8; i++) sfx.tone(400 + i * 90, 0.18, 'triangle', 0.05, i * 0.14);
+      await new Promise(r => setTimeout(r, 1250));
+      if (celestial) await celestialReveal(celestial);
+      const best = Object.keys(got).reduce((a, id) => (!a || RARITY_ORDER_ALL.indexOf(CAR_CATALOG[id].rarity) > RARITY_ORDER_ALL.indexOf(CAR_CATALOG[a].rarity) ? id : a), null);
+      orb.style.setProperty('--rc', best ? RARITIES[CAR_CATALOG[best].rarity].css : '#94a3b8');
+      orb.classList.add('burst');
+      if (best) { sfx.reveal(CAR_CATALOG[best].rarity); const r = orb.getBoundingClientRect(); fx2d.burst(r.left + r.width / 2, r.top + r.height / 2, RARITY_FX[CAR_CATALOG[best].rarity], 140, 11); }
+      else sfx.fail();
+      const cards = Object.keys(got).sort((a, b) => RARITY_ORDER_ALL.indexOf(CAR_CATALOG[b].rarity) - RARITY_ORDER_ALL.indexOf(CAR_CATALOG[a].rarity))
+        .map((id, i) => `<div class="bk" style="--rc:${RARITIES[CAR_CATALOG[id].rarity].css};animation-delay:${Math.min(i, 30) * 0.04}s"><img src="${carThumb(id)}" alt="">${escapeHtml(CAR_CATALOG[id].name)}<b>×${got[id]}</b></div>`).join('');
+      out.innerHTML = `<div class="m-msg" style="color:#fbbf24">⚡ 一鍵合成完成</div>
+        <div class="m-bulk-sum">共合成 <b>${tally.n}</b> 次：✨ 成功 <b style="color:#34d399">${tally.ok}</b>　💔 失敗 <b style="color:#f87171">${tally.fail}</b>${tally.troll ? `　💥 神奇機率 <b style="color:#f87171">${tally.troll}</b>（炸掉了）` : ''}</div>
+        ${cards ? `<div class="m-bulk-grid">${cards}</div>` : '<div style="color:#94a3b8;font-weight:800">這次什麼都沒合出來……</div>'}
+        <div style="display:flex;gap:10px;margin-top:6px"><button class="g-btn gray" id="mMore">繼續合成</button></div>`;
+      if (!ownsCar(gameData.selectedCar)) { gameData.selectedCar = 'balanced'; saveGameData(); showToast('目前裝備的車已用掉，改裝備平衡型'); }
+      document.getElementById('mMore').onclick = () => { mergeStage(false); renderMerge(); };
+      merge.busy = false;
+      renderMerge();
+      mergeStage(true);
+    });
     document.getElementById('mClose').addEventListener('click', () => { if (!merge.busy) closeOverlay('merge-panel'); });
     document.getElementById('mGo').addEventListener('click', async () => {
       if (merge.busy || merge.slots.length !== mergeNeed()) return;
@@ -11491,6 +12746,7 @@
       more: ['林北騎三十年了啦！', '你駕照雞蛋糕換的喔！', '騎那麼快趕投胎喔！', '我要跟你阿嬤講！', '阿伯的檳榔掉了啦！']
     };
     function onKartBump(a, b) {
+      celOnBump(a, b);
       if (carBase(a.typeId) === 'scooter_uncle') uncleCurse(a, 'bump');
       if (carBase(b.typeId) === 'scooter_uncle') uncleCurse(b, 'bump');
     }
@@ -11619,9 +12875,29 @@
       if (pw === null || !pw.trim()) return;
       if (adminHash(pw) !== ADMIN_HASH) { if (!redeemGiftCode(pw)) showToast('❌ 禮包碼錯誤'); return; }
       adminPanel.classList.remove('hidden');
+      fillAdminCars();
       document.getElementById('admFree').textContent = '🆓 免費模式：' + (gameData.adminFree ? '開' : '關');
     });
     document.getElementById('btnAdminClose').addEventListener('click', () => adminPanel.classList.add('hidden'));
+    // 給指定的車：依稀有度分組列出所有車款（含星耀）
+    function fillAdminCars() {
+      const sel = document.getElementById('admCar'), keepV = sel.value;
+      sel.innerHTML = RARITY_ORDER_ALL.slice().reverse().map(r => `<optgroup label="${RARITIES[r].name}">` +
+        gachaCars(r).map(id => `<option value="${id}">${escapeHtml(CAR_CATALOG[id].name)}${CAR_CATALOG[id].exclusive ? '（專屬）' : ''}（有 ${carCount(id)}）</option>`).join('') + '</optgroup>').join('');
+      if (keepV && CAR_CATALOG[keepV]) sel.value = keepV;
+    }
+    document.getElementById('admGive').addEventListener('click', () => {
+      const id = document.getElementById('admCar').value, c = CAR_CATALOG[id];
+      const n = Math.max(1, Math.min(999, Math.floor(Number(document.getElementById('admCarN').value) || 1)));
+      if (!c || c.starter) return;
+      const g = ensureGacha();
+      g.inventory[id] = (g.inventory[id] || 0) + n;
+      saveGameData();
+      fillAdminCars();
+      garageOnOpen();
+      if (c.rarity === 'celestial') { adminPanel.classList.add('hidden'); celestialReveal(id).then(() => { garageOnOpen(); selectGarageCar(id); }); return; }
+      showToast(`✅ 已給 ${c.name} ×${n}`);
+    });
     adminPanel.querySelectorAll('[data-admin]').forEach(btn => btn.addEventListener('click', () => {
       const act = btn.dataset.admin;
       if (act === 'coins10k') gameData.coins += 10000;
@@ -11636,10 +12912,11 @@
         celestialReveal('polaris').then(() => { updateGarageUI(); selectGarageCar('polaris'); });
         return;
       }
+      if (act === 'polaris20') { const g = ensureGacha(); if (!g.inventory.polaris) g.inventory.polaris = 1; g.stars = Object.assign({}, g.stars, { polaris: 20 }); }
       if (act === 'legend10') { const g = ensureGacha(); gachaCars('legendary').forEach(id => { g.inventory[id] = (g.inventory[id] || 0) + 2; }); }
       if (act === 'free') { gameData.adminFree = !gameData.adminFree; btn.textContent = '🆓 免費模式：' + (gameData.adminFree ? '開' : '關'); saveGameData(); showToast(gameData.adminFree ? '🆓 免費模式開啟：強化、衝星、進化、買箱子都不用錢' : '免費模式關閉'); return; }
       if (act === 'overload') { adminPanel.classList.add('hidden'); showOverload(carBase(gameData.selectedCar), { from: 7, lostCar: false }); return; }
-      if (act === 'starup') { const b = carBase(garageSel || gameData.selectedCar); gameData.gacha.stars[b] = Math.min(10, (gameData.gacha.stars[b] || 0) + 1); }
+      if (act === 'starup') { const b = carBase(garageSel || gameData.selectedCar); gameData.gacha.stars[b] = Math.min(carMaxStars(b), (gameData.gacha.stars[b] || 0) + 1); }
       if (act === 'evonow') {
         const b = carBase(garageSel || gameData.selectedCar);
         if (!EVO_CARS[b] || evoLevel(b) >= evoMax(b)) { showToast('這台不能再進化了'); return; }
