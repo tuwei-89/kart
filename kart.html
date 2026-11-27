@@ -1482,7 +1482,7 @@
   <div id="merge-panel" class="g-overlay hidden">
     <div class="g-head">
       <div class="g-title" style="color:#c084fc">⚗️ 合成</div>
-      <div class="g-pill" style="color:#94a3b8">5 台同稀有度的車 → 1 台高一階的車（起始車不能合成）</div>
+      <div class="g-pill" style="color:#94a3b8">5 台同稀有度 → 1 台高一階（傳說要 10 台才能合成星耀；起始車不能合成）</div>
       <button class="g-btn gray" id="mClose">✖ 關閉</button>
     </div>
     <div class="m-tabs" id="mTabs"></div>
@@ -5605,10 +5605,10 @@
         // 雪花引擎：轉速跟車速，變形與二段加速時放大、發光
         flake.rotation.z -= dt * (1.2 + (k.speed || 0) * 0.12 + e * 8 + burst * 10);
         ring.rotation.z += dt * 0.6;
-        engine.scale.setScalar(1 + 0.45 * e + 0.25 * burst);
-        engineGlowMat.opacity = 0.3 + 0.45 * e + 0.25 * burst + 0.1 * Math.sin(t * 9);
-        engineGlowMat.color.setHex(stage2 ? 0xfff7d6 : 0x7dd3fc);
-        core.scale.setScalar(1 + 0.3 * Math.sin(t * 6) + e * 0.8 + burst);
+        engine.scale.setScalar(1 + 0.25 * e + 0.12 * burst);
+        engineGlowMat.opacity = 0.22 + 0.2 * e + 0.1 * burst + 0.05 * Math.sin(t * 9);
+        engineGlowMat.color.setHex(stage2 ? 0xfcd34d : 0x38bdf8);
+        core.scale.setScalar(1 + 0.2 * Math.sin(t * 6) + e * 0.4 + burst * 0.5);
         // 北極星
         star.rotation.z = t * 1.5;
         star.scale.setScalar(1 + 0.12 * Math.sin(t * 3) + 0.4 * e + st.pulse);
@@ -5628,7 +5628,7 @@
       };
     }, {
       legend: true, tagIcon: '✦', smoke: 0xe0f2fe, nitro: 0xe0f2fe, glow: 0x7dd3fc, marks: 0xbae6fd, shock: 0xffffff,
-      trail: { colors: [0x9bd4ff, 0x1e3a8a], minSpeed: 2, life: 0.6, width: 0.38, bySpeed: true, sparkle: true },
+      trail: { colors: [0x9bd4ff, 0x1e3a8a], minSpeed: 2, life: 0.5, width: 0.3, bySpeed: true, sparkle: true },
       tail: 2.2, wheelX: 1.05, wheelZ: 1.25, nitroSound: 'polaris',
       frame: (k, st, dt, t, F) => polarisFrame(k, st, dt, t, F),
       emitFx: (k, F, q) => polarisEmit(k, F, q),
