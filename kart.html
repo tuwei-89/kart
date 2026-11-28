@@ -372,6 +372,7 @@
     .dash-status .st-zone { color: #facc15; }
     .dash-status .st-drag { color: #fbbf24; }
     .dash-status .st-dd { color: #f472b6; }
+    .dash-status .st-bad { color: #f87171; }
     .dash-status .st-catch { color: #fb923c; }
     .dash-speed { width: 92px; text-align: right; flex-shrink: 0; }
     .dash .speedo-number { font-size: 38px; letter-spacing: -1px; }
@@ -1844,7 +1845,8 @@
     const KART_RADIUS = 1.2;              // 車身碰撞半徑
     const KART_COLLISION_DIST = 2.6;      // 車與車碰撞判定距離 (1.3 + 1.3)
     const W_LIMIT = TRACK_HALF_WIDTH - KART_RADIUS; // 6.8
-    const COLLISION_PENALTY = 0.2;        // 碰撞減速係數
+    const COLLISION_PENALTY = 0.26;       // 碰撞減速係數（原本 0.2）
+    const WALL_SCRAPE = 0.15;             // 貼著牆擦：每秒再掉這麼多比例的速度
     const COLLISION_SPEED_THRESHOLD = 0.1;// 碰撞速度門檻
 
     // 氮氣基礎參數
@@ -1868,9 +1870,12 @@
     const DRAG_T0 = 0.3, DRAG_T1 = 1.5, DRAG_CAP0 = 0.95, DRAG_CAP1 = 1.04, DRAG_BOOST_ADD = 0.7;
     // 雙甩：甩尾中（方向鍵按住）放開甩尾鍵再馬上按一次 → 車頭＋行進方向瞬間多甩一個角度，過急 U 彎用
     // 放開到再按下要在 DD_WIN_MIN～DD_WIN_MAX 秒之間；兩次雙甩至少隔 DD_COOLDOWN；每踢一次掉 DD_SPEED_LOSS 速度、拖飄加速歸零
-    const DD_WIN_MIN = 0.06, DD_WIN_MAX = 0.25, DD_COOLDOWN = 0.4, DD_KICK_TIME = 0.12, DD_KICK_ANGLE = 28 * Math.PI / 180, DD_SPEED_LOSS = 0.05;
-    const DD_BODY_ANGLE = 16 * Math.PI / 180; // 車身額外甩出去的角度（只甩車頭，側滑角變大）
-    const DD_SLIP_MAX = 1.0;                  // 雙甩後短時間內側滑角上限放寬（平常 0.7）
+    const DD_WIN_MIN = 0.06, DD_WIN_MAX = 0.25, DD_COOLDOWN = 0.4, DD_KICK_TIME = 0.12, DD_KICK_ANGLE = 18 * Math.PI / 180, DD_SPEED_LOSS = 0.05;
+    const DD_BODY_ANGLE = 8 * Math.PI / 180; // 車身額外甩出去的角度（只甩車頭，側滑角變大）
+    // 雙甩力道：看放開 Shift 多久 —— 快點一下（DD_WIN_MIN）= 輕甩 DD_POW_MIN，放久一點（DD_WIN_MAX）= 全力
+    const DD_POW_MIN = 0.25;
+    function ddPower(gap) { return DD_POW_MIN + (1 - DD_POW_MIN) * Math.max(0, Math.min(1, (gap - DD_WIN_MIN) / (DD_WIN_MAX - DD_WIN_MIN))); }
+    const DD_SLIP_MAX = 0.85;                  // 雙甩後短時間內側滑角上限放寬（平常 0.7）
     function dragLevel(t) { return Math.max(0, Math.min(1, (t - DRAG_T0) / (DRAG_T1 - DRAG_T0))); }
 
     // 尾流判定
@@ -7327,6 +7332,7 @@
         this.inDraft = false;
         this.catchUp = 0;
         this.ddLast = null; this.ddKick = 0; this.ddCd = 0; this.ddFlash = 0; this.dragT = 0;
+        this.driftGain = 0; this.driftTanks = 0; this.gaugeBurst = 0; this.wallLoss = 0;
         this.padBoostTimer = 0;
         this.slopeAlong = 0;
         this.renderPitch = 0;
@@ -7428,6 +7434,7 @@
         this.inDraft = false;
         this.catchUp = 0;
         this.ddLast = null; this.ddKick = 0; this.ddCd = 0; this.ddFlash = 0; this.dragT = 0;
+        this.driftGain = 0; this.driftTanks = 0; this.gaugeBurst = 0; this.wallLoss = 0;
         this.padBoostTimer = 0;
         this.slopeAlong = 0;
         this.renderPitch = 0;
@@ -7463,9 +7470,10 @@
             this.miniBoostTimer = L.boostBefore;
             this.exitAlignTimer = 0;
             this.ddKick = DD_KICK_TIME;
-            this.ddSlipT = DD_KICK_TIME + 0.25;
-            this.ddSnapT = 0; this.ddSnapDir = L.dir; // 畫面上的甩車身動畫
-            if (this.isPlayer) cameraShakeTimer = Math.max(cameraShakeTimer, 0.1);
+            this.ddSlipT = (DD_KICK_TIME + 0.25) * ddPower(this.ddSince);
+            this.ddPow = ddPower(this.ddSince);
+            this.ddSnapT = 0; this.ddSnapDir = L.dir * this.ddPow; // 畫面上的甩車身動畫（力道越大甩越明顯）
+            if (this.isPlayer && this.ddPow > 0.7) cameraShakeTimer = Math.max(cameraShakeTimer, 0.08);
             this.ddCd = DD_COOLDOWN;
             this.ddFlash = 0.7;
             this.ddCount = (this.ddCount || 0) + 1;
@@ -7476,6 +7484,7 @@
             this.driftTime = 0;
             this.dragT = 0;
             this.exitAlignTimer = 0;
+            this.driftGain = 0; this.driftTanks = 0;
           }
           this.ddLast = null;
         }
@@ -7548,8 +7557,9 @@
           let kick = 0;
           if (this.ddKick > 0) {
             const f = Math.min(dt, this.ddKick) / DD_KICK_TIME;
-            kick = this.driftDir * DD_KICK_ANGLE * f;
-            this.yaw += kick + this.driftDir * DD_BODY_ANGLE * f; // 車頭多甩一截 → 車身明顯甩出去
+            const pw = this.ddPow || 1;
+            kick = this.driftDir * DD_KICK_ANGLE * pw * f;
+            this.yaw += kick + this.driftDir * DD_BODY_ANGLE * pw * f; // 車頭多甩一截 → 車身明顯甩出去
           }
 
           // (b) 側滑角 = 車頭與行進方向的夾角，限制最大值
@@ -7578,7 +7588,9 @@
           this.velocity.set(Math.sin(travel) * spd, 0, Math.cos(travel) * spd);
 
           // 甩尾集氣 (套用 nitroChargeMult 集氣倍率)
-          this.nitroGauge += NITRO_CHARGE_RATE * this.stats.nitroChargeMult * smooth01((spd - 8) / 14) * dt;
+          const chg = NITRO_CHARGE_RATE * this.stats.nitroChargeMult * smooth01((spd - 8) / 14) * dt;
+          this.nitroGauge += chg;
+          this.driftGain = (this.driftGain || 0) + chg;
         } else {
           // 甩尾收尾
           if (this.exitAlignTimer > 0 && planarSpeed > 0.5) {
@@ -7623,11 +7635,14 @@
         if (this.nitroGauge >= 100) {
           if (this.nitroCount < 2) {
             this.nitroCount++;
-            this.nitroGauge = 0;
+            if (this.isDrifting) this.driftTanks = (this.driftTanks || 0) + 1;
           } else {
-            this.nitroGauge = 100;
+            this.gaugeBurst = 0.9; // 已經兩管：這一管爆掉浪費
           }
+          this.nitroGauge = 0;
         }
+        this.gaugeBurst = Math.max(0, (this.gaugeBurst || 0) - dt);
+        this.wallLoss = Math.max(0, (this.wallLoss || 0) - dt);
 
         // 診斷數值
         const dfx = Math.sin(this.yaw), dfz = Math.cos(this.yaw);
@@ -7665,7 +7680,9 @@
           const lat = (this.pos.x - zc.x) * zt.z + (this.pos.z - zc.z) * -zt.x;
           if (lat * zs > 0.8 && Math.abs(lat) < trackHalfWidths[this.lastTrackIndex] - 0.4) {
             this.inZone = true;
-            this.nitroGauge += ZONE_CHARGE * (this.stats.zoneMult || 1) * (this.isDrifting ? ZONE_DRIFT_MULT : 1) * dt;
+            const zc = ZONE_CHARGE * (this.stats.zoneMult || 1) * (this.isDrifting ? ZONE_DRIFT_MULT : 1) * dt;
+            this.nitroGauge += zc;
+            if (this.isDrifting) this.driftGain = (this.driftGain || 0) + zc;
           }
         }
 
@@ -7717,6 +7734,14 @@
 
           this.wallGripTimer = 0.25;
           this.wallGripRecoverTimer = 0.2;
+          this.velocity.multiplyScalar(1 - WALL_SCRAPE * dt);
+          if (this.isDrifting && !this.isAI && (this.driftGain || 0) > 0.5) { // 只罰真人（AI 不會故意貼牆甩）
+            this.nitroGauge -= this.driftGain;
+            while (this.nitroGauge < 0 && this.driftTanks > 0 && this.nitroCount > 0) { this.nitroCount--; this.driftTanks--; this.nitroGauge += 100; }
+            this.nitroGauge = Math.max(0, this.nitroGauge);
+            this.driftGain = 0; this.driftTanks = 0;
+            this.wallLoss = 0.9;
+          }
 
           const currentSpeed = this.velocity.length();
           if (currentSpeed > COLLISION_SPEED_THRESHOLD) {
@@ -9047,6 +9072,8 @@
       const st = [];
       if (draftBoosting) st.push('<span class="st-draft">💨 尾流加速</span>');
       else if (p.inDraft) st.push(`<span class="st-draft">💨 吸尾流 ${Math.round(Math.min(1, draftPct) * 100)}%</span>`);
+      if (p.wallLoss > 0) st.push('<span class="st-bad">💥 擦牆，這次甩尾的氣沒了</span>');
+      if (p.gaugeBurst > 0) st.push('<span class="st-bad">💨 氣滿爆掉</span>');
       if (p.ddFlash > 0) st.push('<span class="st-dd">🌀🌀 雙甩</span>');
       if (p.isDrifting && p.dragLv > 0.02) st.push(`<span class="st-drag">🌀 拖飄加速 ${Math.round(p.dragLv * 100)}%</span>`);
       if (p.inZone) st.push('<span class="st-zone">⚡ 集氣帶</span>');
@@ -9936,8 +9963,8 @@
         if (k.ddSnapT !== undefined && k.ddSnapT < 0.6) {
           k.ddSnapT += frameTime;
           const e = Math.exp(-k.ddSnapT * 8), w = k.ddSnapT * 20;
-          snapY = k.ddSnapDir * 0.32 * e * Math.cos(w - 0.6); // 甩出去再彈回來
-          snapZ = -k.ddSnapDir * 0.14 * e;                     // 車身往外側傾
+          snapY = k.ddSnapDir * 0.2 * e * Math.cos(w - 0.6); // 甩出去再彈回來
+          snapZ = -k.ddSnapDir * 0.09 * e;                    // 車身往外側傾
         }
         k.mesh.rotation.y = k.renderYaw + k.visualDriftAngle + snapY;
         k.mesh.rotation.x = -k.renderPitch;
@@ -10015,7 +10042,7 @@
     // 遊戲放上網之後，把網址填在這裡（例如 'https://你的帳號.github.io/kart/kart.html'），
     // 這樣就算你是從自己電腦的檔案開遊戲，產生的邀請連結也會指向網路上的版本
     const GAME_URL = '';
-    const NET_PREFIX = 'mofish-kart-v14-'; // v14：雙甩加大、甩車身；v13：坡度影響極速、三張山道新圖；v12：雙甩、AI 新增星曜等級；v11：房間制（AI 名單、各自難度、1v1～4v4）；v10：拖飄越拖越快；v9：落後第一名的真人有後追補速；v8：新傳說車黑騎士；v7：特色車數值依個性重新分配；v6：六台特色車升神話；v5：星耀新車、專屬機制狀態旗標（v4 加入道具賽），跟舊版不互通
+    const NET_PREFIX = 'mofish-kart-v16-'; // v16：爆氣、擦牆收回集氣、撞牆減速加重；v15：雙甩力道看放開長短；v14：雙甩加大、甩車身；v13：坡度影響極速、三張山道新圖；v12：雙甩、AI 新增星曜等級；v11：房間制（AI 名單、各自難度、1v1～4v4）；v10：拖飄越拖越快；v9：落後第一名的真人有後追補速；v8：新傳說車黑騎士；v7：特色車數值依個性重新分配；v6：六台特色車升神話；v5：星耀新車、專屬機制狀態旗標（v4 加入道具賽），跟舊版不互通
     const NET_SEND_INTERVAL = 0.05;
     const NET_INTERP_DELAY = 100;
     const MAX_RACERS = 8;
