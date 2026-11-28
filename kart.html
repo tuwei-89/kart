@@ -215,7 +215,7 @@
       color: #ef4444;
       text-shadow: 0 0 25px rgba(239, 68, 68, 0.9), 0 4px 0 #7f1d1d;
     }
-    .hud-alerts { position: absolute; left: 50%; bottom: 100px; transform: translateX(-50%); display: flex; flex-direction: column-reverse; align-items: center; gap: 0; pointer-events: none; }
+    .hud-alerts { position: absolute; left: 50%; bottom: 112px; transform: translateX(-50%); display: flex; flex-direction: column-reverse; align-items: center; gap: 0; pointer-events: none; }
     .hud-alerts .drift-alert { font-size: 17px; letter-spacing: 1px; text-shadow: 0 0 8px rgba(251, 191, 36, 0.8), 0 2px 0 #b45309; height: 0; overflow: visible; white-space: nowrap; }
     .hud-alerts .drift-alert.active { height: auto; }
     .hud-alerts .boost-alert { font-size: 20px; letter-spacing: 1px; text-shadow: 0 0 10px rgba(56, 189, 248, 0.8), 0 2px 0 #0369a1; height: 0; white-space: nowrap; }
@@ -344,6 +344,40 @@
       margin-top: 4px;
     }
 
+    /* 下方中間整合儀表：橫的一條，壓低高度，不擋路 */
+    .dash {
+      position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.78); border: 1px solid rgba(56, 189, 248, 0.35); backdrop-filter: blur(8px);
+      border-radius: 14px; padding: 8px 14px; color: #fff; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+      width: 460px; display: flex; align-items: center; gap: 12px;
+    }
+    .dash-tanks { display: flex; flex-direction: column; gap: 4px; }
+    .dash .tank-slot { width: 40px; height: 26px; font-size: 14px; border-radius: 7px; border-width: 1px; }
+    .dash .tank-slot.ready { transform: none; }
+    .dash .tank-slot:not(.ready) { filter: grayscale(1); opacity: 0.5; }
+    .dash-bars { flex: 1; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+    .dash-row { display: flex; align-items: center; gap: 8px; }
+    .dash-lbl { width: 34px; font-size: 14px; font-weight: 900; color: #94a3b8; flex-shrink: 0; letter-spacing: 1px; }
+    .dash .gauge-wrapper { width: auto; flex: 1; height: 13px; }
+    .dash-row.nitro .dash-lbl { color: #fbbf24; }
+    .gauge-fill.draft-fill { background: linear-gradient(90deg, #0891b2, #67e8f9); box-shadow: 0 0 8px rgba(103, 232, 249, 0.7); }
+    .dash-row.draft.on .dash-lbl { color: #67e8f9; }
+    .dash-row.draft.on .gauge-wrapper { border-color: #67e8f9; }
+    .dash-row.draft.boost .gauge-fill { background: linear-gradient(90deg, #22d3ee, #ecfeff); animation: dashPulse 0.35s infinite alternate; }
+    .dash-row.draft.boost .dash-lbl { color: #ecfeff; }
+    .dash-row.draft.zone .gauge-wrapper { border-color: #facc15; box-shadow: 0 0 10px rgba(250, 204, 21, 0.6); }
+    @keyframes dashPulse { from { filter: brightness(1); } to { filter: brightness(1.5); } }
+    .dash-status { height: 15px; font-size: 12px; font-weight: 800; display: flex; gap: 10px; padding-left: 42px; white-space: nowrap; overflow: hidden; }
+    .dash-status .st-draft { color: #67e8f9; }
+    .dash-status .st-zone { color: #facc15; }
+    .dash-status .st-drag { color: #fbbf24; }
+    .dash-status .st-dd { color: #f472b6; }
+    .dash-status .st-catch { color: #fb923c; }
+    .dash-speed { width: 92px; text-align: right; flex-shrink: 0; }
+    .dash .speedo-number { font-size: 38px; letter-spacing: -1px; }
+    .dash .speedo-unit { font-size: 11px; margin-top: 2px; letter-spacing: 1px; }
+    @media (max-width: 1120px) { .controls-hint-card { display: none; } }
+
     /* 小地圖 */
     #minimap {
       position: absolute;
@@ -359,6 +393,10 @@
       z-index: 15;
       pointer-events: none;
     }
+
+    body.hint-off .controls-hint-card { visibility: hidden; }
+    body.map-rm #minimap { top: 50%; transform: translateY(-50%); }
+    body.map-lm #minimap { top: 50%; transform: translateY(-50%); right: auto; left: 24px; }
 
     /* Debug HUD */
     #debug-hud {
@@ -719,6 +757,17 @@
     .mp-teams .mp-badge { margin-left: auto; }
     .mp-card button.mp-swap { width: 100%; margin-top: 8px; padding: 7px; font-size: 13px; }
     .mp-fill { color: #64748b; font-size: 12px; margin-top: 8px; }
+    .room-tabs { display: flex; gap: 6px; }
+    .mp-card .room-tabs button { background: #1e293b; color: #94a3b8; padding: 7px 14px; font-size: 14px; border: 1px solid #334155; }
+    .mp-card .room-tabs button.on { background: #0369a1; color: #fff; border-color: #38bdf8; }
+    .mp-card select.mp-ailv { margin-left: auto; padding: 2px 6px; font-size: 12px; }
+    .mp-card button.mp-mini { background: #334155; padding: 2px 8px; font-size: 12px; border-radius: 6px; flex: 0 0 auto; }
+    .mp-card button.mp-mini.del { background: #7f1d1d; }
+    .mp-card button.mp-addai { width: 100%; margin-top: 6px; padding: 6px; font-size: 13px; background: #0f766e; }
+    .mp-player.empty { color: #334155; font-weight: 600; }
+    .mp-player.ai .mp-ainame { color: #cbd5e1; }
+    .mp-fill.bad { color: #f87171; font-weight: 800; }
+    .mp-body.solo-room .mp-chat { display: none; }
     .mp-status { min-height: 20px; font-size: 13px; margin-top: 8px; }
     .mp-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px; }
     /* 比賽中聊天 */
@@ -1343,24 +1392,26 @@
         • <kbd>Space</kbd>／<kbd>Ctrl</kbd> 氮氣 ｜ <kbd>F</kbd> 全螢幕<br>
         • <kbd>L</kbd> 最佳行車線 ｜ <kbd>1</kbd>~<kbd>4</kbd> 表情<br>
         • <kbd>R</kbd> 回到檢查點 ｜ <kbd>Esc</kbd> 選單（音量、改鍵）<br>
-        • <kbd>E</kbd> 使用道具（道具賽）
+        • 甩尾中方向按住、<kbd>Shift</kbd> 放開馬上再按 → 雙甩（急 U 彎）<br>
+        • <kbd>E</kbd> 使用道具（道具賽）<br>
+        <span style="color:#64748b">（這張說明可以在 Esc 選單關掉）</span>
       </div>
 
-      <!-- 中央氮氣能量條與存槽 -->
-      <div class="nitro-center-dock">
-        <div class="nitro-tanks">
-          <div class="tank-slot" id="tankSlot0">🚀 EMPTY</div>
-          <div class="tank-slot" id="tankSlot1">🚀 EMPTY</div>
+      <!-- 下方中間整合儀表：氮氣存槽＋時速、氮氣條、尾流條、狀態（關掉特效／提示也看得到） -->
+      <div class="dash" id="hudDash">
+        <div class="dash-tanks">
+          <div class="tank-slot" id="tankSlot0">🚀</div>
+          <div class="tank-slot" id="tankSlot1">🚀</div>
         </div>
-        <div class="gauge-wrapper">
-          <div class="gauge-fill" id="hudGaugeFill"></div>
+        <div class="dash-bars">
+          <div class="dash-row nitro"><span class="dash-lbl">氮氣</span><div class="gauge-wrapper"><div class="gauge-fill" id="hudGaugeFill"></div></div></div>
+          <div class="dash-row draft" id="hudDraftRow"><span class="dash-lbl">尾流</span><div class="gauge-wrapper"><div class="gauge-fill draft-fill" id="hudDraftFill"></div></div></div>
+          <div class="dash-status" id="hudDashStatus"></div>
         </div>
-      </div>
-
-      <!-- 右側跑跑時速表 -->
-      <div class="speedo-cluster">
-        <div class="speedo-number" id="hudSpeedNumber">0</div>
-        <div class="speedo-unit">KM / H</div>
+        <div class="dash-speed">
+          <div class="speedo-number" id="hudSpeedNumber">0</div>
+          <div class="speedo-unit">KM / H</div>
+        </div>
       </div>
     </div>
   </div>
@@ -1453,14 +1504,11 @@
     <div class="garage-track-row">
       <span class="track-row-label">🗺️ 賽道</span>
       <div id="trackPicker" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
-      <button class="track-card" id="btnAiLevel" style="min-width:110px"></button>
-      <button class="track-card" id="btnRaceMode" style="min-width:120px"></button>
-      <button class="track-card" id="btnItemMode" style="min-width:110px"></button>
     </div>
 
     <div class="garage-footer">
-      <button class="btn-open-mp" id="btnOpenMp">🌐 多人連線</button>
-      <button class="btn-start-race" id="btnStartRaceFromGarage">🏁 開始比賽 (START RACE)</button>
+      <button class="btn-open-mp" id="btnOpenMp" style="display:none">🌐 多人連線</button>
+      <button class="btn-start-race" id="btnStartRaceFromGarage">🏁 開房間</button>
     </div>
   </div>
 
@@ -1579,6 +1627,7 @@
       <div class="pm-row"><span>總音量</span><input type="range" id="pmVol" min="0" max="100"><b id="pmVolV"></b></div>
       <div class="pm-row"><span>引擎聲</span><input type="range" id="pmEng" min="0" max="100"><b id="pmEngV"></b></div>
       <div class="pm-row"><span>搞笑語音</span><button class="g-btn gray pm-tg" id="pmVoice"></button><span>提示</span><button class="g-btn gray pm-tg" id="pmAlerts"></button><span>全螢幕</span><button class="g-btn gray pm-tg" id="pmFull">F</button></div>
+      <div class="pm-row"><span>按鍵說明</span><button class="g-btn gray pm-tg" id="pmHint"></button><span>小地圖</span><button class="g-btn gray pm-tg" id="pmMap"></button></div>
       <div class="pm-sec">⌨️ 按鍵（點「改」再按新的鍵；「＋」可以多加一個鍵）</div>
       <div id="pmKeys"></div>
       <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px">
@@ -1659,7 +1708,8 @@
   <div id="mp-panel" class="hidden">
     <div class="mp-card mp-wide">
       <div class="mp-head">
-        <div class="mp-title">🌐 多人連線</div>
+        <div class="mp-title">🏁 房間</div>
+        <div class="room-tabs" id="roomTabs"><button data-tab="local">🏠 單人房</button><button data-tab="online">🌐 線上房</button></div>
         <div class="mp-row"><label>暱稱</label><input id="mpName" maxlength="10"></div>
       </div>
       <div id="mpMenu">
@@ -1676,16 +1726,17 @@
         </div>
         <div class="mp-fill" id="mpInviteHint" style="margin-top:0"></div>
         <div class="mp-settings">
-          <span>模式：<select id="mpModeSel"><option value="solo">個人賽</option><option value="team">團體賽 4v4</option></select><b id="mpModeText"></b></span>
+          <span>模式：<select id="mpModeSel"><option value="solo">個人賽</option><option value="team">團隊賽</option></select><b id="mpModeText"></b></span>
           <span>道具：<select id="mpItemSel"><option value="0">關閉</option><option value="1">開啟 🎲</option></select><b id="mpItemText"></b></span>
           <span>地圖：<select id="mpTrackSel"></select><b id="mpTrackText"></b></span>
+          <span id="mpAiAllWrap">全部 AI：<select id="mpAiAll"></select></span>
         </div>
         <div class="mp-body">
           <div class="mp-left">
             <div id="mpPlayers"></div>
             <div class="mp-fill" id="mpFillNote"></div>
           </div>
-          <div class="mp-chat">
+          <div class="mp-chat" id="mpChatBox">
             <div class="mp-chat-log" id="mpChatLog"></div>
             <input id="mpChatInput" maxlength="100" placeholder="輸入訊息，按 Enter 送出">
           </div>
@@ -1812,8 +1863,25 @@
     const DRIFT_SPEED_LOSS = 2.0;         // 甩尾持續減速 (u/s²)
     const MINI_BOOST_MIN_DRIFT = 0.5;     // 甩尾超過這個秒數放開才有小噴
     const MINI_BOOST_TIME = 0.7;
+    // 越拖越快：甩尾 DRAG_T0 秒後開始累積，到 DRAG_T1 秒滿；甩尾中的速度上限從 DRAG_CAP0 拉到 DRAG_CAP1（超過平常極速），
+    // 放開時的小噴也跟著變長（最多 ×(1+DRAG_BOOST_ADD)）。車頭一直在轉，所以只有長彎拖得久，直線拖不了
+    const DRAG_T0 = 0.3, DRAG_T1 = 1.5, DRAG_CAP0 = 0.95, DRAG_CAP1 = 1.04, DRAG_BOOST_ADD = 0.7;
+    // 雙甩：甩尾中（方向鍵按住）放開甩尾鍵再馬上按一次 → 車頭＋行進方向瞬間多甩一個角度，過急 U 彎用
+    // 放開到再按下要在 DD_WIN_MIN～DD_WIN_MAX 秒之間；兩次雙甩至少隔 DD_COOLDOWN；每踢一次掉 DD_SPEED_LOSS 速度、拖飄加速歸零
+    const DD_WIN_MIN = 0.06, DD_WIN_MAX = 0.25, DD_COOLDOWN = 0.4, DD_KICK_TIME = 0.15, DD_KICK_ANGLE = 20 * Math.PI / 180, DD_SPEED_LOSS = 0.05;
+    function dragLevel(t) { return Math.max(0, Math.min(1, (t - DRAG_T0) / (DRAG_T1 - DRAG_T0))); }
 
     // 尾流判定
+    // 後追補速：落後第一名 CATCHUP_START 以上開始補，到 CATCHUP_FULL 補滿 CATCHUP_MAX（約落後 1.5 秒起、8 秒補滿 +6%）
+    const CATCHUP_START = 45, CATCHUP_FULL = 240, CATCHUP_MAX = 0.06;
+    function catchUpBoost(k) {
+      if (raceState !== 'RACING' || k.isFinished) return 0;
+      let lead = -Infinity;
+      for (const o of karts) if (o !== k && !o.isGhost && o.progress > lead) lead = o.progress;
+      const gap = lead - k.progress;
+      if (!(gap > CATCHUP_START)) return 0;
+      return CATCHUP_MAX * Math.min(1, (gap - CATCHUP_START) / (CATCHUP_FULL - CATCHUP_START));
+    }
     const DRAFT_RANGE = 30.0;
     const DRAFT_WIDTH = 2.8;
     const DRAFT_MIN_SPEED = 15.0;
@@ -1825,6 +1893,12 @@
     // 加速帶與坡度
     const PAD_BOOST_TIME = 1.0;
     const SLOPE_GRAVITY = 8.0;
+    // 坡度改變極速：上坡最多 −5%、下坡最多 +8%（坡度 SLOPE_REF 以上算滿）；甩尾、小噴、氮氣的上限都跟著變
+    const SLOPE_UP_LOSS = 0.05, SLOPE_DOWN_GAIN = 0.08, SLOPE_REF = 0.12;
+    function slopeSpeedMult(sl) {
+      if (!sl) return 1;
+      return sl > 0 ? 1 - SLOPE_UP_LOSS * Math.min(1, sl / SLOPE_REF) : 1 + SLOPE_DOWN_GAIN * Math.min(1, -sl / SLOPE_REF);
+    }
 
     // 輔助數學
     function smooth01(x) {
@@ -2120,7 +2194,7 @@
       if (EMOTES[e.code]) sendEmote(e.code);
       if (e.code === 'KeyL') {
         racingLineMesh.visible = !racingLineMesh.visible;
-        showToast(racingLineMesh.visible ? '🧠 最佳行車線：綠＝全油門 黃＝收油 紅＝煞車 紫＝甩尾 粉＝拖飄（輕甩 0.6 秒拿小噴、集氣）' : '最佳行車線：關');
+        showToast(racingLineMesh.visible ? '🧠 最佳行車線：綠＝全油門 黃＝收油 紅＝煞車 紫＝甩尾 粉＝拖飄（彎沒轉完就一直拖，越拖越快）' : '最佳行車線：關');
       }
       if (e.code === 'F1') {
         e.preventDefault();
@@ -2462,6 +2536,39 @@
         pads: [500, 1100],
         ice: [],
         theme: 'skyline'
+      },
+      hairpin: {
+        name: '髮夾山道', desc: '技術賽道・三連 S 型髮夾爬坡・下坡長直線・165° 急 U（雙甩練習）',
+        startHeading: 0,
+        segments: [["S",90],["A",14,180],["S",55],["A",14,-180],["S",55],["A",13,180],["S",90.46],["A",30,-60],["A",30,60],["S",25],["A",15,165],["A",22,-75],["S",36.26],["A",25,90],["S",40]],
+        hills: [ { center: 300, plateau: 60, ramp: 180, height: 12.0, solid: true } ],
+        widths: [ { from: 90, to: 340, half: 7.0 }, { from: 500, to: 560, half: 7.0 } ],
+        pads: [40, 660],
+        ice: [],
+        theme: 'teahill'
+      },
+      ladder5: {
+        name: '五連髮夾山道', desc: '高難度・五連髮夾爬坡・下山高速連彎・急 S・165° 髮夾・Z 字回程',
+        startHeading: 0,
+        segments: [["S",80],["A",13,180],["S",34],["A",13,-180],["S",34],["A",13,180],["S",34],["A",13,-180],["S",34],["A",13,180],["S",40],["A",45,40],["A",45,-80],["A",45,40],["S",25],["A",16,-90],["A",16,90],["A",16,90],["A",16,-90],["S",20],["A",12,165],["A",30,-75],["S",42.52],["A",13,180],["S",30],["A",13,-180],["S",40],["A",25,90],["S",88.57]],
+        hills: [
+          { center: 420, plateau: 0, ramp: 340, height: 20.0, solid: true },
+          { center: 905, plateau: 10, ramp: 45, height: 4.0, solid: true }
+        ],
+        widths: [ { from: 80, to: 420, half: 6.5 }, { from: 611, to: 770, half: 7.0 } ],
+        pads: [30, 1080],
+        ice: [],
+        theme: 'autumn'
+      },
+      longpass: {
+        name: '星夜長程山道', desc: '高難度・1.9 公里・爬坡雙髮夾・山頂急 S・327 公尺下坡長直線・山腳急髮夾',
+        startHeading: 0,
+        segments: [["S",100],["A",50,30],["A",50,-60],["A",50,30],["S",60],["A",13,-180],["S",45],["A",13,180],["S",70],["A",35,-50],["A",35,50],["S",30],["A",25,90],["S",140.83],["A",12,90],["S",30],["A",18,90],["A",18,-90],["A",18,-90],["A",18,90],["S",327.1],["A",13,-180],["S",40],["A",13,180],["S",60],["A",40,-35],["A",40,35],["S",30],["A",30,90],["S",30],["A",12,170],["A",30,-170],["S",70],["A",30,90],["S",60]],
+        hills: [ { center: 790, plateau: 476, ramp: 452, height: 35.0, solid: true } ],
+        widths: [ { from: 265, to: 391, half: 7.0 }, { from: 733, to: 895, half: 7.0 }, { from: 1222, to: 1343, half: 7.0 }, { from: 1529, to: 1684, half: 7.0 } ],
+        pads: [50, 1820],
+        ice: [],
+        theme: 'starlight'
       }
     };
 
@@ -6736,7 +6843,8 @@
       // 氮氣剛啟動
       onNitro(k, st, fx) {
         const p = k.renderPos;
-        if (fx.nitroSound && (k === playerKart || (playerKart && p.distanceTo(playerKart.renderPos) < 30))) sfx.carSound(fx.nitroSound);
+        const ns = fx.nitroSound || NITRO_SIG[carBase(k.typeId)];
+        if (ns && (k === playerKart || (playerKart && p.distanceTo(playerKart.renderPos) < 30))) sfx.carSound(ns);
         if (fx.nitroVoice && k === playerKart) setTimeout(() => speakLine(fx.nitroVoice[Math.floor(Math.random() * fx.nitroVoice.length)], { rate: 1.15 }), 350);
         if (fx.shock) this.shocks.trigger(p.x, p.y, p.z, fx.shock, 13, 0.75);
         if (fx.nitroBurst === 'breath') st.breath = 0.6;
@@ -7215,6 +7323,8 @@
         this.draftCharge = 0;
         this.draftBoostTimer = 0;
         this.inDraft = false;
+        this.catchUp = 0;
+        this.ddLast = null; this.ddKick = 0; this.ddCd = 0; this.ddFlash = 0; this.dragT = 0;
         this.padBoostTimer = 0;
         this.slopeAlong = 0;
         this.renderPitch = 0;
@@ -7314,6 +7424,8 @@
         this.draftCharge = 0;
         this.draftBoostTimer = 0;
         this.inDraft = false;
+        this.catchUp = 0;
+        this.ddLast = null; this.ddKick = 0; this.ddCd = 0; this.ddFlash = 0; this.dragT = 0;
         this.padBoostTimer = 0;
         this.slopeAlong = 0;
         this.renderPitch = 0;
@@ -7332,17 +7444,45 @@
         const speed = Math.abs(last_v_forward);
         const planarSpeed = Math.hypot(this.velocity.x, this.velocity.z);
 
-        // 甩尾進入 / 退出
+        // 甩尾進入 / 退出（含雙甩）
+        this.ddCd = Math.max(0, (this.ddCd || 0) - dt);
+        this.ddKick = Math.max(0, (this.ddKick || 0) - dt);
+        this.ddFlash = Math.max(0, (this.ddFlash || 0) - dt);
+        if (this.ddLast) { this.ddSince += dt; if (this.ddSince > DD_WIN_MAX) this.ddLast = null; }
         if (!this.isDrifting && input.drift && Math.abs(input.steer) > 0.1 && last_v_forward > 12) {
-          this.isDrifting = true;
-          this.driftDir = input.steer > 0 ? 1 : -1;
-          this.driftTime = 0;
-          this.exitAlignTimer = 0;
+          const L = this.ddLast;
+          if (L && this.ddSince >= DD_WIN_MIN && this.ddCd <= 0 && Math.sign(input.steer) === L.dir) {
+            // 雙甩：接回剛剛的甩尾（甩尾時間接著算、剛給的小噴收回），車頭踢一下
+            this.isDrifting = true;
+            this.driftDir = L.dir;
+            this.driftTime = L.driftTime + this.ddSince;
+            this.dragT = 0;
+            this.miniBoostTimer = L.boostBefore;
+            this.exitAlignTimer = 0;
+            this.ddKick = DD_KICK_TIME;
+            this.ddCd = DD_COOLDOWN;
+            this.ddFlash = 0.7;
+            this.ddCount = (this.ddCount || 0) + 1;
+            this.ddCut = DD_SPEED_LOSS; // 甩尾動力學裡扣（那邊會用這一幀開頭的速度重算）
+          } else {
+            this.isDrifting = true;
+            this.driftDir = input.steer > 0 ? 1 : -1;
+            this.driftTime = 0;
+            this.dragT = 0;
+            this.exitAlignTimer = 0;
+          }
+          this.ddLast = null;
         }
         if (this.isDrifting) {
           this.driftTime += dt;
-          if (!input.drift || planarSpeed < 8) {
+          this.dragT = (this.dragT || 0) + dt;
+          if (planarSpeed < 8) {
             this.exitDrift(true);
+          } else if (!input.drift) {
+            // 放開甩尾鍵：記下來，短時間內再按就是雙甩
+            const L = { dir: this.driftDir, driftTime: this.driftTime, boostBefore: this.miniBoostTimer };
+            this.exitDrift(true);
+            this.ddLast = L; this.ddSince = 0;
           }
         }
 
@@ -7382,8 +7522,13 @@
         if (this.padBoostTimer > 0)   { targetVMax = Math.max(targetVMax, 40.0 * this.stats.topSpeedMult); currentAccel = Math.max(currentAccel, 30.0); }
         if (this.nitroTimer > 0)      { targetVMax = Math.max(targetVMax, 42.0 * this.stats.topSpeedMult); currentAccel = Math.max(currentAccel, 25.0); }
 
+        targetVMax *= slopeSpeedMult(this.slopeAlong);
         if (!this.isPlayer) {
           targetVMax *= this.aiSpeedMult;
+        } else {
+          this.catchUp = catchUpBoost(this);
+          targetVMax *= 1 + this.catchUp;
+          currentAccel *= 1 + this.catchUp;
         }
 
         if (this.isDrifting) {
@@ -7393,6 +7538,9 @@
 
           // (a) 車頭先轉
           this.yaw += this.driftDir * (DRIFT_YAW_BASE + DRIFT_YAW_INPUT * s) * this.stats.driftTurnMult * dt;
+          // 雙甩：車頭和行進方向一起多甩 DD_KICK_ANGLE
+          let kick = 0;
+          if (this.ddKick > 0) { kick = this.driftDir * DD_KICK_ANGLE / DD_KICK_TIME * Math.min(dt, this.ddKick); this.yaw += kick; }
 
           // (b) 側滑角 = 車頭與行進方向的夾角，限制最大值
           let slipAng = this.yaw - travel;
@@ -7403,15 +7551,17 @@
           }
 
           // (c) 行進方向被慣性拖著，慢慢追上車頭（側滑角越大追越快）
-          travel += slipAng * DRIFT_CATCH * dt;
+          travel += slipAng * DRIFT_CATCH * dt + kick;
 
           let spd = planarSpeed;
-          spd -= DRIFT_SLIP_DRAG * Math.abs(Math.sin(slipAng)) * dt;
-          const driftCap = targetVMax * DRIFT_SPEED_CAP;
-          if (input.throttle && spd < driftCap) spd = Math.min(driftCap, spd + currentAccel * 0.6 * dt);
+          if (this.ddCut) { spd *= 1 - this.ddCut; this.ddCut = 0; }
+          const dragLv = this.dragLv = dragLevel(this.dragT || 0);
+          spd -= DRIFT_SLIP_DRAG * Math.abs(Math.sin(slipAng)) * (1 - 0.5 * dragLv) * dt;
+          const driftCap = targetVMax * (DRAG_CAP0 + (DRAG_CAP1 - DRAG_CAP0) * dragLv);
+          if (input.throttle && spd < driftCap) spd = Math.min(driftCap, spd + currentAccel * (0.6 + 0.5 * dragLv) * dt);
           if (input.brake) spd -= BRAKE_DECEL * dt;
-          spd -= DRIFT_SPEED_LOSS * (this.stats.driftLossMult || 1) * dt;
-          if (spd > driftCap) spd = Math.max(driftCap, spd - 6.0 * dt);
+          spd -= DRIFT_SPEED_LOSS * (this.stats.driftLossMult || 1) * (1 - 0.6 * dragLv) * dt;
+          if (spd > driftCap) spd = Math.max(driftCap, spd - 4.0 * dt);
           spd -= SLOPE_GRAVITY * this.slopeAlong * dt;
           spd = Math.max(0, spd);
           this.velocity.set(Math.sin(travel) * spd, 0, Math.cos(travel) * spd);
@@ -7517,9 +7667,10 @@
       exitDrift(allowMiniBoost = true) {
         if (!this.isDrifting) return;
         if (allowMiniBoost && this.driftTime >= MINI_BOOST_MIN_DRIFT) {
-          this.miniBoostTimer = MINI_BOOST_TIME * (this.stats.miniBoostMult || 1);
+          this.miniBoostTimer = MINI_BOOST_TIME * (this.stats.miniBoostMult || 1) * (1 + DRAG_BOOST_ADD * dragLevel(this.dragT || 0));
         }
         this.isDrifting = false;
+        this.dragLv = 0;
         this.exitAlignTimer = 0.35;
         this.driftTime = 0;
       }
@@ -7687,6 +7838,46 @@
       { id: 'ai7', name: '鋼鐵旋風', isPlayer: false, row: 3, col: 1, lane: 0.8, team: 'blue' }
     ];
     const SOLO_RACERS = 6;
+    // AI 難度：調整 AI 的極速倍率
+    const AI_LEVELS = [
+      { name: '簡單', min: 0.86, max: 0.91 },
+      { name: '普通', min: 0.92, max: 0.97 },
+      { name: '困難', min: 0.97, max: 1.00 },          // 困難起：會拖飄、氣滿就噴
+      { name: '專家', min: 0.99, max: 1.00 },          // 隨機傳說車＋滿強化、不放水、走準線、會雙甩
+      { name: '星曜', min: 1.00, max: 1.00 },          // 隨機星曜車（北極星以外）＋滿強化
+      { name: '不可能', min: 1.00, max: 1.00 }         // 全部開 20 星北極星＋滿強化、完美路線
+    ];
+    const AI_DIFF_MULT = [0.7, 1.0, 1.5, 2.0, 2.5, 3.0]; // 各難度的金幣倍率
+    const AI_LV_MAX = AI_LEVELS.length - 1;
+    function aiLvOk(v) { return Number.isInteger(v) && v >= 0 && v <= AI_LV_MAX; }
+    // ---------- 房間設定：模式、AI 名單（每台自己的難度、隊伍）、自己的隊伍；單人房和自己開的線上房共用 ----------
+    const ROOM_MAX = 8, ROOM_TEAM_MAX = 4;
+    let roomOverride = null; // 試駕頁用：暫時的房間設定，不存檔
+    function roomCfg() {
+      if (roomOverride) return roomOverride;
+      let r = gameData.room;
+      if (!r || typeof r !== 'object' || !Array.isArray(r.ais)) {
+        // 舊存檔：照以前的模式、AI 難度換成房間設定
+        const lv0 = [0, 1, 2, 3, 4].includes(gameData.aiLevel) ? gameData.aiLevel : 1, lv = lv0 === 4 ? 5 : lv0, old = gameData.raceMode;
+        r = { mode: old === 'team' ? 'team' : 'solo', team: 'red',
+              ais: old === 'practice' ? [] : (old === 'team' ? ['red', 'blue', 'blue', 'red', 'blue', 'red', 'blue'] : [null, null, null, null, null]).map(t => ({ lv, team: t })), v: 2 };
+        gameData.room = r;
+      }
+      if (r.v !== 2) { r.ais.forEach(a => { if (a && a.lv === 4) a.lv = 5; }); r.v = 2; } // 舊的 4 是「不可能」，現在 4 是「星曜」
+      r.mode = r.mode === 'team' ? 'team' : 'solo';
+      r.team = r.team === 'blue' ? 'blue' : 'red';
+      r.ais = r.ais.filter(a => a && typeof a === 'object').slice(0, ROOM_MAX - 1)
+        .map(a => ({ lv: aiLvOk(a.lv) ? a.lv : 1, team: a.team === 'blue' ? 'blue' : (a.team === 'red' ? 'red' : null) }));
+      return r;
+    }
+    // 團隊賽：沒隊伍的 AI 分到台數少的那隊（humanTeams = 真人的隊伍陣列）
+    function roomBalanceAi(r, humanTeams) {
+      if (r.mode !== 'team') return;
+      const cnt = { red: humanTeams.filter(t => t === 'red').length, blue: humanTeams.filter(t => t === 'blue').length };
+      r.ais.forEach(a => { if (a.team) cnt[a.team]++; });
+      r.ais.forEach(a => { if (!a.team) { a.team = cnt.red <= cnt.blue ? 'red' : 'blue'; cnt[a.team]++; } });
+    }
+
 
     const availableTypes = ['balanced', 'speed', 'drift', 'heavy'];
     // AI 的外觀：隨機抽一台抽箱車（傳說至少 10%）。性能仍是 availableTypes 的起始車，難度不變
@@ -7694,8 +7885,33 @@
     // 專家：隨機傳說車＋滿強化；不可能：20 星北極星＋滿強化（數值是真的車款數值，不是起始車）
     const AI_MAX_UP = { engine: 5, tire: 5, nitro: 5, drift: 5 };
     const AI_TAP_TIME = 0.6;
+    // AI 雙甩：目前關閉（實測 AI 的路線跟不上雙甩的角度，反而慢約 1 秒）；改成 0.8 就會在急 U 彎雙甩
+    let AI_DD_STEER = 99;
+    // 急 U 彎標記：彎道半徑 < 19、整段轉超過 120° 的地方，每個彎一個編號（AI 只在這裡雙甩）
+    const uturnCorner = (() => {
+      const n = trackCenters.length, W = 4, out = new Int16Array(n), rad = new Float32Array(n), turn = new Float32Array(n);
+      for (let i = 0; i < n; i++) {
+        const a = trackTangents[(i - W + n) % n], b = trackTangents[(i + W) % n];
+        let d = Math.atan2(b.x, b.z) - Math.atan2(a.x, a.z); d -= Math.PI * 2 * Math.round(d / (Math.PI * 2));
+        let len = 0; for (let j = -W; j < W; j++) { const p = trackCenters[(i + j + n) % n], q = trackCenters[(i + j + 1 + n) % n]; len += Math.hypot(q.x - p.x, q.z - p.z); }
+        rad[i] = Math.abs(d) > 1e-4 ? len / Math.abs(d) : 1e9; turn[i] = d / (2 * W);
+      }
+      let id = 0;
+      for (let i = 0; i < n; i++) {
+        if (rad[i] >= 19 || (i > 0 && rad[i - 1] < 19)) continue;
+        let j = i, ang = 0; while (j < n && rad[j] < 19) { ang += turn[j]; j++; }
+        if (Math.abs(ang) > 2.1) { id++; for (let k = Math.max(0, i - 6); k < j; k++) out[k] = id; }
+      }
+      return out;
+    })();
+    const AI_TAP = { max: 1.8, hold: 0.12 }; // 彎還沒轉完就繼續拖（越拖越快），最多 max 秒
     function aiEliteCar(level) {
-      if (level >= 4) {
+      if (level === 4) {
+        const ids = Object.values(CAR_CATALOG).filter(c => !c.variantOf && c.rarity === 'celestial' && c.id !== 'polaris').map(c => c.id);
+        const car = ids[Math.floor(Math.random() * ids.length)];
+        return { car, stats: getKartEffectiveStats(car, AI_MAX_UP) };
+      }
+      if (level >= 5) {
         const st = getKartEffectiveStats('polaris', AI_MAX_UP), m = 1 + 20 * STAR_BONUS_EARLY;
         st.stars = 20; st.topSpeedMult *= m; st.accelMult *= m; st.steerMult *= m; st.driftTurnMult *= m;
         return { car: 'polaris', stats: st };
@@ -7774,28 +7990,41 @@
       if (showTag) attachNameTag(k, k.name, k.team ? TEAM_TAG_BG[k.team] : undefined);
     }
 
-    // 依模式決定單人模式要放哪些車進場
+    // 依房間設定決定單人模式要放哪些車進場（AI 台數、各自難度、隊伍；起跑格 AI 在前、自己在後，團隊賽紅藍交錯）
     function setupSoloKarts() {
-      raceMode = gameData.raceMode === 'team' ? 'team' : (gameData.raceMode === 'practice' ? 'practice' : 'solo');
-      // 練習賽：只有自己一台，沒有 AI
-      const want = raceMode === 'team' ? soloPool : (raceMode === 'practice' ? soloPool.slice(0, 1) : soloPool.slice(0, SOLO_RACERS));
-      const lv = gameData.aiLevel ?? 1;
+      const r = roomCfg();
+      roomBalanceAi(r, [r.team]);
+      raceMode = r.mode === 'team' ? 'team' : (r.ais.length ? 'solo' : 'practice');
       karts.forEach(k => scene.remove(k.mesh));
       karts.length = 0;
-      want.forEach((k, i) => {
-        // AI 每次換一台抽箱車的外觀（stats 不變）
-        if (!k.isPlayer) {
-          if (!k.baseStats) k.baseStats = k.stats; // 原本的 AI 數值（專家以上會換掉，切回來要還原）
-          const e = lv >= 3 ? aiEliteCar(lv) : null;
-          k.reconfigure(e ? e.car : pickAiCar(), k.color, e ? e.stats : k.baseStats);
-          k.mesh.rotation.order = 'YXZ';
-        }
+      const me = soloPool[0], list = [me];
+      me.team = raceMode === 'team' ? r.team : null;
+      r.ais.forEach((a, i) => {
+        const k = soloPool[i + 1];
+        if (!k.baseStats) k.baseStats = k.stats; // 原本的 AI 數值（專家以上會換掉，切回來要還原）
+        const e = a.lv >= 3 ? aiEliteCar(a.lv) : null;
+        k.reconfigure(e ? e.car : pickAiCar(), k.color, e ? e.stats : k.baseStats);
+        k.mesh.rotation.order = 'YXZ';
+        k.aiLevel = a.lv;
+        k.isAI = true;
+        k.team = raceMode === 'team' ? a.team : null;
+        list.push(k);
+      });
+      let order;
+      if (raceMode === 'team') {
+        const side = t => [...list.filter(k => k !== me && k.team === t), ...(me.team === t ? [me] : [])];
+        const red = side('red'), blue = side('blue');
+        order = [];
+        for (let i = 0; i < Math.max(red.length, blue.length); i++) (i % 2 ? [blue[i], red[i]] : [red[i], blue[i]]).forEach(k => { if (k) order.push(k); });
+      } else order = [...list.slice(1), me];
+      order.forEach((k, slot) => k.spawnPos.copy(calcGridPos(Math.floor(slot / 2), slot % 2 === 0 ? -1 : 1)));
+      list.forEach(k => {
         karts.push(k);
         scene.add(k.mesh);
-        k.team = raceMode === 'team' ? kartConfigs[i].team : null;
-        applyTeamLook(k, raceMode === 'team' && !k.isPlayer);
+        applyTeamLook(k, raceMode === 'team' && k !== me);
       });
       playerKart = karts[0];
+      applyAiLevel();
     }
     setupSoloKarts();
 
@@ -7915,14 +8144,14 @@
         nitro = true;
       }
 
-      // 拖飄：困難以上的 AI（和最佳線）在一般彎道也會輕甩 0.6 秒拿小噴＋集氣；氣滿兩管就直接噴
+      // 拖飄：困難以上的 AI（和最佳線）在一般彎道也會甩尾，彎還沒轉完就一直拖（最多 1.8 秒，越拖越快）；氣滿兩管就直接噴
       // （實測各賽道三圈快 5～13%，比只在急彎甩尾、只在長直線噴氮氣快很多）
       let steerOut = steer;
       if (kart.aiTap) {
         kart.tapCd = Math.max(0, (kart.tapCd || 0) - dt);
         if (kart.tapOn) {
           kart.tapT += dt;
-          if (kart.tapT < AI_TAP_TIME && kart.isDrifting) {
+          if (kart.isDrifting && (kart.tapT < AI_TAP_TIME || (kart.tapT < AI_TAP.max && Math.abs(steer) > AI_TAP.hold && Math.sign(steer) === kart.driftDir))) {
             drift = true;
             const dir = Math.sign(steer || kart.driftDir);
             steerOut = dir * Math.max(Math.abs(steer), 0.3) * (dir === kart.driftDir ? 1 : 0.4);
@@ -7932,6 +8161,20 @@
           steerOut = Math.sign(steer) * Math.max(0.3, Math.abs(steer));
         }
         if (kart.nitroCount >= 2 && !drift && !kart.isDrifting && kart.nitroTimer <= 0) nitro = true;
+      }
+
+      if ((kart.aiLevel || 0) >= 3 && !kart.isGhost) {
+        if (kart.aiDD > 0) {
+          kart.aiDD -= dt;
+          drift = kart.aiDD <= 0; // 放開 0.1 秒後再按
+          if (drift) steerOut = kart.driftDir * Math.max(0.5, Math.abs(steerOut));
+        } else {
+          // 只在急 U 彎（半徑小、轉超過 120°）雙甩，每個彎一次
+          const cid = uturnCorner[kart.lastTrackIndex];
+          if (cid && kart.aiDDCorner !== cid && kart.isDrifting && kart.ddCd <= 0 && speed > 18 && Math.abs(steer) > AI_DD_STEER && Math.sign(steer) === kart.driftDir && kart.driftTime > 0.2) {
+            kart.aiDD = 0.1; drift = false; kart.aiDDCorner = cid;
+          }
+        }
       }
 
       const diffToPlayer = kart.isGhost ? 0 : kart.progress - playerKart.progress;
@@ -8083,6 +8326,7 @@
           k.draftCharge += dt * (k.inZone ? ZONE_DRAFT_CHARGE : 1);
           if (k.draftCharge >= DRAFT_CHARGE_TIME / (k.stats.draftChargeMult || 1)) {
             k.draftBoostTimer = DRAFT_BOOST_TIME * (k.stats.draftBoostMult || 1) * (k.inZone ? ZONE_DRAFT_BOOST : 1);
+            k.draftBoostMax = k.draftBoostTimer;
             k.draftCharge = 0;
           }
         } else {
@@ -8372,7 +8616,7 @@
 
       if (raceMode === 'practice') {
         saveGameData();
-        document.getElementById('modalRewardBadge').textContent = '🏁 練習賽沒有金幣獎勵';
+        document.getElementById('modalRewardBadge').textContent = '🏁 自己跑（練習）沒有金幣獎勵';
         document.getElementById('modalTotalTime').textContent = playerKart.isFinished ? formatTime(playerKart.finishTime) : '未完賽';
         setModalButtonsEnabled(true);
         renderLeaderboard();
@@ -8382,10 +8626,12 @@
 
       // 金幣：名次獎勵 × 難度 × 連線加成，再加上破紀錄、贏過 AI 最佳線、團體賽勝利
       const rewardTiers = [200, 140, 100, 70, 50, 30, 20, 10];
-      const raceAiLevel = net.inRace ? net.raceAiLevel : (gameData.aiLevel ?? 1);
-      const diffMult = [0.7, 1.0, 1.5, 2.0, 2.5][raceAiLevel] || 1.0;
+      const aiKs = order.filter(k => k.isAI);
+      const diffMult = aiKs.length ? Math.round(aiKs.reduce((a, k) => a + (AI_DIFF_MULT[k.aiLevel] || 1), 0) / aiKs.length * 100) / 100 : 1.0;
+      const opp = order.length - 1; // 對手少於 5 台：金幣打折（避免只放一台簡單 AI 刷第一名）
+      const fieldMult = opp >= 5 ? 1 : Math.round((0.4 + 0.12 * opp) * 100) / 100;
       const netMult = net.role ? 1.5 : 1.0;
-      let earnedCoins = Math.round((rewardTiers[playerRank - 1] || 10) * diffMult * netMult);
+      let earnedCoins = Math.round((rewardTiers[playerRank - 1] || 10) * diffMult * fieldMult * netMult);
       const bonusNotes = [];
       const myBestLap = playerKart.lapTimes.length ? Math.min(...playerKart.lapTimes) : Infinity;
       if (!gameData.bestLaps) gameData.bestLaps = {};
@@ -8407,7 +8653,7 @@
       const lostTeam = raceMode === 'team' && playerKart.team && teamResult(order).winner !== playerKart.team;
       if (((playerRank === order.length && order.length > 1) || lostTeam) && Math.random() < 0.05) setTimeout(showFakeAd, 900);
 
-      const multNote = [diffMult !== 1 ? `難度 ×${diffMult}` : '', netMult !== 1 ? `連線 ×${netMult}` : ''].filter(Boolean).join('・');
+      const multNote = [diffMult !== 1 ? `難度 ×${diffMult}` : '', fieldMult !== 1 ? `人數 ×${fieldMult}` : '', netMult !== 1 ? `連線 ×${netMult}` : ''].filter(Boolean).join('・');
       document.getElementById('modalRewardBadge').textContent =
         `💰 +${earnedCoins} 金幣（第 ${playerRank} 名${multNote ? '・' + multNote : ''}${bonusNotes.length ? '・' + bonusNotes.join('・') : ''}）`;
       document.getElementById('modalTotalTime').textContent = playerKart.isFinished ? formatTime(playerKart.finishTime) : '未完賽';
@@ -8610,11 +8856,12 @@
       if (!gacha.panel.classList.contains('hidden') && !gacha.busy) gachaRefresh();
     }
 
-    document.getElementById('btnStartRaceFromGarage').addEventListener('click', startRaceFromGarage);
+    document.getElementById('btnStartRaceFromGarage').addEventListener('click', () => openRoomPanel());
     document.getElementById('btnOpenGarageInGame').addEventListener('click', openGarage);
     document.getElementById('btnModalGarage').addEventListener('click', () => {
       if (net.role) { net.inRace = false; openGarage(); mpEls.panel.classList.remove('hidden'); renderLobby(); return; }
       openGarage();
+      openRoomPanel(); // 單人房：回到房間，可以直接改 AI 再開
     });
     document.getElementById('btnModalSettle').addEventListener('click', () => soloSettleNow());
     document.getElementById('btnModalRestart').addEventListener('click', () => {
@@ -8636,6 +8883,10 @@
     const hudGaugeFill = document.getElementById('hudGaugeFill');
     const tankSlot0 = document.getElementById('tankSlot0');
     const tankSlot1 = document.getElementById('tankSlot1');
+    const hudDraftRow = document.getElementById('hudDraftRow');
+    const hudDraftFill = document.getElementById('hudDraftFill');
+    const hudDashStatus = document.getElementById('hudDashStatus');
+    let lastDashStatus = '';
 
     // Debug HUD
     const debugHud = document.getElementById('debug-hud');
@@ -8770,10 +9021,23 @@
       hudGaugeFill.style.width = `${Math.min(100, p.nitroGauge)}%`;
 
       tankSlot0.className = p.nitroCount >= 1 ? 'tank-slot ready' : 'tank-slot';
-      tankSlot0.textContent = p.nitroCount >= 1 ? '🚀 READY!' : '🚀 EMPTY';
-
       tankSlot1.className = p.nitroCount >= 2 ? 'tank-slot ready' : 'tank-slot';
-      tankSlot1.textContent = p.nitroCount >= 2 ? '🚀 READY!' : '🚀 EMPTY';
+
+      // 尾流條：跟車時集氣、觸發後顯示剩餘加速時間
+      const draftNeed = DRAFT_CHARGE_TIME / (p.stats.draftChargeMult || 1);
+      const draftBoosting = p.draftBoostTimer > 0;
+      const draftPct = draftBoosting ? p.draftBoostTimer / (p.draftBoostMax || DRAFT_BOOST_TIME) : p.draftCharge / draftNeed;
+      hudDraftFill.style.width = `${Math.max(0, Math.min(100, draftPct * 100))}%`;
+      hudDraftRow.className = 'dash-row draft' + (draftBoosting ? ' boost' : (p.inDraft ? ' on' : '')) + (p.inZone ? ' zone' : '');
+      const st = [];
+      if (draftBoosting) st.push('<span class="st-draft">💨 尾流加速</span>');
+      else if (p.inDraft) st.push(`<span class="st-draft">💨 吸尾流 ${Math.round(Math.min(1, draftPct) * 100)}%</span>`);
+      if (p.ddFlash > 0) st.push('<span class="st-dd">🌀🌀 雙甩</span>');
+      if (p.isDrifting && p.dragLv > 0.02) st.push(`<span class="st-drag">🌀 拖飄加速 ${Math.round(p.dragLv * 100)}%</span>`);
+      if (p.inZone) st.push('<span class="st-zone">⚡ 集氣帶</span>');
+      if (p.catchUp > 0.004) st.push(`<span class="st-catch">🔥 追趕 +${Math.round(p.catchUp * 100)}%</span>`);
+      const stHtml = st.join('');
+      if (stHtml !== lastDashStatus) { hudDashStatus.innerHTML = stHtml; lastDashStatus = stHtml; }
 
       // 4. Debug HUD
       if (debugHud.style.display === 'block') {
@@ -9728,7 +9992,7 @@
     // 遊戲放上網之後，把網址填在這裡（例如 'https://你的帳號.github.io/kart/kart.html'），
     // 這樣就算你是從自己電腦的檔案開遊戲，產生的邀請連結也會指向網路上的版本
     const GAME_URL = '';
-    const NET_PREFIX = 'mofish-kart-v8-'; // v8：新傳說車黑騎士；v7：特色車數值依個性重新分配；v6：六台特色車升神話；v5：星耀新車、專屬機制狀態旗標（v4 加入道具賽），跟舊版不互通
+    const NET_PREFIX = 'mofish-kart-v13-'; // v13：坡度影響極速、三張山道新圖；v12：雙甩、AI 新增星曜等級；v11：房間制（AI 名單、各自難度、1v1～4v4）；v10：拖飄越拖越快；v9：落後第一名的真人有後追補速；v8：新傳說車黑騎士；v7：特色車數值依個性重新分配；v6：六台特色車升神話；v5：星耀新車、專屬機制狀態旗標（v4 加入道具賽），跟舊版不互通
     const NET_SEND_INTERVAL = 0.05;
     const NET_INTERP_DELAY = 100;
     const MAX_RACERS = 8;
@@ -9828,7 +10092,24 @@
     // 新玩家分到真人比較少的隊伍（有偏好且還有空位就照偏好）
     function pickTeam(pref) {
       if ((pref === 'red' || pref === 'blue') && teamCount(pref) < TEAM_SIZE) return pref;
-      return teamCount('red') <= teamCount('blue') ? 'red' : 'blue';
+      const tr = teamTotal('red'), tb = teamTotal('blue');
+      return tr === tb ? (teamCount('red') <= teamCount('blue') ? 'red' : 'blue') : (tr < tb ? 'red' : 'blue');
+    }
+    // 一隊的總台數（真人＋AI）
+    function teamTotal(team, exceptId = null) {
+      const ais = net.role === 'host' ? roomCfg().ais : (net.ais || []);
+      return teamCount(team, exceptId) + ais.filter(a => a.team === team).length;
+    }
+    // 房主：真人＋AI 超過 8 台（或團隊賽某隊超過 4 台）時，AI 讓位給真人
+    function roomFitHumans(team) {
+      const r = roomCfg();
+      roomBalanceAi(r, net.players.map(p => p.team));
+      const drop = pred => { for (let i = r.ais.length - 1; i >= 0; i--) if (pred(r.ais[i])) { r.ais.splice(i, 1); return true; } return false; };
+      while (net.players.length + r.ais.length > ROOM_MAX) {
+        if (!drop(a => r.mode !== 'team' || !team || a.team === team) && !drop(() => true)) break;
+      }
+      if (r.mode === 'team') for (const t of ['red', 'blue']) while (teamTotal(t) > TEAM_SIZE && drop(a => a.team === t)) {}
+      saveGameData();
     }
     function allReady() { return net.players.every(p => p.id === 'host' || p.ready); }
 
@@ -9847,13 +10128,14 @@
         net.role = 'host';
         net.myId = 'host';
         net.clockOffset = 0;
-        net.mode = rehost ? (urlParams.get('mode') === 'team' ? 'team' : 'solo') : (gameData.raceMode === 'team' ? 'team' : 'solo');
+        net.mode = roomCfg().mode; // 房主的房間設定（模式、AI 名單）跟單人房共用
         net.items = rehost ? urlParams.get('items') === '1' : !!gameData.itemMode;
         let kicked = [];
         try { kicked = JSON.parse(ssGet('kart_kicked_' + net.code) || '[]'); } catch (e) {}
         net.kickedCids = new Set(Array.isArray(kicked) ? kicked : []);
         const pref = ssGet('kart_team_pref');
-        net.players = [Object.assign({ id: 'host' }, myProfile(), { team: pref === 'blue' ? 'blue' : 'red', ready: true, cid: CLIENT_ID })];
+        net.players = [Object.assign({ id: 'host' }, myProfile(), { team: pref === 'blue' ? 'blue' : (pref === 'red' ? 'red' : roomCfg().team), ready: true, cid: CLIENT_ID })];
+        roomFitHumans();
         mpStatus('房間已建立，把房間碼給朋友');
         renderLobby();
       });
@@ -9881,12 +10163,14 @@
         if (cid && net.kickedCids.has(cid)) { netSend(conn, { t: 'reject', reason: '你已被移出這個房間', kicked: true }); return; }
         if (net.inRace) { netSend(conn, { t: 'reject', reason: '比賽進行中，請等這場結束' }); return; }
         if (net.players.length >= MAX_RACERS) { netSend(conn, { t: 'reject', reason: '房間已滿' }); return; }
+        const team0 = pickTeam(d.team);
         const id = 'p' + (net.nextId++);
         conn.kartId = id;
         net.conns.set(id, conn);
         net.lastSeen.set(id, performance.now());
-        const np = Object.assign({ id }, cleanProfile(d.profile), { team: pickTeam(d.team), ready: false, cid });
+        const np = Object.assign({ id }, cleanProfile(d.profile), { team: team0, ready: false, cid });
         net.players.push(np);
+        roomFitHumans(np.team);
         netSend(conn, { t: 'welcome', id, track: SELECTED_TRACK_ID, code: net.code, mode: net.mode, items: net.items ? 1 : 0, chat: net.chat });
         hostSysChat(`${np.name} 加入了房間`);
         broadcastLobby();
@@ -9899,7 +10183,7 @@
         broadcastLobby();
       } else if (d.t === 'team') {
         if (net.inRace || (d.team !== 'red' && d.team !== 'blue') || p.team === d.team) return;
-        if (teamCount(d.team, p.id) >= TEAM_SIZE) return;
+        if (teamTotal(d.team, p.id) >= TEAM_SIZE) return;
         p.team = d.team;
         broadcastLobby();
       } else if (d.t === 'ready') {
@@ -9952,13 +10236,14 @@
 
     function hostSetTeam(team) {
       const me = net.players[0];
-      if (!me || me.team === team || teamCount(team, 'host') >= TEAM_SIZE) return;
+      if (!me || me.team === team || teamTotal(team, 'host') >= TEAM_SIZE) return;
       me.team = team;
+      roomCfg().team = team; saveGameData();
       broadcastLobby();
     }
 
     function broadcastLobby() {
-      netBroadcast({ t: 'lobby', mode: net.mode, items: net.items ? 1 : 0,
+      netBroadcast({ t: 'lobby', mode: net.mode, items: net.items ? 1 : 0, ais: roomCfg().ais,
         players: net.players.map(p => ({ id: p.id, name: p.name, car: p.car, color: p.color, team: p.team, ready: !!p.ready })) });
       renderLobby();
     }
@@ -10051,6 +10336,8 @@
         net.players = Array.isArray(d.players) ? d.players : [];
         net.mode = d.mode === 'team' ? 'team' : 'solo';
         net.items = !!d.items;
+        net.ais = (Array.isArray(d.ais) ? d.ais : []).slice(0, ROOM_MAX)
+          .map(a => ({ lv: a && aiLvOk(a.lv) ? a.lv : 1, team: a && (a.team === 'red' || a.team === 'blue') ? a.team : null }));
         const me = net.players.find(p => p.id === net.myId);
         if (me && me.team) ssSet('kart_team_pref', me.team);
         renderLobby();
@@ -10100,7 +10387,7 @@
       net.conns.clear();
       if (net.peer) { try { net.peer.destroy(); } catch (e) {} }
       const wasInRace = net.inRace || net.rosterBuilt;
-      Object.assign(net, { role: null, peer: null, myId: '', players: [], clockOffset: 0, bestRtt: Infinity, inRace: false,
+      Object.assign(net, { role: null, peer: null, myId: '', players: [], ais: [], clockOffset: 0, bestRtt: Infinity, inRace: false,
                            mode: 'solo', chat: [], chatTimes: new Map(), kickedCids: new Set() });
       if (!silent) mpStatus('已離開房間');
       renderLobby();
@@ -10190,30 +10477,77 @@
     });
 
     // ---------- 大廳畫面 ----------
+    // 房間分頁：'local' 單人房 / 'online' 線上房（在線上房裡時固定是線上）
+    let roomTab = gameData.roomTab === 'online' ? 'online' : 'local';
+    function openRoomPanel(tab) {
+      if (tab) roomTab = tab;
+      mpEls.panel.classList.remove('hidden');
+      renderLobby();
+    }
+    // 現在房間裡的真人、AI、模式（單人房用自己的設定；線上房用房主同步來的）
+    function roomView() {
+      const online = !!net.role, r = roomCfg();
+      if (online) return { online, mode: net.mode, ais: net.role === 'host' ? r.ais : (net.ais || []), humans: net.players };
+      roomBalanceAi(r, [r.team]);
+      return { online, mode: r.mode, ais: r.ais,
+               humans: [{ id: 'me', name: gameData.playerName, car: gameData.selectedCar, color: gameData.selectedColor, team: r.team }] };
+    }
+    function roomTeamTotals(v) {
+      const t = { red: 0, blue: 0 };
+      v.humans.forEach(h => { if (t[h.team] !== undefined) t[h.team]++; });
+      v.ais.forEach(a => { if (t[a.team] !== undefined) t[a.team]++; });
+      return t;
+    }
+    function roomStartable() {
+      const v = roomView();
+      if (v.mode !== 'team') return true;
+      const t = roomTeamTotals(v);
+      return t.red === t.blue && t.red >= 1 && t.red <= TEAM_SIZE;
+    }
+    // 改完房間設定：存檔、單人房重排車、線上房廣播
+    function roomCommit() {
+      saveGameData();
+      if (net.role === 'host') { roomFitHumans(); broadcastLobby(); return; }
+      if (!net.role) { setupSoloKarts(); karts.forEach(k => k.reset()); }
+      renderLobby();
+    }
+    const AI_LV_COLOR = ['#22c55e', '#38bdf8', '#f59e0b', '#ef4444', '#f472b6', '#a855f7'];
+
     function renderLobby() {
       syncBgLoop();
-      const inRoom = !!net.role;
+      const online = !!net.role;
+      if (online) roomTab = 'online';
+      const local = !online && roomTab === 'local';
+      const inRoom = online || local;
       const isHost = net.role === 'host';
-      const isTeam = net.mode === 'team';
-      mpEls.menu.style.display = inRoom ? 'none' : 'block';
+      const canEdit = isHost || local;
+      const v = roomView();
+      const isTeam = v.mode === 'team';
+      document.querySelectorAll('#roomTabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === roomTab));
+      document.getElementById('roomTabs').style.display = online ? 'none' : 'flex';
+      mpEls.menu.style.display = !online && roomTab === 'online' ? 'block' : 'none';
       mpEls.lobby.style.display = inRoom ? 'block' : 'none';
-      mpEls.btnLeave.style.display = inRoom ? 'inline-block' : 'none';
-      document.getElementById('mpBgHint').style.display = inRoom ? 'block' : 'none';
+      mpEls.btnLeave.style.display = online ? 'inline-block' : 'none';
+      document.getElementById('mpBgHint').style.display = online ? 'block' : 'none';
+      document.querySelector('#mpLobby .mp-top').style.display = online ? '' : 'none';
+      document.querySelector('#mpLobby .mp-body').classList.toggle('solo-room', !online);
       mpEls.codeShow.textContent = net.code;
       renderInvite();
 
-      // 模式、地圖：房主用下拉選單，其他人只看文字
-      mpEls.modeSel.style.display = isHost ? '' : 'none';
-      mpEls.modeSel.value = net.mode;
-      mpEls.modeText.textContent = isHost ? '' : (isTeam ? '團體賽 4v4' : '個人賽');
-      document.getElementById('mpItemSel').style.display = isHost ? '' : 'none';
-      document.getElementById('mpItemSel').value = net.items ? '1' : '0';
-      document.getElementById('mpItemText').textContent = isHost ? '' : (net.items ? '開啟 🎲' : '關閉');
-      mpEls.trackSel.style.display = isHost ? '' : 'none';
+      // 模式、道具、地圖：房主／單人房用下拉選單，其他人只看文字
+      mpEls.modeSel.style.display = canEdit ? '' : 'none';
+      mpEls.modeSel.value = v.mode;
+      mpEls.modeText.textContent = canEdit ? '' : (isTeam ? '團隊賽' : '個人賽');
+      const items = online ? net.items : !!gameData.itemMode;
+      document.getElementById('mpItemSel').style.display = canEdit ? '' : 'none';
+      document.getElementById('mpItemSel').value = items ? '1' : '0';
+      document.getElementById('mpItemText').textContent = canEdit ? '' : (items ? '開啟 🎲' : '關閉');
+      mpEls.trackSel.style.display = canEdit ? '' : 'none';
       mpEls.trackSel.value = SELECTED_TRACK_ID;
-      mpEls.trackText.textContent = isHost ? '' : TRACK_DEF.name;
+      mpEls.trackText.textContent = canEdit ? '' : TRACK_DEF.name;
+      document.getElementById('mpAiAllWrap').style.display = canEdit && v.ais.length ? '' : 'none';
+      document.getElementById('mpAiAll').value = '';
 
-      const carName = id => (CAR_CATALOG[id] && CAR_CATALOG[id].name) || id;
       const carTag = id => {
         const c = CAR_CATALOG[id];
         if (!c) return `<span class="mp-car">${escapeHtml(String(id))}</span>`;
@@ -10224,60 +10558,136 @@
       const dotColor = p => { const c = CAR_CATALOG[p.car]; return c && !c.starter ? RARITIES[c.rarity].css : '#' + (Number(p.color) || 0).toString(16).padStart(6, '0'); };
       const playerRow = p => {
         const host = p.id === 'host';
-        const badge = host ? '<span class="mp-badge host">房主</span>'
+        const badge = !online ? '' : host ? '<span class="mp-badge host">房主</span>'
           : (p.ready ? '<span class="mp-badge ready">✅ 已準備</span>' : '<span class="mp-badge wait">⏳ 未準備</span>');
         const kick = (isHost && !host) ? `<button class="mp-kick" data-kick="${escapeHtml(p.id)}">踢出</button>` : '';
+        const mine = p.id === net.myId || p.id === 'me';
         return `<div class="mp-player"><span class="mp-dot" style="background:${dotColor(p)}"></span>` +
-          `<span class="mp-pname">${escapeHtml(p.name)}${host ? ' 👑' : ''}${p.id === net.myId ? '（你）' : ''}</span>${badge}` +
+          `<span class="mp-pname">${escapeHtml(p.name)}${host ? ' 👑' : ''}${mine ? '（你）' : ''}</span>${badge}` +
           `${carTag(p.car)}${kick}</div>`;
       };
-      const aiRow = () => '<div class="mp-player ai"><span class="mp-dot" style="background:#334155"></span>🤖 AI</div>';
-      const me = net.players.find(p => p.id === net.myId);
+      const aiRow = (a, i) => {
+        const lv = AI_LEVELS[a.lv] || AI_LEVELS[1];
+        const ctl = canEdit
+          ? `<select class="mp-ailv" data-ailv="${i}">${AI_LEVELS.map((l, j) => `<option value="${j}"${j === a.lv ? ' selected' : ''}>${l.name}</option>`).join('')}</select>` +
+            (isTeam ? `<button class="mp-mini" data-aimove="${i}" title="換到另一隊">⇄</button>` : '') +
+            `<button class="mp-mini del" data-aidel="${i}" title="移除這台 AI">✕</button>`
+          : `<span class="mp-car" style="color:${AI_LV_COLOR[a.lv]}">${lv.name}</span>`;
+        return `<div class="mp-player ai"><span class="mp-dot" style="background:${AI_LV_COLOR[a.lv] || '#334155'}"></span><span class="mp-ainame">🤖 AI</span>${ctl}</div>`;
+      };
+      const total = v.humans.length + v.ais.length;
+      const myId = online ? net.myId : 'me';
+      const me = v.humans.find(p => p.id === myId);
       let html = '';
       if (!inRoom) html = '';
       else if (isTeam) {
+        const tot = roomTeamTotals(v);
         html = '<div class="mp-teams">' + ['red', 'blue'].map(t => {
-          const hs = net.players.filter(p => p.team === t);
-          let col = `<div class="mp-team ${t}"><div class="mp-team-title">${t === 'red' ? '🔴 紅隊' : '🔵 藍隊'}（${hs.length} 人）</div>`;
+          const hs = v.humans.filter(p => p.team === t);
+          let col = `<div class="mp-team ${t}"><div class="mp-team-title">${t === 'red' ? '🔴 紅隊' : '🔵 藍隊'}（${tot[t]} 台）</div>`;
           col += hs.map(playerRow).join('');
-          for (let i = hs.length; i < TEAM_SIZE; i++) col += aiRow();
+          v.ais.forEach((a, i) => { if (a.team === t) col += aiRow(a, i); });
+          if (canEdit) col += `<button class="mp-addai" data-addai="${t}" ${tot[t] >= TEAM_SIZE || total >= ROOM_MAX ? 'disabled' : ''}>＋ 加 AI 到${TEAM_NAMES[t]}</button>`;
           if (me && me.team !== t) {
-            const full = hs.length >= TEAM_SIZE;
-            col += `<button class="mp-swap" data-swap="${t}" ${full ? 'disabled' : ''}>${full ? '已滿 4 位真人' : '換到' + TEAM_NAMES[t]}</button>`;
+            const full = tot[t] >= TEAM_SIZE;
+            col += `<button class="mp-swap" data-swap="${t}" ${full ? 'disabled' : ''}>${full ? '這隊已滿 4 台' : '換到' + TEAM_NAMES[t]}</button>`;
           }
           return col + '</div>';
         }).join('') + '</div>';
       } else {
-        html = net.players.map(playerRow).join('');
-        for (let i = net.players.length; i < MAX_RACERS; i++) html += aiRow();
+        html = v.humans.map(playerRow).join('');
+        v.ais.forEach((a, i) => { html += aiRow(a, i); });
+        if (canEdit) html += `<button class="mp-addai" data-addai="" ${total >= ROOM_MAX ? 'disabled' : ''}>＋ 加 AI（${total}/${ROOM_MAX}）</button>`;
+        else for (let i = total; i < ROOM_MAX; i++) html += '<div class="mp-player empty"><span class="mp-dot" style="background:#1e293b"></span>空位</div>';
       }
       mpEls.players.innerHTML = html;
 
-      const ready = allReady();
-      mpEls.fillNote.textContent = !inRoom ? '' :
-        (isTeam ? '每隊 4 台，空位由 AI 補滿。依名次得分 10/8/6/5/4/3/2/1，總分高的隊伍獲勝'
-                : `空位由 AI 補滿到 ${MAX_RACERS} 台`) +
-        (isHost && !ready ? '・等待所有玩家按「準備」' : '');
+      const ready = online ? allReady() : true;
+      const startable = roomStartable();
+      let note = '', bad = false;
+      if (inRoom) {
+        if (isTeam) {
+          const tot = roomTeamTotals(v);
+          bad = !startable;
+          note = bad ? `⚠️ 兩隊台數要一樣才能開始（現在 ${tot.red} vs ${tot.blue}，可以 1v1～4v4）`
+                     : `${tot.red}v${tot.blue}・依名次得分 10/8/6/5/4/3/2/1，總分高的隊伍獲勝`;
+        } else {
+          note = `共 ${total} 台（真人 ${v.humans.length}＋AI ${v.ais.length}）`;
+          if (!online && !v.ais.length) note += '・只有自己：練習模式，沒有金幣、沒有道具';
+          else if (total - 1 < 5) note += '・對手少於 5 台，金幣會打折';
+        }
+        if (online && isHost) note += '・朋友加入時，房間滿了會自動拿掉一台 AI';
+        if (isHost && !ready) note += '・等待所有玩家按「準備」';
+      }
+      mpEls.fillNote.textContent = note;
+      mpEls.fillNote.classList.toggle('bad', bad);
 
-      mpEls.btnStart.style.display = isHost ? 'inline-block' : 'none';
-      mpEls.btnStart.disabled = !ready;
-      mpEls.btnStart.title = ready ? '' : '所有玩家都準備好才能開始';
+      mpEls.btnStart.style.display = isHost || local ? 'inline-block' : 'none';
+      mpEls.btnStart.disabled = !ready || !startable;
+      mpEls.btnStart.title = !startable ? '兩隊台數要一樣' : (ready ? '' : '所有玩家都準備好才能開始');
       mpEls.btnReady.style.display = net.role === 'client' && me ? 'inline-block' : 'none';
-      if (me) {
+      if (online && me) {
         mpEls.btnReady.textContent = me.ready ? '✅ 已準備（點擊取消）' : '✋ 準備';
         mpEls.btnReady.classList.toggle('on', !!me.ready);
       }
       renderChat();
 
-      mpEls.btnOpen.textContent = inRoom ? `🌐 房間 ${net.code}（${net.players.length} 人）` : '🌐 多人連線';
+      mpEls.btnOpen.textContent = online ? `🌐 房間 ${net.code}（${net.players.length} 人）` : '🌐 多人連線';
       const startBtn = document.getElementById('btnStartRaceFromGarage');
-      startBtn.textContent = net.role === 'client' ? '⏳ 等待房主開始' : (isHost ? '🏁 開始連線比賽' : '🏁 開始比賽 (START RACE)');
+      startBtn.textContent = online ? `🚪 回到房間 ${net.code}（${net.players.length} 人）` : '🏁 開房間';
     }
+    document.getElementById('roomTabs').addEventListener('click', e => {
+      const b = e.target.closest('[data-tab]');
+      if (!b || net.role) return;
+      roomTab = b.dataset.tab;
+      gameData.roomTab = roomTab; saveGameData();
+      renderLobby();
+    });
+    // AI 名單：加、刪、換隊、改難度
+    mpEls.players.addEventListener('change', e => {
+      const sel = e.target.closest('[data-ailv]');
+      if (!sel || !(net.role === 'host' || !net.role)) return;
+      const a = roomCfg().ais[+sel.dataset.ailv];
+      if (a) { a.lv = +sel.value; roomCommit(); }
+    });
+    mpEls.players.addEventListener('click', e => {
+      if (!(net.role === 'host' || !net.role)) return;
+      const r = roomCfg(), v = roomView();
+      const add = e.target.closest('[data-addai]');
+      if (add && !add.disabled) {
+        if (v.humans.length + r.ais.length >= ROOM_MAX) return;
+        const team = add.dataset.addai || null;
+        r.ais.push({ lv: r.ais.length ? r.ais[r.ais.length - 1].lv : 1, team });
+        roomCommit(); return;
+      }
+      const del = e.target.closest('[data-aidel]');
+      if (del) { r.ais.splice(+del.dataset.aidel, 1); roomCommit(); return; }
+      const mv = e.target.closest('[data-aimove]');
+      if (mv) {
+        const a = r.ais[+mv.dataset.aimove]; if (!a) return;
+        const to = a.team === 'red' ? 'blue' : 'red';
+        if (roomTeamTotals(v)[to] >= TEAM_SIZE) { showToast(`${TEAM_NAMES[to]}已經 4 台了`); return; }
+        a.team = to; roomCommit(); return;
+      }
+      // 單人房換隊
+      const swap = e.target.closest('[data-swap]');
+      if (swap && !swap.disabled && !net.role) { r.team = swap.dataset.swap; roomCommit(); }
+    });
+    AI_LEVELS.forEach((l, j) => { const o = document.createElement('option'); o.value = j; o.textContent = l.name; document.getElementById('mpAiAll').appendChild(o); });
+    { const o = document.createElement('option'); o.value = ''; o.textContent = '一次設定…'; document.getElementById('mpAiAll').prepend(o); }
+    document.getElementById('mpAiAll').addEventListener('change', e => {
+      if (e.target.value === '' || !(net.role === 'host' || !net.role)) return;
+      const lv = +e.target.value;
+      roomCfg().ais.forEach(a => { a.lv = lv; });
+      if (lv === 5) showToast('😈 不可能：20 星北極星、完美路線。練習跟車吃尾流吧！', 3500);
+      else if (lv === 4) showToast('🌌 星曜：AI 開星曜車（北極星以外）＋滿強化，走準線、會雙甩', 3500);
+      roomCommit();
+    });
     mpEls.players.addEventListener('click', e => {
       const kick = e.target.closest('[data-kick]');
       if (kick) { hostKick(kick.dataset.kick); return; }
       const swap = e.target.closest('[data-swap]');
-      if (swap && !swap.disabled) {
+      if (swap && !swap.disabled && net.role) {
         if (net.role === 'host') hostSetTeam(swap.dataset.swap);
         else if (net.role === 'client') netSend(net.conns.get('host'), { t: 'team', team: swap.dataset.swap });
       }
@@ -10294,20 +10704,26 @@
     });
     mpEls.trackSel.addEventListener('change', () => {
       const id = mpEls.trackSel.value;
-      if (net.role !== 'host' || id === SELECTED_TRACK_ID || !TRACKS[id]) return;
+      if (net.role === 'client' || id === SELECTED_TRACK_ID || !TRACKS[id]) return;
       gameData.selectedTrack = id;
       saveGameData();
+      if (!net.role) { location.href = location.pathname + '?track=' + id + '&room=1'; return; }
       hostChangeTrack(id);
     });
     mpEls.modeSel.addEventListener('change', () => {
-      if (net.role !== 'host') return;
-      net.mode = mpEls.modeSel.value === 'team' ? 'team' : 'solo';
-      hostSysChat(`房主把模式改成${net.mode === 'team' ? '團體賽 4v4' : '個人賽'}`);
-      broadcastLobby();
+      if (net.role === 'client') return;
+      const r = roomCfg();
+      r.mode = mpEls.modeSel.value === 'team' ? 'team' : 'solo';
+      r.ais.forEach(a => { a.team = null; });
+      roomBalanceAi(r, net.role ? net.players.map(p => p.team) : [r.team]);
+      if (net.role === 'host') { net.mode = r.mode; hostSysChat(`房主把模式改成${net.mode === 'team' ? '團隊賽' : '個人賽'}`); }
+      roomCommit();
     });
     document.getElementById('mpItemSel').addEventListener('change', e => {
-      if (net.role !== 'host') return;
+      if (net.role === 'client') return;
+      if (!net.role) { gameData.itemMode = e.target.value === '1'; saveGameData(); renderLobby(); return; }
       net.items = e.target.value === '1';
+      gameData.itemMode = net.items; saveGameData();
       hostSysChat(net.items ? '房主開啟了道具 🎲' : '房主關閉了道具');
       broadcastLobby();
     });
@@ -10351,39 +10767,33 @@
       sendProfile();
       const aiNames = kartConfigs.filter(c => !c.isPlayer).map(c => c.name);
       const aiLanes = [-3.2, 3.2, -1.6, 1.6, -2.0, 2.0, -0.8, 0.8];
+      const room = roomCfg();
+      roomBalanceAi(room, net.players.map(p => p.team));
+      if (!roomStartable()) { mpStatus('團隊賽兩隊的台數要一樣（1v1～4v4）才能開始', true); return; }
       const humans = net.players.map(p => ({ id: p.id, name: p.name, car: p.car, color: p.color, stats: p.stats, isAI: false, lane: 0, team: p.team }));
       let ai = 0;
-      const makeAI = team => {
+      const makeAI = a => {
         const type = availableTypes[ai % availableTypes.length];
-        const el = (gameData.aiLevel ?? 1) >= 3 ? aiEliteCar(gameData.aiLevel) : null;
-        const r = { id: 'ai' + (ai + 1), name: aiNames[ai % aiNames.length], car: el ? el.car : pickAiCar(),
-                    color: KART_COLORS[(ai + 1) % KART_COLORS.length].hex, stats: el ? el.stats : getKartEffectiveStats(type), isAI: true, lane: aiLanes[ai % aiLanes.length], team };
+        const el = a.lv >= 3 ? aiEliteCar(a.lv) : null;
+        const r = { id: 'ai' + (ai + 1), name: aiNames[ai % aiNames.length], car: el ? el.car : pickAiCar(), lv: a.lv,
+                    color: KART_COLORS[(ai + 1) % KART_COLORS.length].hex, stats: el ? el.stats : getKartEffectiveStats(type), isAI: true, lane: aiLanes[ai % aiLanes.length], team: net.mode === 'team' ? a.team : null };
         ai++;
         return r;
       };
       let order;
       if (net.mode === 'team') {
-        // 每隊補 AI 到 4 台；起跑格兩隊交錯（每排一紅一藍，左右輪流）
-        const side = t => {
-          const hs = humans.filter(h => h.team === t).slice(0, TEAM_SIZE);
-          const ais = [];
-          while (hs.length + ais.length < TEAM_SIZE) ais.push(makeAI(t));
-          return [...ais, ...hs]; // AI 在前排、真人在後排
-        };
+        // 起跑格兩隊交錯（每排一紅一藍，左右輪流）；AI 在前排、真人在後排
+        const side = t => [...room.ais.filter(a => a.team === t).map(makeAI), ...humans.filter(h => h.team === t)];
         const red = side('red'), blue = side('blue');
         order = [];
-        for (let i = 0; i < TEAM_SIZE; i++) {
-          if (i % 2 === 0) order.push(red[i], blue[i]); else order.push(blue[i], red[i]);
-        }
+        for (let i = 0; i < Math.max(red.length, blue.length); i++) (i % 2 ? [blue[i], red[i]] : [red[i], blue[i]]).forEach(x => { if (x) order.push(x); });
       } else {
-        const ais = [];
-        while (humans.length + ais.length < MAX_RACERS) ais.push(makeAI(null));
-        order = [...ais, ...humans]; // 起跑位置：AI 在前排、真人在後排
+        order = [...room.ais.slice(0, ROOM_MAX - humans.length).map(makeAI), ...humans]; // 起跑位置：AI 在前排、真人在後排
       }
       order.forEach((r, slot) => { r.slot = slot; });
       net.players.forEach(p => { if (p.id !== 'host') p.ready = false; }); // 下一場要重新準備
       const startAt = net.now() + 4600; // 4.6 秒後開跑（含 3 秒倒數）
-      const aiLevel = AI_LEVELS[gameData.aiLevel] ? gameData.aiLevel : 1; // 用房主車庫的 AI 難度
+      const aiLevel = 1; // 舊欄位（每台 AI 的難度在 roster 的 lv）
       netBroadcast({ t: 'start', roster: order, startAt, mode: net.mode, aiLevel, items: net.items ? 1 : 0 });
       broadcastLobby();
       beginNetRace(order, startAt, net.mode, aiLevel, net.items);
@@ -10400,7 +10810,7 @@
     function beginNetRace(roster, startAt, mode, aiLevel, withItems) {
       raceMode = mode === 'team' ? 'team' : 'solo';
       net.raceItems = !!withItems;
-      net.raceAiLevel = [0, 1, 2, 3, 4].includes(aiLevel) ? aiLevel : 1;
+      net.raceAiLevel = aiLvOk(aiLevel) ? aiLevel : 1;
       resetRaceEnd();
       karts.forEach(k => scene.remove(k.mesh));
       karts.length = 0;
@@ -10413,6 +10823,8 @@
           spawnPos: calcGridPos(row, col), spawnYaw: spawnYaw, laneOffset: r.lane || 0
         });
         k.isRemote = !local && !(net.role === 'host' && r.isAI);
+        k.isAI = !!r.isAI;
+        if (r.isAI) k.aiLevel = aiLvOk(r.lv) ? r.lv : net.raceAiLevel;
         k.netBuffer = [];
         k.team = raceMode === 'team' && (r.team === 'red' || r.team === 'blue') ? r.team : null;
         applyTeamLook(k, !local && (raceMode === 'team' || !r.isAI));
@@ -10570,10 +10982,17 @@
     mpEls.btnOpen.addEventListener('click', () => { mpEls.panel.classList.remove('hidden'); renderLobby(); });
     document.getElementById('btnMpClose').addEventListener('click', () => mpEls.panel.classList.add('hidden'));
     document.getElementById('btnMpHost').addEventListener('click', hostRoom);
+    // 網址帶 ?room=1：單人房換完地圖，回到房間
+    if (urlParams.get('room')) setTimeout(() => openRoomPanel('local'), 300);
     document.getElementById('btnMpJoin').addEventListener('click', () => joinRoom(mpEls.code.value));
     mpEls.code.addEventListener('keydown', e => { if (e.key === 'Enter') joinRoom(mpEls.code.value); e.stopPropagation(); });
     mpEls.name.addEventListener('keydown', e => e.stopPropagation());
-    mpEls.btnStart.addEventListener('click', netStartRace);
+    mpEls.btnStart.addEventListener('click', () => {
+      if (net.role) { netStartRace(); return; }
+      if (!roomStartable()) { showToast('兩隊台數要一樣才能開始'); return; }
+      mpEls.panel.classList.add('hidden');
+      startRaceFromGarage();
+    });
     mpEls.btnLeave.addEventListener('click', () => leaveRoom(false));
     // 心跳檢查：超過 5 秒沒收到資料就當作斷線（對方關機、斷網時 WebRTC 很久才會回報）
     setInterval(() => {
@@ -10604,65 +11023,19 @@
     }
 
 
-    // AI 難度：調整 AI 的極速倍率
-    const AI_LEVELS = [
-      { name: '簡單', min: 0.86, max: 0.91 },
-      { name: '普通', min: 0.92, max: 0.97 },
-      { name: '困難', min: 0.97, max: 1.00 },          // 困難起：會拖飄、氣滿就噴
-      { name: '專家', min: 0.99, max: 1.00 },          // 全部開傳說車＋滿強化、不放水
-      { name: '不可能', min: 1.00, max: 1.00 }         // 全部開 20 星北極星＋滿強化、完美路線
-    ];
-    function applyAiLevel(level = gameData.aiLevel) {
-      const lv = AI_LEVELS[level] || AI_LEVELS[1];
+    // 每台 AI 用自己的難度（k.aiLevel）；沒設定的用 fallback
+    function applyAiLevel(fallback = 1) {
       karts.forEach(k => {
         if (k.isPlayer || k.isRemote) return;
+        const level = AI_LEVELS[k.aiLevel] ? k.aiLevel : (AI_LEVELS[fallback] ? fallback : 1);
+        const lv = AI_LEVELS[level];
         k.baseAiSpeedMult = lv.min + Math.random() * (lv.max - lv.min);
         k.aiSpeedMult = k.baseAiSpeedMult;
-        k.aiLevel = AI_LEVELS[level] ? level : 1;
-        k.aiTap = k.aiLevel >= 2;
-        k.aiPerfect = k.aiLevel >= 4;
+        k.aiLevel = level;
+        k.aiTap = level >= 2;
+        k.aiPerfect = level >= 3; // 專家起：不亂飄、走準線
       });
-      const btn = document.getElementById('btnAiLevel');
-      const own = AI_LEVELS[gameData.aiLevel] || AI_LEVELS[1]; // 按鈕永遠顯示自己車庫的設定
-      btn.innerHTML = `<div class="t-name">🤖 AI：${own.name}</div><div class="t-desc">點一下切換難度</div>`;
     }
-    const RACE_MODE_LABEL = { solo: '個人賽', team: '團體賽 4v4', practice: '練習賽（無 AI）' };
-    function renderRaceModeBtn() {
-      const m = RACE_MODE_LABEL[gameData.raceMode] ? gameData.raceMode : 'solo';
-      document.getElementById('btnRaceMode').innerHTML =
-        `<div class="t-name">🏁 ${RACE_MODE_LABEL[m]}</div><div class="t-desc">點一下切換模式</div>`;
-      document.getElementById('btnAiLevel').style.opacity = m === 'practice' ? '0.45' : '';
-      const ib = document.getElementById('btnItemMode');
-      ib.innerHTML = `<div class="t-name">🎲 道具：${gameData.itemMode ? '開' : '關'}</div><div class="t-desc">${m === 'practice' ? '練習賽沒有道具' : '撞箱子拿道具・E 使用'}</div>`;
-      ib.style.opacity = m === 'practice' ? '0.45' : '';
-      ib.classList.toggle('on', !!gameData.itemMode && m !== 'practice');
-    }
-    document.getElementById('btnRaceMode').addEventListener('click', () => {
-      if (net.role) { showToast('🏁 連線時由房主在房間裡選模式'); return; }
-      // 個人賽 → 團體賽 → 練習賽 → 個人賽
-      gameData.raceMode = { solo: 'team', team: 'practice', practice: 'solo' }[gameData.raceMode] || 'team';
-      saveGameData();
-      setupSoloKarts();
-      applyAiLevel();
-      karts.forEach(k => k.reset());
-      renderRaceModeBtn();
-    });
-    document.getElementById('btnItemMode').addEventListener('click', () => {
-      if (net.role) { showToast('🎲 連線時由房主在房間裡開關道具'); return; }
-      if (gameData.raceMode === 'practice') { showToast('練習賽沒有道具，先切到個人賽或團體賽'); return; }
-      gameData.itemMode = !gameData.itemMode;
-      saveGameData();
-      renderRaceModeBtn();
-    });
-    renderRaceModeBtn();
-    document.getElementById('btnAiLevel').addEventListener('click', () => {
-      gameData.aiLevel = ((gameData.aiLevel ?? 1) + 1) % AI_LEVELS.length;
-      saveGameData();
-      if (!net.role) { setupSoloKarts(); karts.forEach(k => k.reset()); }
-      applyAiLevel();
-      if (gameData.aiLevel === 4) showToast('😈 不可能模式：AI 全部是 20 星北極星，跑完美路線。練習跟車吃尾流吧！', 4000);
-      else if (gameData.aiLevel === 3) showToast('🔥 專家：AI 全開傳說車、滿強化，會拖飄、氣滿就噴', 3500);
-    });
     applyAiLevel();
 
     // 挑戰目標：用一台看不見的 AI 照最佳行車線跑一圈（不用氮氣），算出參考單圈
@@ -10677,7 +11050,7 @@
       g.aiTap = true; g.aiPerfect = true; // 最佳線也會拖飄
       g.emitParticles = () => {};
       const tapHits = new Uint8Array(N);
-      for (let step = 0; step < 60 * 200 && g.lapTimes.length < 3; step++) {
+      for (let step = 0; step < 60 * 400 && g.lapTimes.length < 3; step++) {
         g.baseAiSpeedMult = 1; g.aiSpeedMult = 1; g.nitroCount = 0;
         g.prevPos.copy(g.pos); g.prevYaw = g.yaw;
         g.update(FIXED_DT, getAIInput(g, FIXED_DT));
@@ -11646,7 +12019,20 @@
     };
 
     // 特色車的簡單音效：[頻率, 長度, 波形, 音量, 延遲, 滑到的頻率]
+    // 傳說、神話車原本沒有專屬氮氣音效的：依車款主題補一個
+    const NITRO_SIG = { flame_dragon: 'dragon', abyss_shark: 'shark', stardust: 'stardust', storm_eye: 'storm', solar_flare: 'solar',
+                        aurora: 'aurora', iron_bastion: 'bastion', sky_crown: 'crown', sky_falcon: 'falcon', tide_runner: 'tide' };
     const SIMPLE_SOUNDS = {
+      dragon:    [[110, 0.8, 'sawtooth', 0.14, 0, 55], [220, 0.6, 'square', 0.06, 0.05, 90], [1800, 0.4, 'sawtooth', 0.03, 0, 300]],
+      shark:     [[60, 0.7, 'sine', 0.18, 0, 40], [1200, 0.12, 'sine', 0.06, 0.05], [900, 0.12, 'sine', 0.05, 0.2], [700, 0.15, 'sine', 0.04, 0.35]],
+      stardust:  [[1319, 0.2, 'sine', 0.06, 0], [1760, 0.2, 'sine', 0.06, 0.06], [2349, 0.25, 'sine', 0.05, 0.12], [3136, 0.4, 'triangle', 0.04, 0.18]],
+      storm:     [[300, 1.0, 'sawtooth', 0.05, 0, 1400], [1400, 0.8, 'sine', 0.03, 0.2, 500]],
+      solar:     [[262, 0.6, 'sawtooth', 0.06, 0], [330, 0.6, 'sawtooth', 0.05, 0.03], [392, 0.7, 'sawtooth', 0.05, 0.06], [523, 0.8, 'triangle', 0.05, 0.1]],
+      aurora:    [[880, 0.9, 'sine', 0.05, 0, 1320], [1109, 0.9, 'sine', 0.04, 0.05, 1661], [1319, 1.0, 'sine', 0.035, 0.1, 1976]],
+      bastion:   [[70, 0.6, 'square', 0.12, 0, 40], [1800, 0.08, 'square', 0.06, 0], [1200, 0.1, 'square', 0.05, 0.08], [2400, 0.06, 'square', 0.04, 0.16]],
+      crown:     [[523, 0.15, 'square', 0.06, 0], [659, 0.15, 'square', 0.06, 0.12], [784, 0.15, 'square', 0.06, 0.24], [1047, 0.45, 'square', 0.06, 0.36]],
+      falcon:    [[2800, 0.5, 'sawtooth', 0.04, 0, 1600], [3200, 0.3, 'sine', 0.03, 0.05, 2000]],
+      tide:      [[150, 1.0, 'sine', 0.12, 0, 60], [600, 0.8, 'sawtooth', 0.03, 0, 200]],
       sigh:      [[440, 0.8, 'sine', 0.12, 0, 180]],
       knight:    [[90, 0.7, 'sawtooth', 0.14, 0, 42], [60, 0.8, 'square', 0.06, 0.03, 35], [180, 0.35, 'sawtooth', 0.05, 0.05, 70]],
       polaris:   [[1047, 0.5, 'sine', 0.08, 0], [1319, 0.5, 'sine', 0.07, 0.07], [1568, 0.6, 'sine', 0.07, 0.14], [2093, 0.8, 'triangle', 0.05, 0.21], [300, 0.6, 'sawtooth', 0.04, 0, 900]],
@@ -12292,36 +12678,128 @@
     });
     renderMusicBtn();
 
-    // ---------- 比賽音效：引擎聲（依速度、換檔，依車款類型音色不同）、甩尾輪胎聲、氮氣噴射聲 ----------
+    // ---------- 比賽音效：引擎聲（依速度、換檔、油門負載，依車款類型音色不同）、甩尾輪胎尖叫、氮氣點火＋火焰轟鳴 ----------
     const ENGINE_TONE = { speed: 78, drift: 88, balanced: 70, heavy: 46, accel: 95, knight: 50 }; // 黑騎士：低沉厚實
+    // 引擎音色：sub = 低頻厚度、drive = 失真（顆粒感）、bright = 亮度、burble = 低轉速「噗噗」抖動
+    const ENGINE_COLOR = {
+      balanced: { sub: 0.6, drive: 2.4, bright: 1.0, burble: 0.35 },
+      speed:    { sub: 0.4, drive: 2.0, bright: 1.35, burble: 0.25 },
+      accel:    { sub: 0.5, drive: 2.8, bright: 1.2, burble: 0.4 },
+      drift:    { sub: 0.5, drive: 2.2, bright: 1.15, burble: 0.3 },
+      heavy:    { sub: 1.0, drive: 3.6, bright: 0.75, burble: 0.55 },
+      knight:   { sub: 1.0, drive: 3.0, bright: 0.7, burble: 0.5 }
+    };
+    // 高級車（傳說、神話、星曜）專屬引擎聲：tone = 基本音高、color = 音色覆蓋、saw = 鋸齒波量（電動車低）、
+    // harm = 高八度尖嘯（V12）、whine = [倍數, 音量] 隨轉速的電動／渦輪高音、crackle = 收油回火、blowoff = 換檔洩壓「噗嘶」
+    const CAR_VOICE = {
+      flame_dragon:  { tone: 58, color: { sub: 0.9, drive: 3.4, bright: 0.9, burble: 0.6 }, harm: 0.12, crackle: true },          // 龍吼 V8＋回火
+      abyss_shark:   { tone: 52, color: { sub: 1.1, drive: 2.0, bright: 0.6, burble: 0.75 }, whine: [3, 0.02] },               // 深海低頻＋氣泡
+      stardust:      { tone: 110, color: { sub: 0.3, drive: 1.4, bright: 1.4, burble: 0 }, saw: 0.3, whine: [4, 0.05] },        // 電動星塵
+      storm_eye:     { tone: 84, color: { sub: 0.5, drive: 2.4, bright: 1.2, burble: 0.2 }, whine: [8, 0.03], blowoff: true },  // 渦輪
+      formosan_bear: { tone: 48, color: { sub: 1.1, drive: 3.8, bright: 0.7, burble: 0.65 }, crackle: true },                   // 熊：粗獷
+      solar_flare:   { tone: 82, color: { sub: 0.5, drive: 2.6, bright: 1.5, burble: 0.15 }, harm: 0.3 },                        // V12 高轉尖嘯
+      aurora:        { tone: 100, color: { sub: 0.4, drive: 1.3, bright: 1.3, burble: 0 }, saw: 0.35, whine: [2, 0.05] },        // 極光：柔和電子
+      iron_bastion:  { tone: 40, color: { sub: 1.3, drive: 4.2, bright: 0.65, burble: 0.7 }, crackle: true },                    // 要塞：超低沉
+      sky_crown:     { tone: 85, color: { sub: 0.5, drive: 2.4, bright: 1.45, burble: 0.12 }, harm: 0.35 },                      // 蒼穹：V12
+      sky_falcon:    { tone: 90, color: { sub: 0.4, drive: 2.2, bright: 1.3, burble: 0.15 }, whine: [6, 0.035], blowoff: true }, // 翔隼：渦輪
+      black_knight:  { tone: 50, color: { sub: 1.0, drive: 3.0, bright: 0.7, burble: 0.5 }, crackle: true },                    // 黑騎士：低沉＋回火
+      tide_runner:   { tone: 64, color: { sub: 0.9, drive: 2.0, bright: 0.8, burble: 0.7 }, whine: [2.5, 0.02] },               // 潮汐
+      polaris:       { tone: 120, color: { sub: 0.4, drive: 1.5, bright: 1.5, burble: 0 }, saw: 0.3, harm: 0.1, whine: [4, 0.05] },
+      corona:        { tone: 90, color: { sub: 0.5, drive: 2.6, bright: 1.5, burble: 0.1 }, harm: 0.3, whine: [3, 0.03] },
+      new_moon:      { tone: 55, color: { sub: 1.0, drive: 1.6, bright: 0.8, burble: 0 }, saw: 0.4, whine: [6, 0.03] },
+      galaxy:        { tone: 105, color: { sub: 0.4, drive: 1.3, bright: 1.35, burble: 0 }, saw: 0.3, whine: [3, 0.045] },
+      comet:         { tone: 100, color: { sub: 0.4, drive: 2.0, bright: 1.5, burble: 0.05 }, whine: [10, 0.04], blowoff: true }
+    };
     const raceAudio = {
-      ready: false, level: 0,
+      ready: false, rpm: 0.15, gear: 0, shiftDip: 0, prevNitro: false, prevMini: false, nitroT: 0, colorKey: '',
       build() {
         const ac = sfx.ac(); if (!ac) return false;
         this.ac = ac;
         this.master = ac.createGain(); this.master.gain.value = 0; this.master.connect(sfx.out);
-        // 引擎：鋸齒波＋方波（稍微走音）→ 低通
-        this.lp = ac.createBiquadFilter(); this.lp.type = 'lowpass'; this.lp.frequency.value = 900; this.lp.Q.value = 2;
-        this.engGain = ac.createGain(); this.engGain.gain.value = 0.5;
+        // ===== 引擎：兩個稍微走音的鋸齒波（厚度）→ 失真 → 低通 → 點火脈動（AM）；另外一個低八度正弦當底 =====
+        this.shaper = ac.createWaveShaper(); this.shaper.oversample = '2x';
+        this.pre = ac.createGain(); this.pre.gain.value = 0.5;
+        this.lp = ac.createBiquadFilter(); this.lp.type = 'lowpass'; this.lp.frequency.value = 900; this.lp.Q.value = 1.4;
+        this.am = ac.createGain(); this.am.gain.value = 0.7;
+        this.engGain = ac.createGain(); this.engGain.gain.value = 0.4;
         this.o1 = ac.createOscillator(); this.o1.type = 'sawtooth';
-        this.o2 = ac.createOscillator(); this.o2.type = 'square'; this.o2.detune.value = -1180;
-        const g2 = ac.createGain(); g2.gain.value = 0.35;
-        this.o1.connect(this.lp); this.o2.connect(g2); g2.connect(this.lp); this.lp.connect(this.engGain); this.engGain.connect(this.master);
-        this.o1.start(); this.o2.start();
-        // 噪音（甩尾、氮氣共用）
+        this.o2 = ac.createOscillator(); this.o2.type = 'sawtooth'; this.o2.detune.value = 9;
+        this.o3 = ac.createOscillator(); this.o3.type = 'square'; this.o3.detune.value = -1195; // 低八度方波，增加「轟」
+        const g3 = ac.createGain(); g3.gain.value = 0.25;
+        this.sub = ac.createOscillator(); this.sub.type = 'sine';
+        this.subGain = ac.createGain(); this.subGain.gain.value = 0.5;
+        this.o1.connect(this.pre); this.o2.connect(this.pre); this.o3.connect(g3); g3.connect(this.pre);
+        this.pre.connect(this.shaper); this.shaper.connect(this.lp);
+        this.sub.connect(this.subGain); this.subGain.connect(this.lp);
+        this.lp.connect(this.am); this.am.connect(this.engGain); this.engGain.connect(this.master);
+        // 點火脈動：用跟引擎同步的低頻去抖音量 → 「噗嚕嚕」而不是平平的嗡嗡聲
+        this.lfo = ac.createOscillator(); this.lfo.type = 'triangle';
+        this.lfoDepth = ac.createGain(); this.lfoDepth.gain.value = 0.3;
+        this.lfo.connect(this.lfoDepth); this.lfoDepth.connect(this.am.gain);
+        // 高級車用：高八度尖嘯、隨轉速的電動／渦輪高音
+        this.harm = ac.createOscillator(); this.harm.type = 'sawtooth';
+        this.harmG = ac.createGain(); this.harmG.gain.value = 0;
+        this.harm.connect(this.harmG); this.harmG.connect(this.lp);
+        this.whine = ac.createOscillator(); this.whine.type = 'sine';
+        this.whineG = ac.createGain(); this.whineG.gain.value = 0;
+        this.whine.connect(this.whineG); this.whineG.connect(this.engGain);
+        [this.o1, this.o2, this.o3, this.sub, this.lfo, this.harm, this.whine].forEach(o => o.start());
+        // ===== 噪音 =====
         const len = ac.sampleRate * 2, buf = ac.createBuffer(1, len, ac.sampleRate), d = buf.getChannelData(0);
         for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
-        const mkNoise = (type, f, q) => {
+        this.noiseBuf = buf;
+        const mkNoise = (type, f, q, dest) => {
           const src = ac.createBufferSource(); src.buffer = buf; src.loop = true;
           const flt = ac.createBiquadFilter(); flt.type = type; flt.frequency.value = f; flt.Q.value = q;
           const gn = ac.createGain(); gn.gain.value = 0;
-          src.connect(flt); flt.connect(gn); gn.connect(this.master); src.start();
+          src.connect(flt); flt.connect(gn); gn.connect(dest || this.master); src.start();
           return { flt, gn };
         };
-        this.skid = mkNoise('bandpass', 1100, 3);
-        this.jet = mkNoise('highpass', 1800, 0.7);
+        // 甩尾：輪胎尖叫（有音高、會抖）＋一點摩擦噪音
+        this.skidGain = ac.createGain(); this.skidGain.gain.value = 0; this.skidGain.connect(this.master);
+        this.squeal = ac.createOscillator(); this.squeal.type = 'triangle'; this.squeal.frequency.value = 820;
+        const sqF = ac.createBiquadFilter(); sqF.type = 'bandpass'; sqF.frequency.value = 1000; sqF.Q.value = 2;
+        const sqG = ac.createGain(); sqG.gain.value = 0.35;
+        this.squeal.connect(sqF); sqF.connect(sqG); sqG.connect(this.skidGain);
+        this.vib = ac.createOscillator(); this.vib.frequency.value = 9;
+        const vibD = ac.createGain(); vibD.gain.value = 28;
+        this.vib.connect(vibD); vibD.connect(this.squeal.frequency);
+        this.squeal.start(); this.vib.start();
+        this.skidN = mkNoise('bandpass', 1400, 1.5, this.skidGain); this.skidN.gn.gain.value = 0.6;
+        // 氮氣：中低頻火焰轟鳴（會亂抖）＋低頻隆隆＋渦輪哨音；點火瞬間另外播「轟」
+        this.flame = mkNoise('bandpass', 520, 0.9);
+        this.rumble = mkNoise('lowpass', 160, 0.7);
+        this.flutter = ac.createOscillator(); this.flutter.type = 'sawtooth'; this.flutter.frequency.value = 23;
+        this.flutterD = ac.createGain(); this.flutterD.gain.value = 0;
+        this.flutter.connect(this.flutterD); this.flutterD.connect(this.flame.gn.gain); this.flutter.start();
+        this.whistle = ac.createOscillator(); this.whistle.type = 'sine'; this.whistle.frequency.value = 1500;
+        this.whistleG = ac.createGain(); this.whistleG.gain.value = 0;
+        this.whistle.connect(this.whistleG); this.whistleG.connect(this.master); this.whistle.start();
         this.ready = true;
         return true;
+      },
+      setColor(key, trait) {
+        if (this.colorKey === key) return;
+        this.colorKey = key;
+        this.voice = CAR_VOICE[key] || null;
+        const c = Object.assign({}, ENGINE_COLOR[trait] || ENGINE_COLOR.balanced, this.voice && this.voice.color), n = 1024, curve = new Float32Array(n);
+        for (let i = 0; i < n; i++) { const x = i / (n - 1) * 2 - 1; curve[i] = Math.tanh(c.drive * x) / Math.tanh(c.drive); }
+        this.shaper.curve = curve;
+        this.color = c;
+      },
+      // 一次性的聲音：噪音爆一下（低通掃頻）
+      burst(t, dur, f0, f1, vol, type = 'lowpass') {
+        const ac = this.ac, src = ac.createBufferSource(), flt = ac.createBiquadFilter(), g = ac.createGain();
+        src.buffer = this.noiseBuf; flt.type = type; flt.Q.value = 1;
+        flt.frequency.setValueAtTime(f0, t); flt.frequency.exponentialRampToValueAtTime(f1, t + dur);
+        g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+        src.connect(flt); flt.connect(g); g.connect(this.master); src.start(t); src.stop(t + dur + 0.05);
+      },
+      thump(t, f0, f1, dur, vol) {
+        const ac = this.ac, o = ac.createOscillator(), g = ac.createGain();
+        o.type = 'sine'; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+        g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+        o.connect(g); g.connect(this.master); o.start(t); o.stop(t + dur + 0.05);
       },
       update(dt) {
         const k = playerKart;
@@ -12330,20 +12808,76 @@
         if (!active) { if (this.ready) this.master.gain.setTargetAtTime(0, this.ac.currentTime, 0.08); return; }
         if (!this.ready && !this.build()) return;
         const t = this.ac.currentTime;
-        this.master.gain.setTargetAtTime(0.2 * (gameData.engineVolume ?? 0.8), t, 0.1);
-        // 換檔：每 9 速一檔，檔內音高往上爬
-        const spd = k.speed, gear = Math.min(5, Math.floor(spd / 9)), inGear = (spd - gear * 9) / 9;
-        const base = ENGINE_TONE[(k.stats && k.stats.trait) || 'balanced'] || 70;
+        const trait = (k.stats && k.stats.trait) || 'balanced';
+        const vkey = CAR_VOICE[carBase(k.typeId)] ? carBase(k.typeId) : trait;
+        this.setColor(vkey, trait);
+        const c = this.color, V = this.voice;
+        this.master.gain.setTargetAtTime(0.28 * (gameData.engineVolume ?? 0.8), t, 0.1);
+        const spd = k.speed, throttle = !!(rawKeys.throttle && raceState !== 'FINISHED');
         const boost = k.nitroTimer > 0 || k.miniBoostTimer > 0 || k.padBoostTimer > 0 || k.draftBoostTimer > 0;
-        const f = base * (1 + gear * 0.18 + inGear * 0.9) * (boost ? 1.08 : 1);
-        this.o1.frequency.setTargetAtTime(f, t, 0.05);
-        this.o2.frequency.setTargetAtTime(f, t, 0.05);
-        this.lp.frequency.setTargetAtTime(500 + spd * 40 + (boost ? 800 : 0), t, 0.08);
-        this.engGain.gain.setTargetAtTime(raceState === 'COUNTDOWN' ? 0.3 : 0.4 + Math.min(1, spd / 30) * 0.4, t, 0.1);
+        // 轉速：比賽中跟車速＋檔位；倒數時按 W 可以空踩催油
+        let targetRpm, gear = this.gear;
+        if (raceState === 'COUNTDOWN') { targetRpm = throttle ? 0.85 : 0.12; gear = 0; }
+        else {
+          gear = Math.min(5, Math.floor(spd / 7.5));
+          const inGear = Math.max(0, Math.min(1, (spd - gear * 7.5) / 7.5));
+          targetRpm = 0.25 + inGear * 0.65 + (throttle ? 0.05 : -0.06) + (boost ? 0.08 : 0);
+        }
+        if (gear > this.gear && raceState === 'RACING') {
+          this.shiftDip = 0.09; this.burst(t, 0.12, 900, 200, 0.06); // 換檔：頓一下＋「噗」
+          if (V && V.blowoff) this.burst(t + 0.02, 0.3, 5000, 1800, 0.08, 'highpass'); // 渦輪洩壓「噗嘶」
+        }
+        // 收油回火：高轉速突然放油門 → 劈哩啪啦
+        if (V && V.crackle && this.prevThrottle && !throttle && this.rpm > 0.55 && raceState === 'RACING') {
+          const n = 3 + Math.floor(Math.random() * 3);
+          for (let i = 0; i < n; i++) this.burst(t + 0.05 + i * (0.06 + Math.random() * 0.07), 0.05, 2600, 700, 0.14 + Math.random() * 0.08, 'bandpass');
+        }
+        this.prevThrottle = throttle;
+        this.gear = gear;
+        this.rpm += (targetRpm - this.rpm) * Math.min(1, dt * (targetRpm > this.rpm ? 7 : 4));
+        this.shiftDip = Math.max(0, this.shiftDip - dt);
+        const base = (V && V.tone) || ENGINE_TONE[trait] || 70;
+        const f = base * (0.9 + gear * 0.12) * (0.75 + this.rpm * 1.3);
+        [this.o1, this.o2, this.o3].forEach(o => o.frequency.setTargetAtTime(f, t, 0.03));
+        this.sub.frequency.setTargetAtTime(f / 2, t, 0.03);
+        this.pre.gain.setTargetAtTime(0.5 * (V && V.saw !== undefined ? V.saw : 1), t, 0.1);
+        this.harm.frequency.setTargetAtTime(f * 2, t, 0.03);
+        this.harmG.gain.setTargetAtTime(V && V.harm ? V.harm * (0.4 + this.rpm) : 0, t, 0.08);
+        this.whine.frequency.setTargetAtTime(f * (V && V.whine ? V.whine[0] : 4), t, 0.05);
+        this.whineG.gain.setTargetAtTime(V && V.whine ? V.whine[1] * (0.3 + this.rpm * 1.2) : 0, t, 0.08);
+        this.subGain.gain.setTargetAtTime(c.sub * (0.5 + (1 - this.rpm) * 0.5), t, 0.1);
+        this.lfo.frequency.setTargetAtTime(f / 4, t, 0.03); // 點火脈動
+        this.lfoDepth.gain.setTargetAtTime(c.burble * (throttle ? 0.6 : 1.1) * (1.2 - this.rpm), t, 0.08);
+        // 油門負載：踩著比較亮、放開比較悶
+        this.lp.frequency.setTargetAtTime((350 + this.rpm * 1500 * c.bright) * (throttle ? 1 : 0.6) + (boost ? 700 : 0), t, 0.06);
+        const vol = (raceState === 'COUNTDOWN' ? 0.35 + this.rpm * 0.25 : 0.42 + this.rpm * 0.35) * (throttle ? 1 : 0.75) * (this.shiftDip > 0 ? 0.45 : 1) * (V && V.saw !== undefined ? 2 - V.saw : 1); // 電動系鋸齒波少，音量補回來
+        this.engGain.gain.setTargetAtTime(vol, t, this.shiftDip > 0 ? 0.01 : 0.06);
+        // 甩尾：輪胎尖叫
         const drifting = k.isDrifting && spd > 8;
-        this.skid.gn.gain.setTargetAtTime(drifting ? 0.55 : 0, t, drifting ? 0.03 : 0.12);
-        this.skid.flt.frequency.setTargetAtTime((900 + spd * 18) * (k.stats && k.stats.trait === 'knight' ? 0.55 : 1), t, 0.1);
-        this.jet.gn.gain.setTargetAtTime(k.nitroTimer > 0 ? 0.5 : (boost ? 0.2 : 0), t, 0.06);
+        this.skidGain.gain.setTargetAtTime(drifting ? 0.32 : 0, t, drifting ? 0.03 : 0.1);
+        const kn = trait === 'knight' ? 0.6 : 1;
+        this.squeal.frequency.setTargetAtTime((700 + spd * 9) * kn, t, 0.1);
+        this.skidN.flt.frequency.setTargetAtTime((1100 + spd * 20) * kn, t, 0.1);
+        // 氮氣：點火「轟」＋火焰轟鳴＋渦輪哨音慢慢拉高；結束「噗嘶」
+        const nOn = k.nitroTimer > 0;
+        if (nOn && !this.prevNitro) {
+          this.thump(t, 150, 42, 0.35, 0.55);
+          this.burst(t, 0.45, 2400, 180, 0.5);
+          this.nitroT = 0;
+        }
+        if (!nOn && this.prevNitro) this.burst(t, 0.5, 3000, 400, 0.18, 'bandpass');
+        this.prevNitro = nOn;
+        if (nOn) this.nitroT += dt;
+        this.flame.gn.gain.setTargetAtTime(nOn ? 0.55 : 0, t, nOn ? 0.03 : 0.15);
+        this.flutterD.gain.setTargetAtTime(nOn ? 0.22 : 0, t, 0.05);
+        this.flame.flt.frequency.setTargetAtTime(nOn ? 420 + Math.min(1, this.nitroT / 1.5) * 380 : 520, t, 0.1);
+        this.rumble.gn.gain.setTargetAtTime(nOn ? 0.7 : (boost ? 0.25 : 0), t, 0.06);
+        this.whistle.frequency.setTargetAtTime(nOn ? 1400 + Math.min(1, this.nitroT / 2) * 1300 : 1200, t, 0.15);
+        this.whistleG.gain.setTargetAtTime(nOn ? 0.035 : 0, t, 0.12);
+        // 小噴／加速帶：短短一聲「咻」
+        const mini = k.miniBoostTimer > 0 || k.padBoostTimer > 0;
+        if (mini && !this.prevMini && !nOn) this.burst(t, 0.35, 500, 2600, 0.22, 'bandpass');
+        this.prevMini = mini;
       }
     };
     document.addEventListener('visibilitychange', () => { if (document.hidden && raceAudio.ready) raceAudio.master.gain.setTargetAtTime(0, raceAudio.ac.currentTime, 0.02); });
@@ -12761,6 +13295,8 @@
       document.getElementById('pmEng').value = Math.round(eng * 100); document.getElementById('pmEngV').textContent = Math.round(eng * 100);
       document.getElementById('pmVoice').textContent = gameData.uncleVoice === false ? '關' : '開';
       document.getElementById('pmAlerts').textContent = gameData.hudAlerts === 'off' ? '關' : '開';
+      document.getElementById('pmHint').textContent = gameData.hudHint === 'off' ? '關' : '開';
+      document.getElementById('pmMap').textContent = MAP_POS_NAME[mapPos()];
       let html = '';
       for (const [a, label] of KEY_ACTIONS) {
         const wait = keyCapture && keyCapture.action === a;
@@ -12807,6 +13343,8 @@
     document.getElementById('pmEng').addEventListener('input', e => { gameData.engineVolume = e.target.value / 100; renderPauseMenu(); });
     document.getElementById('pmEng').addEventListener('change', () => saveGameData());
     document.getElementById('pmVoice').addEventListener('click', () => { gameData.uncleVoice = gameData.uncleVoice === false; saveGameData(); renderPauseMenu(); });
+    document.getElementById('pmHint').addEventListener('click', () => { gameData.hudHint = gameData.hudHint === 'off' ? 'on' : 'off'; saveGameData(); applyHudLayout(); renderPauseMenu(); });
+    document.getElementById('pmMap').addEventListener('click', () => { gameData.mapPos = MAP_POS[(MAP_POS.indexOf(mapPos()) + 1) % MAP_POS.length]; saveGameData(); applyHudLayout(); renderPauseMenu(); });
     document.getElementById('pmAlerts').addEventListener('click', () => { gameData.hudAlerts = gameData.hudAlerts === 'off' ? 'on' : 'off'; saveGameData(); applyHudAlerts(); renderPauseMenu(); });
     document.getElementById('pmFull').addEventListener('click', () => toggleGameFullscreen());
     function gameVolume() { return typeof gameData.volume === 'number' ? Math.max(0, Math.min(1, gameData.volume)) : 0.8; }
@@ -12846,7 +13384,8 @@
       // 頭上的對話框
       if (k.uncleBubble && k.uncleBubble.parent) k.uncleBubble.parent.remove(k.uncleBubble);
       const sp = makeTextSprite('💢 ' + text, 40, '#ffffff', 'rgba(185, 28, 28, 0.9)');
-      sp.position.set(0, 3.5, 0); sp.scale.multiplyScalar(1.1);
+      const mine = k === playerKart; // 自己開阿伯：框更小、放低，不擋前面的路
+      sp.position.set(0, mine ? 2.3 : 3.0, 0); sp.scale.multiplyScalar(mine ? 0.42 : 0.6);
       k.mesh.add(sp); k.uncleBubble = sp;
       setTimeout(() => { if (k.uncleBubble === sp && sp.parent) sp.parent.remove(sp); }, 2300);
       // 語音（瀏覽器內建語音合成；只播附近的阿伯）
@@ -12878,6 +13417,15 @@
       if (!document.getElementById('merge-panel').classList.contains('hidden') && !merge.busy) closeOverlay('merge-panel');
     });
 
+    // 畫面配置：按鍵說明開關、小地圖位置（右上／右中／左中）
+    const MAP_POS = ['tr', 'rm', 'lm'], MAP_POS_NAME = { tr: '右上', rm: '右中', lm: '左中' };
+    function mapPos() { return MAP_POS.includes(gameData.mapPos) ? gameData.mapPos : 'tr'; }
+    function applyHudLayout() {
+      document.body.classList.toggle('hint-off', gameData.hudHint === 'off');
+      document.body.classList.toggle('map-rm', mapPos() === 'rm');
+      document.body.classList.toggle('map-lm', mapPos() === 'lm');
+    }
+    applyHudLayout();
     // 車庫上方按鈕的數字
     function applyHudAlerts() {
       const off = gameData.hudAlerts === 'off';
@@ -12890,7 +13438,7 @@
       showToast(gameData.hudAlerts === 'off' ? '💬 甩尾／氮氣／尾流提示已關閉' : '💬 提示已開啟（顯示在畫面下方）');
     });
     function renderGarageHeader() {
-      applyHudAlerts();
+      applyHudAlerts(); applyHudLayout();
       document.getElementById('ghBoxes').textContent = gameData.gacha.boxes;
       document.getElementById('btnOpenGacha').title = dailyRaceText();
       document.getElementById('btnOpenGacha').classList.toggle('hot', gameData.gacha.boxes > 0);
@@ -13189,7 +13737,8 @@
         list.style.display = 'none';
         document.getElementById('racing-hud').style.display = '';
         gameData.selectedCar = carlab.car;
-        gameData.raceMode = stress ? 'team' : 'solo';
+        roomOverride = stress ? { mode: 'team', team: 'red', ais: ['red', 'blue', 'blue', 'red', 'blue', 'red', 'blue'].map(t => ({ lv: 1, team: t })) }
+                              : { mode: 'solo', team: 'red', ais: [1, 1, 1, 1, 1].map(lv => ({ lv, team: null })) };
         karts.forEach(k => { k.mesh.visible = true; });
         startRaceFromGarage();
         // 對手換成各種新車款（只在測試頁）
