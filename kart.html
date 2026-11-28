@@ -1270,7 +1270,11 @@
     .tp-sub { font-size: 13px; font-weight: 800; color: #059669; }
     .tp-buy { margin-top: 8px; font-size: 26px; font-weight: 900; padding: 12px 48px; border-radius: 999px; border: 4px solid #fff; color: #fff; cursor: pointer;
       background: linear-gradient(90deg, #ff0040, #ff8c00); box-shadow: 0 6px 0 #9f1239; transition: transform 0.15s; position: relative; }
-    .tp-decline { margin-top: 10px; font-size: 11px; color: #9ca3af; min-height: 16px; }
+    .tp-decline { margin-top: 10px; font-size: 11px; color: #9ca3af; min-height: 16px; position: relative; z-index: 3; }
+    .tp-buy { position: relative; z-index: 1; }
+    .tp-close { position: absolute; top: 8px; right: 10px; z-index: 5; width: 34px; height: 34px; border-radius: 50%; border: 2px solid #d1d5db;
+      background: #fff; color: #6b7280; font-size: 18px; font-weight: 900; cursor: pointer; line-height: 1; }
+    .tp-close:hover { background: #fee2e2; color: #dc2626; border-color: #fca5a5; }
     .tp-decline a { color: #9ca3af; cursor: pointer; text-decoration: underline; }
     .tp-legal { font-size: 10px; color: #9ca3af; margin-top: 4px; }
     #fake-ad { position: absolute; inset: 0; z-index: 128; background: #000; color: #fff; display: flex; flex-direction: column; }
@@ -1642,6 +1646,7 @@
   <div id="troll-pack" class="hidden">
     <div class="tp-rainbow"></div>
     <div class="tp-card">
+      <button class="tp-close" id="tpClose" title="關閉">✕</button>
       <div class="tp-flash">🔥🔥 限時特賣 🔥🔥</div>
       <div class="tp-title">✨ 新手大禮包 ✨</div>
       <div class="tp-timer">⏰ 剩餘 <b id="tpTimer">00:59:59</b>　錯過再等一百年！</div>
@@ -1970,14 +1975,16 @@
     // ---------- 車輛圖鑑（抽箱系統）----------
     const GACHA_MODE = 'local'; // 'local'：單機試玩，存在 localStorage；'server'：之後改由伺服器決定抽箱與合成結果
     const RARITIES = {
-      common:    { name: '普通', css: '#9ca3af', sum: 80, rate: 0.70 },
+      common:    { name: '普通', css: '#9ca3af', sum: 80, rate: 0.698 },
       rare:      { name: '稀有', css: '#3b82f6', sum: 84, rate: 0.22 },
       epic:      { name: '史詩', css: '#a855f7', sum: 88, rate: 0.06 },
-      mythic:    { name: '神話', css: '#ef4444', sum: 92, rate: 0.019 },
-      legendary: { name: '傳說', css: '#fbbf24', sum: 96, rate: 0.001 },
+      mythic:    { name: '神話', css: '#ef4444', sum: 92, rate: 0.02 },
+      legendary: { name: '傳說', css: '#fbbf24', sum: 96, rate: 0.002 },
       celestial: { name: '星耀', css: '#e0f2fe', sum: 106, rate: 0 } // 抽不到，只能用 10 台傳說合成
     };
     const RARITY_ORDER = ['common', 'rare', 'epic', 'mythic', 'legendary'];
+    // 單抽（RARITIES 的 rate）：神話 2%、傳說 0.2%；10 連抽：神話 1%、傳說 0.1%，少掉的加到史詩
+    const TEN_RATES = { common: 0.70, rare: 0.22, epic: 0.069, mythic: 0.01, legendary: 0.001 };
     const RARITY_ORDER_ALL = RARITY_ORDER.concat(['celestial']); // 圖鑑、測試頁用（含合成限定的星耀）
     // 屬性換算：倍率 = 1 + (屬性值 - 20) × 0.01
     const statMult = v => 1 + (v - 20) * 0.01;
@@ -11125,7 +11132,7 @@
     const BOX_PRICE = 500; // 大約 5 場比賽的收入
     const STARTER_GIFT_BOXES = 50; // 新手第一次簽到送的箱子
     const STARTER_GIFT_OLD = 10;   // 舊版開局禮（領過的人補差額）
-    // 衝星：每次 1,000 金幣，越上面越難；+5 以上失敗掉一星，+8 以上失敗有一半機率爆星歸零。每星四項屬性 +0.2%（滿星 +2%）
+    // 衝星：每次 1,000 金幣，越上面越難；+5 以上失敗掉一星（爆星歸零已取消）。每星四項屬性 +0.2%（滿星 +2%）
     const STAR_COST = 1000;
     const adminCost = c => (gameData.adminFree ? 0 : c);   // 管理員免費模式
     const STAR_RATE = [1.0, 0.9, 0.8, 0.65, 0.5, 0.4, 0.3, 0.2, 0.1, 0.05]; // 衝 +1 ～ +10 的成功率
@@ -11133,7 +11140,7 @@
     const STAR_RATE_EX = [0.05, 0.05, 0.04, 0.04, 0.03, 0.03, 0.02, 0.02, 0.01, 0.01]; // 專屬車 +11 ～ +20
     function carMaxStars(id) { const c = CAR_CATALOG[carBase(id)]; return c && c.exclusive ? 20 : 10; }
     function starRate(cur) { return cur < 10 ? STAR_RATE[cur] : (STAR_RATE_EX[cur - 10] || 0); }
-    const STAR_OVERLOAD = 0.005;   // 隱藏：每次衝星 0.5% 車子爆炸
+    const STAR_OVERLOAD = 0;       // 隱藏爆車：已取消（原本每次衝星 0.5%）
     function carStars(id) { const b = carBase(id); return (gameData.gacha && gameData.gacha.stars && gameData.gacha.stars[b]) || 0; }
     // 分解重複的車換金幣（每款至少留 1 台）。開一箱平均只能分解回約 130 金幣，不會變成刷錢漏洞
     const DISMANTLE_VALUE = { common: 50, rare: 150, epic: 500, mythic: 1500, legendary: 5000, celestial: 50000 };
@@ -11159,9 +11166,9 @@
     const mergePool = rar => gachaCars(rar).filter(id => !CAR_CATALOG[id].exclusive); // 合成結果（北極星不會出）
     function secureRandom() { const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] / 4294967296; }
     function pickOne(arr) { return arr[Math.floor(secureRandom() * arr.length)]; }
-    function rollRarity(r = secureRandom()) {
+    function rollRarity(r = secureRandom(), table = null) {
       let acc = 0;
-      for (const k of RARITY_ORDER) { acc += RARITIES[k].rate; if (r < acc) return k; }
+      for (const k of RARITY_ORDER) { acc += table ? table[k] : RARITIES[k].rate; if (r < acc) return k; }
       return 'common';
     }
     function carCount(id) {
@@ -11266,8 +11273,8 @@
         const g = this.local();
         if (g.boxes < 10) throw new Error('箱子不到 10 個');
         const ids = [];
-        // 10 連抽：每一抽都是獨立的單抽機率（跟開 10 次 1 箱一樣）
-        for (let i = 0; i < 10; i++) ids.push(pickOne(gachaCars(rollRarity())));
+        // 10 連抽：每一抽獨立，用 10 連抽的機率表（神話 1%、傳說 0.2%）
+        for (let i = 0; i < 10; i++) ids.push(pickOne(gachaCars(rollRarity(secureRandom(), TEN_RATES))));
         // 演出用：把最好的一台換到最後一枚硬幣（只換順序，不影響機率）
         let bi = 9;
         ids.forEach((id, i) => { if (RARITY_ORDER.indexOf(CAR_CATALOG[id].rarity) > RARITY_ORDER.indexOf(CAR_CATALOG[ids[bi]].rarity)) bi = i; });
@@ -11399,7 +11406,6 @@
           return { result: 'overload', from: cur, to: 0, lostCar: !c.starter };
         }
         if (secureRandom() < starRate(cur)) { now = cur + 1; result = 'success'; }
-        else if (cur >= 8 && !ex && secureRandom() < 0.5) { now = 0; result = 'boom'; }
         else if (cur >= 5) { now = cur - 1; result = 'down'; }
         else result = 'fail';
         g.stars = Object.assign({}, g.stars, { [b]: now });
@@ -11617,7 +11623,7 @@
         const st = carStars(id), maxSt = carMaxStars(id), ex = !!c.exclusive;
         const stars = '★'.repeat(st) + '☆'.repeat(Math.max(0, maxSt - st));
         html += `<div class="ci-star"><div class="cs-t">🌟 衝星 <b>+${st}</b> <span class="cs-s">${stars}</span></div>`;
-        if (st < maxSt) html += `<div class="cs-d">下一星成功率 <b>${Math.round(starRate(st) * 100)}%</b>　${st >= 8 && !ex ? '<span class="bad">失敗：一半機率爆星歸零，不然掉一星</span>' : (st >= 5 ? `<span class="bad">失敗會掉一星${ex ? '（專屬車不會爆星）' : ''}</span>` : '失敗不會掉星')}${ex && st < 20 ? '<br>✦ 衝到 20 星覺醒：頭上星冠、地面金色雪花陣、二段加速多一圈金色雪花' : ''}</div>
+        if (st < maxSt) html += `<div class="cs-d">下一星成功率 <b>${Math.round(starRate(st) * 100)}%</b>　${st >= 5 ? '<span class="bad">失敗會掉一星</span>' : '失敗不會掉星'}${ex && st < 20 ? '<br>✦ 衝到 20 星覺醒：頭上星冠、地面金色雪花陣、二段加速多一圈金色雪花' : ''}</div>
           <button class="btn-star" id="btnStar" ${gameData.coins >= adminCost(STAR_COST) ? '' : 'disabled'}>🔨 衝星（${adminCost(STAR_COST) ? STAR_COST.toLocaleString() + ' 💰' : '免費'}）</button>`;
         else html += `<div class="cs-d">滿星！四項屬性 +${Math.round(maxSt * STAR_BONUS_EARLY * 100)}%，名牌顯示 ★${maxSt}。${ex ? '✦ 已覺醒：星冠＋金色雪花陣' : ''}</div>`;
         html += `</div>`;
@@ -11774,7 +11780,7 @@
       const card = e.target.closest('.dex-card');
       if (card) selectGarageCar(card.dataset.car);
       // 一直點圖鑑：跳出搞笑禮包（第 8 次，之後每 20 次）
-      if (card) { dexClicks++; if (dexClicks === 8 || (dexClicks > 8 && (dexClicks - 8) % 20 === 0)) openTrollPack(); }
+      if (card) { dexClicks++; if (dexClicks === 25 || (dexClicks > 25 && (dexClicks - 25) % 100 === 0)) openTrollPack(); } // 圖鑑點第 25 下出現大禮包，之後每 100 下
     });
     // ---------- 每日比賽獎勵：台灣時間每天第 5 場送 20 抽、第 10 場再送 30 抽 ----------
     const DAILY_RACE_GIFTS = [[5, 20], [10, 30]];
@@ -11905,18 +11911,19 @@
       const b = e.currentTarget, n = Number(b.dataset.n || 0);
       if (n >= 4) return; // 跑幾次就累了，讓你按
       b.dataset.n = String(n + 1);
-      b.style.transform = `translate(${(Math.random() - 0.5) * 360}px, ${(Math.random() - 0.5) * 60}px)`;
+      b.style.transform = `translate(${(Math.random() - 0.5) * 300}px, ${-Math.random() * 40}px)`;
     });
     document.getElementById('tpBuy').addEventListener('click', () => {
       showToast(tpBuyLines[Math.floor(Math.random() * tpBuyLines.length)], 2600);
       sfx.fail();
     });
-    document.getElementById('tpDecline').addEventListener('click', e => {
-      if (!e.target.closest('#tpNo')) return;
+    function closeTrollPack() {
       clearInterval(tpTimerId);
       document.getElementById('troll-pack').classList.add('hidden');
       showToast('😢 好吧……阿伯會在這裡等你的', 2500);
-    });
+    }
+    document.getElementById('tpDecline').addEventListener('click', e => { if (e.target.closest('#tpNo')) closeTrollPack(); });
+    document.getElementById('tpClose').addEventListener('click', closeTrollPack);
     document.getElementById('btnFxQuality').addEventListener('click', () => {
       gameData.fxQuality = gameData.fxQuality === 'low' ? 'high' : 'low';
       saveGameData();
@@ -12199,7 +12206,7 @@
       for (const r of RARITY_ORDER) {
         const ids = gachaCars(r), R = RARITIES[r];
         const each = (R.rate / ids.length * 100);
-        html += `<div style="--rc:${R.css}"><b>${R.name} ${+(R.rate * 100).toFixed(1)}%</b>
+        html += `<div style="--rc:${R.css}"><b>${R.name} ${+(R.rate * 100).toFixed(1)}%</b> <span style="color:#94a3b8;font-size:11px">10 連 ${+(TEN_RATES[r] * 100).toFixed(1)}%</span>
           <div class="gl">每台 ${each < 0.1 ? each.toFixed(2) : each.toFixed(each < 1 ? 3 : 2)}%<br>${ids.map(id => escapeHtml(CAR_CATALOG[id].name)).join('、')}</div></div>`;
       }
       document.getElementById('gRates').innerHTML = html;
